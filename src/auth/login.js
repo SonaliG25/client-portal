@@ -44,7 +44,7 @@ export const Login = () => {
       <div className="login-box">
         <div className="login-logo">
           <a href="/">
-            <b>ExcelyTech</b>
+            <b>AppName</b>
           </a>
         </div>
         <div className="card">
