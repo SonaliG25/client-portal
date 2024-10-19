@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+
 import axios from "axios";
 
 export const Login = () => {
@@ -8,6 +9,7 @@ export const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [auth, setAuth] = useAuth();
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -22,10 +24,7 @@ export const Login = () => {
     );
     if (response.status === 200) {
       console.log("res", response);
-      localStorage.setItem("auth", {
-        user: response.data.userInfo,
-        token: response.data.token,
-      });
+      localStorage.setItem("auth", JSON.stringify(response.data.userInfo));
       setAuth({
         user: response.data.userInfo,
         token: response.data.token,
