@@ -15,13 +15,10 @@ export const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     // Placeholder login logic, replace with actual authentication logic
-    const response = await axios.post(
-      "https://client-portal-server-b7rq.onrender.com/user/login",
-      {
-        email,
-        password,
-      }
-    );
+    const response = await axios.post("http://localhost:3000/user/login", {
+      email,
+      password,
+    });
     if (response.status === 200) {
       console.log("res", response);
       localStorage.setItem("auth", JSON.stringify(response.data.userInfo));

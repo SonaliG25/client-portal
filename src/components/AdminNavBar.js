@@ -1,6 +1,6 @@
 import React from "react";
 
-const Navbar = () => {
+const AdminNavbar = () => {
   return (
     <nav className="main-header navbar navbar-expand navbar-white navbar-light">
       {/* Left navbar links */}
@@ -199,4 +199,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default AdminNavbar;

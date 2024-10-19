@@ -32,6 +32,12 @@ function App() {
     {
       path: "/admin-dashboard",
       element: <Dashboard />,
+      children: [
+        {
+          path: "proposal",
+          element: <Proposals />,
+        },
+      ],
     },
   ]);
 
