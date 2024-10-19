@@ -4,8 +4,8 @@ import { Navigate, Outlet } from "react-router-dom";
 import Navbar from "./NavBar";
 import Sidebar from "./Sidebar";
 
-import { AuthContext } from "../context/AuthContext";
 import { UserRoles } from "../constants/roles";
+import { useAuth } from "../context/AuthContext";
 // Main Layout component for wrapping other routes/pages with a common structure
 function ClientLayout() {
   return (
@@ -31,9 +31,9 @@ function ClientLayout() {
 }
 
 function Layout() {
-  const { currentUser } = useContext(AuthContext);
+  const [auth, setAuth] = useAuth();
 
-  if (!currentUser) return <Navigate to="/login" />;
+  if (!auth) return <Navigate to="/login" />;
   else {
     if (currentUser.role === UserRoles.ADMIN) return AdminLayout();
     else return ClientLayout();

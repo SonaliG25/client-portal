@@ -20,15 +20,15 @@ import reportWebVitals from "./reportWebVitals";
 // // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 // reportWebVitals();
 
-import { AuthContextProvider } from "./context/AuthContext.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
 import { SocketContextProvider } from "./context/SocketContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <AuthContextProvider>
+    <AuthProvider>
       {/* <SocketContextProvider> */}
       <App />
       {/* </SocketContextProvider> */}
-    </AuthContextProvider>
+    </AuthProvider>
   </React.StrictMode>
 );

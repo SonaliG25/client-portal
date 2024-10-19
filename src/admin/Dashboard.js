@@ -5,7 +5,7 @@ const Dashboard = () => {
     <div className="content-wrapper">
       <section className="content">
         <div className="container-fluid">
-          <h1>Dashboard</h1>
+          <h1> Admin Dashboard</h1>
         </div>
       </section>
     </div>

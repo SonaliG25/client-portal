@@ -1,39 +1,43 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
+import axios from "axios";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [auth, setAuth] = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     // Placeholder login logic, replace with actual authentication logic
-    try {
-      const response = await fetch("http://localhost:3000/user/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      if (response.ok) {
-        const data = await response.json(); // Store the token in localStorage
-        localStorage.setItem("token", data.token);
-        // Check if userInfo is valid
-        if (typeof data.userInfo === "object" && data.userInfo !== null) {
-          localStorage.setItem("userInfo", JSON.stringify(data.userInfo)); // Store userInfo
-        } else {
-          console.error("userInfo is not valid:", data.userInfo);
-        }
-        console.log(localStorage.getItem("userInfo"));
-        navigate("/"); // Redirect to the dashboard or home page
-      } else {
-        setError("Invalid email or password");
+    const response = await axios.post(
+      "https://client-portal-server-b7rq.onrender.com/user/login",
+      {
+        email,
+        password,
       }
-    } catch (err) {
-      console.log(err);
-      setError("An error occurred, please try again later");
+    );
+    if (response.status === 200) {
+      console.log("res", response);
+      localStorage.setItem("auth", {
+        user: response.data.userInfo,
+        token: response.data.token,
+      });
+      setAuth({
+        user: response.data.userInfo,
+        token: response.data.token,
+      });
+      response.data.userInfo.role == "admin"
+        ? navigate("/admin-dashboard")
+        : navigate("/user-dashboard"); // Redirect to the dashboard or home page
+    } else {
+      setError("Invalid email or password");
     }
+    // console.log(err);
+    // setError("An error occurred, please try again later");
   };
 
   return (
@@ -50,12 +54,6 @@ export const Login = () => {
         <div className="card">
           <div className="card-body login-card-body">
             <p className="login-box-msg">Sign in to start your session</p>
-
-            {error && (
-              <div className="alert alert-danger" role="alert">
-                {error}
-              </div>
-            )}
 
             <form onSubmit={handleLogin}>
               <div className="input-group mb-3">
@@ -89,7 +87,11 @@ export const Login = () => {
                   </div>
                 </div>
               </div>
-
+              {error && (
+                <div className="text-danger" role="alert">
+                  {error}
+                </div>
+              )}
               <div className="row">
                 <div className="col-8">
                   <div className="icheck-primary">
@@ -108,13 +110,13 @@ export const Login = () => {
 
             <div className="social-auth-links text-center mb-3">
               <p>- OR -</p>
-              <a href="#" className="btn btn-block btn-primary">
+              {/* <a href="#" className="btn btn-block btn-primary">
                 <i className="fab fa-facebook mr-2"></i> Sign in using Facebook
-              </a>
-              <a href="#" className="btn btn-block btn-danger">
+              </a> */}
+              {/* <a href="#" className="btn btn-block btn-danger">
                 <i className="fab fa-google-plus mr-2"></i> Sign in using
                 Google+
-              </a>
+              </a> */}
             </div>
 
             <p className="mb-1">
