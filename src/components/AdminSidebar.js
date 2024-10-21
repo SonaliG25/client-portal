@@ -47,9 +47,15 @@ const AdminSidebar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/newUser" className="nav-link">
+              <Link to="newuser" className="nav-link">
                 <i className="nav-icon fas fa-users"></i>
                 <p>NewUser</p>
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="newuser" className="nav-link">
+                <i className="nav-icon fas fa-users"></i>
+                <p>Users</p>
               </Link>
             </li>
             <li className="nav-item">

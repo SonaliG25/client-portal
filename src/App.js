@@ -11,20 +11,16 @@ import Orders from "./admin/Orders";
 import Proposals from "./admin/Proposal";
 import ClientDashboard from "./client/ClientDashboard";
 import Home from "./components/Home";
+import Register from "./auth/Register";
 
 function App() {
-  // const { currentUser } = useContext(AuthContext);
-  // Ensure currentUser is not null before accessing role
-  // const userRole = currentUser ? currentUser.role : null; // Use null or a default role
-
-  // Define routes using `createBrowserRouter`. The `router` object contains all the routes and their associated components.
-  // Define routes using `createBrowserRouter`. The `router` object contains all the routes and their associated components.
   const router = createBrowserRouter([
     { path: "/", element: <Home /> },
     {
       path: "/login", // Route for login
       element: <Login />, // Render the Login component
     },
+
     {
       path: "/user-dashboard",
       element: <ClientDashboard />,
@@ -36,6 +32,10 @@ function App() {
         {
           path: "proposal",
           element: <Proposals />,
+        },
+        {
+          path: "newuser",
+          element: <Register />,
         },
       ],
     },
