@@ -53,7 +53,7 @@ const AdminSidebar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="newuser" className="nav-link">
+              <Link to="allusers" className="nav-link">
                 <i className="nav-icon fas fa-users"></i>
                 <p>Users</p>
               </Link>

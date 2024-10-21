@@ -22,6 +22,7 @@ export const Login = () => {
     if (response.status === 200) {
       console.log("res", response);
       localStorage.setItem("auth", JSON.stringify(response.data.userInfo));
+      localStorage.setItem("token", response.data.token);
       setAuth({
         user: response.data.userInfo,
         token: response.data.token,

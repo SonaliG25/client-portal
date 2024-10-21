@@ -37,6 +37,10 @@ function App() {
           path: "newuser",
           element: <Register />,
         },
+        {
+          path: "allusers", // Route for login
+          element: <Users />, // Render the Login component
+        },
       ],
     },
   ]);
