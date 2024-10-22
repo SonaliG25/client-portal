@@ -21,13 +21,16 @@ import reportWebVitals from "./reportWebVitals";
 // reportWebVitals();
 
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { EditUserProvider } from "./context/EditUserContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
-      {/* <SocketContextProvider> */}
-      <App />
-      {/* </SocketContextProvider> */}
+      <EditUserProvider>
+        {/* <SocketContextProvider> */}
+        <App />
+        {/* </SocketContextProvider> */}
+      </EditUserProvider>
     </AuthProvider>
   </React.StrictMode>
 );

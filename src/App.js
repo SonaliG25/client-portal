@@ -12,6 +12,7 @@ import Proposals from "./admin/Proposal";
 import ClientDashboard from "./client/ClientDashboard";
 import Home from "./components/Home";
 import Register from "./auth/Register";
+import UpdateForm from "./admin/UpdateForm";
 
 function App() {
   const router = createBrowserRouter([
@@ -40,6 +41,10 @@ function App() {
         {
           path: "allusers", // Route for login
           element: <Users />, // Render the Login component
+        },
+        {
+          path: "Update", // Route for login
+          element: <UpdateForm />, // Render the Login component
         },
       ],
     },
