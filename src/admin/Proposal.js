@@ -4,23 +4,23 @@ import ProposalTemplate from "../components/ProposalTemplate.js";
 const Proposals = () => {
   const tableRef = useRef(null); // Create a ref for the table
 
-  useEffect(() => {
-    // Initialize DataTable
-    const table = $(tableRef.current).DataTable({
-      paging: true,
-      lengthChange: false,
-      searching: false,
-      ordering: true,
-      info: true,
-      autoWidth: false,
-      responsive: true,
-    });
+  // useEffect(() => {
+  //   // Initialize DataTable
+  //   const table = (tableRef.current).DataTable({
+  //     paging: true,
+  //     lengthChange: false,
+  //     searching: false,
+  //     ordering: true,
+  //     info: true,
+  //     autoWidth: false,
+  //     responsive: true,
+  //   });
 
-    // Cleanup DataTable on component unmount
-    return () => {
-      table.destroy(true);
-    };
-  }, []);
+  //   // Cleanup DataTable on component unmount
+  //   return () => {
+  //     table.destroy(true);
+  //   };
+  // }, []);
 
   return (
   <div className="content-wrapper">
