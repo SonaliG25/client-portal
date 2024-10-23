@@ -13,6 +13,7 @@ import ClientDashboard from "./client/ClientDashboard";
 import Home from "./components/Home";
 import Register from "./auth/Register";
 import UpdateForm from "./admin/UpdateForm";
+import View from "./admin/View";
 
 function App() {
   const router = createBrowserRouter([
@@ -43,7 +44,11 @@ function App() {
           element: <Users />, // Render the Login component
         },
         {
-          path: "Update", // Route for login
+          path: "view", // Route for view
+          element: <View />, // Render the Login component
+        },
+        {
+          path: "Update", // Route for Update
           element: <UpdateForm />, // Render the Login component
         },
       ],

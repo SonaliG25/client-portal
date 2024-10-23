@@ -14,15 +14,6 @@ const Users = () => {
   const navigate = useNavigate();
 
   console.log("UserDetails", UserDetails);
-  const [updateitem, setUpdateItem] = useState({
-    lastName: "",
-    firstName: "",
-    phone: "",
-    email: "",
-    userType: "",
-    subscription: "",
-    updatedkey: "",
-  });
 
   // http://localhost:3000/user/user-detail/${id}
   const getUser = async () => {
@@ -59,8 +50,12 @@ const Users = () => {
     }
   }, [auth]);
 
-  const handleClick = () => {
+  const handleAddUser = () => {
     navigate("/admin-dashboard/newuser");
+  };
+  const HandleView = (data) => {
+    setUserDetails(data);
+    navigate("/admin-dashboard/view");
   };
 
   const handleUpdateForm = (data) => {
@@ -72,18 +67,6 @@ const Users = () => {
     console.log("deletedid:", deleteId);
   };
 
-  const HandlePopup = (data) => {
-    setUpdateItem({
-      lastName: data.lastName,
-      firstName: data.firstName,
-      phone: data.phone,
-      email: data.email,
-      userType: data.userType,
-      subscription: data.subscription.length,
-      updatedkey: data._id,
-    });
-    // console.log(updateitem);
-  };
   return (
     <>
       {" "}
@@ -91,7 +74,10 @@ const Users = () => {
         <section className="content">
           <div className="container-fluid">
             <div className="row m-2">
-              <button onClick={handleClick} className="btn btn-lg  btn-success">
+              <button
+                onClick={handleAddUser}
+                className="btn btn-lg  btn-success"
+              >
                 Add user
               </button>
               <div className="col-12">
@@ -114,56 +100,45 @@ const Users = () => {
                             <th>lastName</th>
                             <th>FirstName</th>
                             <th>Phone</th>
-                            <th>Address</th>
                             <th>Number of Subscription</th>
                             <th>action</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {userdata?.map((data, index) => (
+                          {userdata?.map((data) => (
                             <tr key={data._id}>
                               <td>{data.lastName}</td>
                               <td>{data.firstName}</td>
                               <td>{data.phone}</td>
-                              <td> {data.addresses?.[0]?.city || "N/A"}</td>
 
                               <td>{data.subscription.length}</td>
                               <td>
-                                <button
-                                  className="m-1 btn btn-primary"
-                                  data-toggle="modal"
-                                  data-target="#exampleModal"
-                                  onClick={() => HandlePopup(data)}
-                                >
-                                  View
-                                </button>{" "}
-                                <button
-                                  className="m-1  btn btn-danger"
-                                  data-toggle="modal"
-                                  data-target="#exampleModalCenter"
-                                  onClick={() => handleDeleteID(data?._id)}
-                                >
-                                  Delete
-                                </button>
-                                <button
-                                  className="m-1 btn btn-dark"
-                                  onClick={() => handleUpdateForm(data)}
-                                >
-                                  Edit
-                                </button>
+                                <div className="d-flex justify-content-center">
+                                  <button
+                                    className="m-1 btn btn-primary"
+                                    onClick={() => HandleView(data)}
+                                  >
+                                    View
+                                  </button>{" "}
+                                  <button
+                                    className="m-1  btn btn-danger"
+                                    data-toggle="modal"
+                                    data-target="#exampleModalCenter"
+                                    onClick={() => handleDeleteID(data?._id)}
+                                  >
+                                    Delete
+                                  </button>
+                                  <button
+                                    className="m-1 btn btn-dark"
+                                    onClick={() => handleUpdateForm(data)}
+                                  >
+                                    Edit
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           ))}
                         </tbody>
-                        {/* <tfoot>
-                        <tr>
-                          <th>Rendering engine</th>
-                          <th>Browser</th>
-                          <th>Platform(s)</th>
-                          <th>Engine version</th>
-                          <th>CSS grade</th>
-                        </tr>
-                      </tfoot> */}
                       </table>
                     )}
                   </div>
@@ -173,134 +148,11 @@ const Users = () => {
           </div>
         </section>
       </div>
-      {/* popup  */}
-      {/* Button trigger modal */}
       {/* Modal */}
-      <div
-        className="modal fade"
-        id="exampleModal"
-        tabIndex={-1}
-        role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                Update
-              </h5>
-              <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              <div className="form-group">
-                <label htmlFor="inputEstimatedBudget">username</label>
-                <input
-                  value={updateitem.lastName}
-                  onChange={(e) =>
-                    setUpdateItem({ ...updateitem, lastName: e.target.value })
-                  }
-                  type="text"
-                  id="inputEstimatedBudget"
-                  className="form-control"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="inputEstimatedBudget">firstname</label>
-                <input
-                  value={updateitem.firstName}
-                  onChange={(e) =>
-                    setUpdateItem({ ...updateitem, firstName: e.target.value })
-                  }
-                  type="text"
-                  id="inputEstimatedBudget"
-                  className="form-control"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="inputEstimatedBudget">Phone</label>
-                <input
-                  value={updateitem.phone}
-                  onChange={(e) =>
-                    setUpdateItem({ ...updateitem, phone: e.target.value })
-                  }
-                  type="text"
-                  id="inputEstimatedBudget"
-                  className="form-control"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="inputEstimatedBudget">email</label>
-                <input
-                  value={updateitem.email}
-                  onChange={(e) =>
-                    setUpdateItem({ ...updateitem, email: e.target.value })
-                  }
-                  type="text"
-                  id="inputEstimatedBudget"
-                  className="form-control"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="inputStatus">User Type</label>
-                <select
-                  value={updateitem.userType}
-                  onChange={(e) =>
-                    setUpdateItem({ ...updateitem, userType: e.target.value })
-                  }
-                  id="inputStatus"
-                  className="form-control custom-select"
-                >
-                  <option selected disabled>
-                    Select one
-                  </option>
-                  <option value="lead">Lead</option>
-                  <option value="prospect">Prospect</option>
-                  <option value="opportunity">Opportunity</option>
-                  <option value="customer">Customer</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label htmlFor="inputEstimatedBudget">subscription</label>
-                <input
-                  value={updateitem.subscription}
-                  onChange={(e) =>
-                    setUpdateItem({
-                      ...updateitem,
-                      subscription: e.target.value,
-                    })
-                  }
-                  type="text"
-                  id="inputEstimatedBudget"
-                  className="form-control"
-                />
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
       {/* delete popup */}
       <div>
         {/* Button trigger modal */}
-        <button type="button" className="btn btn-primary">
-          Launch demo modal
-        </button>
+
         {/* Modal */}
         <div
           className="modal fade"
@@ -336,7 +188,7 @@ const Users = () => {
                 </button>
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className="btn btn-danger"
                   data-dismiss="modal"
                   aria-label="Close"
                   onClick={handleDelete}
