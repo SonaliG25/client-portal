@@ -10,6 +10,7 @@ const Users = () => {
   const [UserDetails, setUserDetails] = useEditUserContext();
 
   const [userdata, setUserdata] = useState(null);
+  const [deleteId, setDeleteId] = useState();
   const navigate = useNavigate();
 
   console.log("UserDetails", UserDetails);
@@ -35,8 +36,21 @@ const Users = () => {
       setUserdata(res.data);
       // console.log("userdata:", userdata);
 
-      console.log(res);
+      // console.log(res);
     } catch (error) {}
+  };
+  const handleDelete = async () => {
+    try {
+      const res = await axios.delete(`http://localhost:3000/user/${deleteId}`, {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`, // Sending token in Authorization header
+        },
+      });
+      console.log("delete Successful:", res);
+      getUser();
+    } catch (error) {
+      console.log(error);
+    }
   };
   useEffect(() => {
     console.log("auth-test", auth);
@@ -53,6 +67,11 @@ const Users = () => {
     setUserDetails(data);
     navigate("/admin-dashboard/Update");
   };
+  const handleDeleteID = (id) => {
+    setDeleteId(id);
+    console.log("deletedid:", deleteId);
+  };
+
   const HandlePopup = (data) => {
     setUpdateItem({
       lastName: data.lastName,
@@ -106,12 +125,9 @@ const Users = () => {
                               <td>{data.lastName}</td>
                               <td>{data.firstName}</td>
                               <td>{data.phone}</td>
-                              <td> {data.addresses[0].city}</td>
+                              <td> {data.addresses?.[0]?.city || "N/A"}</td>
 
-                              <td>
-                                {data.subscription.length}
-                                {data.__id}
-                              </td>
+                              <td>{data.subscription.length}</td>
                               <td>
                                 <button
                                   className="m-1 btn btn-primary"
@@ -121,7 +137,12 @@ const Users = () => {
                                 >
                                   View
                                 </button>{" "}
-                                <button className="m-1  btn btn-danger">
+                                <button
+                                  className="m-1  btn btn-danger"
+                                  data-toggle="modal"
+                                  data-target="#exampleModalCenter"
+                                  onClick={() => handleDeleteID(data?._id)}
+                                >
                                   Delete
                                 </button>
                                 <button
@@ -270,9 +291,59 @@ const Users = () => {
               >
                 Close
               </button>
-              <button className="btn btn-primary " data-dismiss="modal">
-                view
-              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* delete popup */}
+      <div>
+        {/* Button trigger modal */}
+        <button type="button" className="btn btn-primary">
+          Launch demo modal
+        </button>
+        {/* Modal */}
+        <div
+          className="modal fade"
+          id="exampleModalCenter"
+          tabIndex={-1}
+          role="dialog"
+          aria-labelledby="exampleModalCenterTitle"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLongTitle">
+                  Delete
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div className="modal-body">Are you sure </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                  onClick={handleDelete}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         </div>
