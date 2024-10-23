@@ -11,6 +11,9 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("client");
+  const [subscription, setSubscription] = useState([]);
+  const [purchaseHistory, setPurchaseHistory] = useState([]);
+
   const [addresses, setAddresses] = useState([
     {
       street: "",
@@ -21,42 +24,34 @@ const Register = () => {
       isDefault: false,
     },
   ]);
-  const [subscriptions, setSubscriptions] = useState([
-    {
-      planId: "",
-      planName: "",
-      startDate: "",
-      endDate: "",
-      status: "active",
-    },
-  ]); // Updated for subscription schema
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log({
-    //   firstName,
-    //   lastName,
-    //   phone,
-    //   userType,
+    // console.log(
     //   username,
     //   email,
     //   password,
     //   role,
-    //   addresses,
-    //   subscriptions,
-    // });
+    //   subscription,
+    //   purchaseHistory,
+    //   firstName,
+    //   lastName,
+    //   phone,
+    //   addresses
+    // );
+
     try {
       const res = await axios.post(`http://localhost:3000/user/register`, {
-        firstName,
-        lastName,
-        phone,
-        userType,
         username,
         email,
         password,
         role,
+        subscription,
+        purchaseHistory,
+        firstName,
+        lastName,
+        phone,
         addresses,
-        subscriptions,
       });
       console.log(res);
     } catch (error) {
@@ -65,115 +60,133 @@ const Register = () => {
   };
 
   return (
-    <div
-      className="hold-transition login-page"
-      style={{ minHeight: "100vh", backgroundColor: "#f4f6f9" }}
-    >
-      <div className="register-box">
-        <div className="register-logo">
-          <a href="/">
-            <b>Admin</b>LTE
-          </a>
-        </div>
-        <div className="card">
-          <div className="card-body register-card-body">
-            <p className="login-box-msg">Register a new membership</p>
-            <form onSubmit={handleSubmit}>
-              {/* First Row */}
-              <div className="row">
-                <div className="col-xs-12 col-sm-6">
+    <>
+      <div className="content-wrapper">
+        <section className="content-header">
+          <div className="container-fluid">
+            <div className="row mb-2">
+              <div className="col-sm-6">
+                <h1 className="text-dark">Add User</h1>
+              </div>
+              <div className="col-sm-6">
+                <ol className="breadcrumb float-sm-right">
+                  <li className="breadcrumb-item">
+                    <a href="#">Home</a>
+                  </li>
+                  <li className="breadcrumb-item active">Project Add</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+          {/* /.container-fluid */}
+        </section>
+        {/* Main content */}
+        <section className="content">
+          <div className="row">
+            <div className="col-md-6">
+              <div className="card card-primary">
+                <div className="card-header">
+                  <h3 className="card-title">Person Information</h3>
+                  <div className="card-tools">
+                    <button
+                      type="button"
+                      className="btn btn-tool"
+                      data-card-widget="collapse"
+                      title="Collapse"
+                    >
+                      <i className="fas fa-minus" />
+                    </button>
+                  </div>
+                </div>
+                <div className="card-body">
                   <div className="form-group">
+                    <label htmlFor="inputName">First Name</label>
                     <input
                       type="text"
-                      className="form-control"
-                      placeholder="First Name"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      required
+                      id="inputName"
+                      className="form-control"
                     />
                   </div>
-                </div>
-                <div className="col-xs-12 col-sm-6">
                   <div className="form-group">
+                    <label htmlFor="inputName">Last Name</label>
                     <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Last Name"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      required
+                      type="text"
+                      id="inputName"
+                      className="form-control"
                     />
                   </div>
-                </div>
-                <div className="col-xs-12 col-sm-6">
                   <div className="form-group">
+                    <label htmlFor="inputName">Phone</label>
                     <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Phone"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="col-xs-12 col-sm-6">
-                  <div className="form-group">
-                    <input
                       type="text"
+                      id="inputName"
                       className="form-control"
-                      placeholder="Username"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      required
                     />
                   </div>
-                </div>
-                <div className="col-xs-12 col-sm-6">
                   <div className="form-group">
-                    <input
-                      type="email"
-                      className="form-control"
-                      placeholder="Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="col-xs-12 col-sm-6">
-                  <div className="form-group">
-                    <input
-                      type="password"
-                      className="form-control"
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="col-xs-12 col-sm-6">
-                  <div className="form-group">
+                    <label htmlFor="inputStatus">User Type</label>
                     <select
-                      className="form-control"
                       value={userType}
                       onChange={(e) => setUserType(e.target.value)}
+                      id="inputStatus"
+                      className="form-control custom-select"
                     >
+                      <option selected disabled>
+                        Select one
+                      </option>
                       <option value="lead">Lead</option>
                       <option value="prospect">Prospect</option>
                       <option value="opportunity">Opportunity</option>
                       <option value="customer">Customer</option>
                     </select>
                   </div>
-                </div>
-                <div className="col-xs-12 col-sm-6">
                   <div className="form-group">
-                    <select
+                    <label htmlFor="inputName">UserName</label>
+                    <input
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      type="text"
+                      id="inputName"
                       className="form-control"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="inputName">Password</label>
+                    <input
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      type="text"
+                      id="inputName"
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="inputName">Email</label>
+                    <input
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      type="text"
+                      id="inputName"
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="inputStatus">Role</label>
+                    <select
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
+                      id="inputStatus"
+                      className="form-control custom-select"
                     >
+                      <option selected disabled>
+                        Select one
+                      </option>
                       <option value="client">Client</option>
                       <option value="admin">Admin</option>
                       <option value="manager">Manager</option>
@@ -181,170 +194,313 @@ const Register = () => {
                     </select>
                   </div>
                 </div>
+                {/* /.card-body */}
               </div>
-
-              {/* Second Row for Addresses and Subscriptions */}
-              <div className="row">
-                <div className="col-xs-12 col-sm-6">
-                  <h5>Addresses</h5>
-
+              {/* /.card */}
+            </div>
+            <div className="col-md-6">
+              <div className="card card-secondary">
+                <div className="card-header">
+                  <h3 className="card-title">Address</h3>
+                  <div className="card-tools">
+                    <button
+                      type="button"
+                      className="btn btn-tool"
+                      data-card-widget="collapse"
+                      title="Collapse"
+                    >
+                      <i className="fas fa-minus" />
+                    </button>
+                  </div>
+                </div>
+                <div className="card-body">
                   <div className="form-group">
+                    <label htmlFor="inputEstimatedBudget">Street</label>
                     <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Street"
                       value={addresses.street}
                       onChange={(e) =>
                         setAddresses({ ...addresses, street: e.target.value })
                       }
-                      required
+                      type="text"
+                      id="inputEstimatedBudget"
+                      className="form-control"
                     />
                   </div>
                   <div className="form-group">
+                    <label htmlFor="inputSpentBudget">City</label>
                     <input
-                      type="text"
-                      className="form-control"
-                      placeholder="City"
                       value={addresses.city}
                       onChange={(e) =>
                         setAddresses({ ...addresses, city: e.target.value })
                       }
-                      required
+                      type="text"
+                      id="inputSpentBudget"
+                      className="form-control"
                     />
                   </div>
                   <div className="form-group">
+                    <label htmlFor="inputEstimatedDuration">State</label>
                     <input
-                      type="text"
-                      className="form-control"
-                      placeholder="State"
                       value={addresses.state}
                       onChange={(e) =>
                         setAddresses({ ...addresses, state: e.target.value })
                       }
-                      required
+                      type="text"
+                      id="inputEstimatedDuration"
+                      className="form-control"
                     />
                   </div>
                   <div className="form-group">
+                    <label htmlFor="inputEstimatedDuration">ZipCode</label>
                     <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Zip Code"
                       value={addresses.zipCode}
                       onChange={(e) =>
                         setAddresses({ ...addresses, zipCode: e.target.value })
                       }
-                      required
+                      type="text"
+                      id="inputEstimatedDuration"
+                      className="form-control"
                     />
                   </div>
                   <div className="form-group">
+                    <label htmlFor="inputEstimatedDuration">Country</label>
                     <input
-                      type="text"
-                      className="form-control"
-                      placeholder="country"
                       value={addresses.country}
                       onChange={(e) =>
                         setAddresses({ ...addresses, country: e.target.value })
                       }
-                      required
+                      type="text"
+                      id="inputEstimatedDuration"
+                      className="form-control"
                     />
                   </div>
                 </div>
-
-                <div className="col-xs-12 col-sm-6">
-                  <div
-                    className="form-group 
-                  "
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Plan ID"
-                      value={subscriptions.planId}
-                      onChange={(e) =>
-                        setSubscriptions({
-                          ...subscriptions,
-                          planId: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Plan Name"
-                      value={subscriptions.planName}
-                      onChange={(e) =>
-                        setSubscriptions({
-                          ...subscriptions,
-                          planName: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      type="date"
-                      className="form-control"
-                      placeholder="Start Date"
-                      value={subscriptions.startDate} // Convert date to string
-                      onChange={(e) =>
-                        setSubscriptions({
-                          ...subscriptions,
-                          startDate: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      type="date"
-                      className="form-control"
-                      placeholder="End Date"
-                      value={subscriptions.endDate}
-                      onChange={(e) =>
-                        setSubscriptions({
-                          ...subscriptions,
-                          endDate: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="form-group">
-                    <select
-                      className="form-control"
-                      value={subscriptions.status}
-                      onChange={(e) =>
-                        setSubscriptions({
-                          ...subscriptions,
-                          status: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                      <option value="cancelled">Cancelled</option>
-                    </select>
-                  </div>
-                </div>
+                {/* /.card-body */}
               </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                className="btn btn-block btn-primary btn-block"
-              >
-                Register
-              </button>
-            </form>
+              {/* /.card */}
+            </div>
           </div>
-        </div>
+          <div className="row">
+            <div className="col-12">
+              <button
+                onClick={handleSubmit}
+                className="btn btn-success btn-block"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </section>
       </div>
-    </div>
+    </>
   );
+  //   <div
+  //     className="hold-transition login-page"
+  //     style={{ minHeight: "100vh", backgroundColor: "#f4f6f9" }}
+  //   >
+  //     <div className="register-box">
+  //       <div className="register-logo">
+  //         <a href="/">
+  //           <b>Admin</b>LTE
+  //         </a>
+  //       </div>
+  //       <div className="card">
+  //         <div className="card-body register-card-body">
+  //           <p className="login-box-msg">Register a new membership</p>
+  //           <form onSubmit={handleSubmit}>
+  //             {/* First Row */}
+  //             <div className="row">
+  //               <div className="col-xs-12 col-sm-6">
+  //                 <div className="form-group">
+  //                   <input
+  //                     type="text"
+  //                     className="form-control"
+  //                     placeholder="First Name"
+  //                     value={firstName}
+  //                     onChange={(e) => setFirstName(e.target.value)}
+  //                     required
+  //                   />
+  //                 </div>
+  //               </div>
+  //               <div className="col-xs-12 col-sm-6">
+  //                 <div className="form-group">
+  //                   <input
+  //                     type="text"
+  //                     className="form-control"
+  //                     placeholder="Last Name"
+  //                     value={lastName}
+  //                     onChange={(e) => setLastName(e.target.value)}
+  //                     required
+  //                   />
+  //                 </div>
+  //               </div>
+  //               <div className="col-xs-12 col-sm-6">
+  //                 <div className="form-group">
+  //                   <input
+  //                     type="text"
+  //                     className="form-control"
+  //                     placeholder="Phone"
+  //                     value={phone}
+  //                     onChange={(e) => setPhone(e.target.value)}
+  //                     required
+  //                   />
+  //                 </div>
+  //               </div>
+  //               <div className="col-xs-12 col-sm-6">
+  //                 <div className="form-group">
+  //                   <input
+  //                     type="text"
+  //                     className="form-control"
+  //                     placeholder="Username"
+  //                     value={username}
+  //                     onChange={(e) => setUsername(e.target.value)}
+  //                     required
+  //                   />
+  //                 </div>
+  //               </div>
+  //               <div className="col-xs-12 col-sm-6">
+  //                 <div className="form-group">
+  //                   <input
+  //                     type="email"
+  //                     className="form-control"
+  //                     placeholder="Email"
+  //                     value={email}
+  //                     onChange={(e) => setEmail(e.target.value)}
+  //                     required
+  //                   />
+  //                 </div>
+  //               </div>
+  //               <div className="col-xs-12 col-sm-6">
+  //                 <div className="form-group">
+  //                   <input
+  //                     type="password"
+  //                     className="form-control"
+  //                     placeholder="Password"
+  //                     value={password}
+  //                     onChange={(e) => setPassword(e.target.value)}
+  //                     required
+  //                   />
+  //                 </div>
+  //               </div>
+  //               <div className="col-xs-12 col-sm-6">
+  //                 <div className="form-group">
+  //                   <select
+  //                     className="form-control"
+  //                     value={userType}
+  //                     onChange={(e) => setUserType(e.target.value)}
+  //                   >
+  //                     <option value="lead">Lead</option>
+  //                     <option value="prospect">Prospect</option>
+  //                     <option value="opportunity">Opportunity</option>
+  //                     <option value="customer">Customer</option>
+  //                   </select>
+  //                 </div>
+  //               </div>
+  //               <div className="col-xs-12 col-sm-6">
+  //                 <div className="form-group">
+  //                   <select
+  //                     className="form-control"
+  //                     value={role}
+  //                     onChange={(e) => setRole(e.target.value)}
+  //                   >
+  //                     <option value="client">Client</option>
+  //                     <option value="admin">Admin</option>
+  //                     <option value="manager">Manager</option>
+  //                     <option value="developer">Developer</option>
+  //                   </select>
+  //                 </div>
+  //               </div>
+  //             </div>
+
+  //             {/* Second Row for Addresses  */}
+  //             <div className="row">
+  //               <div className="col-xs-12 col-sm-12">
+  //                 <h5>Addresses</h5>
+
+  //                 <div className="form-group">
+  //                   <input
+  //                     type="text"
+  //                     className="form-control"
+  //                     placeholder="Street"
+  //                     value={addresses.street}
+  //                     onChange={(e) =>
+  //                       setAddresses({ ...addresses, street: e.target.value })
+  //                     }
+  //                     required
+  //                   />
+  //                 </div>
+  //                 <div className="form-group">
+  //                   <input
+  //                     type="text"
+  //                     className="form-control"
+  //                     placeholder="City"
+  //                     value={addresses.city}
+  //                     onChange={(e) =>
+  //                       setAddresses({ ...addresses, city: e.target.value })
+  //                     }
+  //                     required
+  //                   />
+  //                 </div>
+  //                 <div className="form-group">
+  //                   <input
+  //                     type="text"
+  //                     className="form-control"
+  //                     placeholder="State"
+  //                     value={addresses.state}
+  //                     onChange={(e) =>
+  //                       setAddresses({ ...addresses, state: e.target.value })
+  //                     }
+  //                     required
+  //                   />
+  //                 </div>
+  //                 <div className="form-group">
+  //                   <input
+  //                     type="text"
+  //                     className="form-control"
+  //                     placeholder="Zip Code"
+  //                     value={addresses.zipCode}
+  //                     onChange={(e) =>
+  //                       setAddresses({ ...addresses, zipCode: e.target.value })
+  //                     }
+  //                     required
+  //                   />
+  //                 </div>
+  //                 <div className="form-group">
+  //                   <input
+  //                     type="text"
+  //                     className="form-control"
+  //                     placeholder="country"
+  //                     value={addresses.country}
+  //                     onChange={(e) =>
+  //                       setAddresses({ ...addresses, country: e.target.value })
+  //                     }
+  //                     required
+  //                   />
+  //                 </div>
+  //               </div>
+  //             </div>
+
+  //             {/* Submit Button */}
+  //             <div className="d-flex justify-content-between">
+  //               <button
+  //                 type="submit"
+  //                 className=" px-5 py-2 btn  btn-lg btn-primary"
+  //               >
+  //                 Create
+  //               </button>
+  //               <button
+  //                 type="submit"
+  //                 className="px-5 py-2  btn btn-lg btn-dark"
+  //               >
+  //                 Edit
+  //               </button>
+  //             </div>
+  //           </form>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
 };
 
 export default Register;

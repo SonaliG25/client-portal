@@ -20,7 +20,6 @@ export const Login = () => {
       password,
     });
     if (response.status === 200) {
-      console.log("res", response);
       localStorage.setItem("auth", JSON.stringify(response.data.userInfo));
       localStorage.setItem("token", response.data.token);
       setAuth({
