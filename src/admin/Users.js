@@ -1,9 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext.jsx";
 // import { Link } from "react-router-dom";
 
-import { useEditUserContext } from "../context/EditUserContext";
+import { useEditUserContext } from "../context/EditUserContext.jsx";
 import { useNavigate } from "react-router-dom";
 const Users = () => {
   const [auth, setAuth] = useAuth();

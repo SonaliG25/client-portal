@@ -27,9 +27,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
       <EditUserProvider>
-        {/* <SocketContextProvider> */}
         <App />
-        {/* </SocketContextProvider> */}
       </EditUserProvider>
     </AuthProvider>
   </React.StrictMode>
