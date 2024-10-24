@@ -5,7 +5,7 @@ const Register = () => {
   // User state
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState();
   const [userType, setUserType] = useState("lead");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -13,8 +13,12 @@ const Register = () => {
   const [role, setRole] = useState("client");
   const [subscription, setSubscription] = useState([]);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
+<<<<<<< HEAD
   const navigate = useNavigate();
 
+=======
+  const [errors, setErrors] = useState();
+>>>>>>> 83d15428af1c2d5eac33202bdb519c0bfe9d5d36
   const [addresses, setAddresses] = useState([
     {
       street: "",
@@ -25,6 +29,27 @@ const Register = () => {
       isDefault: false,
     },
   ]);
+
+  
+
+  // const isValidPhoneNumber = (phone) => {
+  //   const phoneRegex = /^\d{13}$/
+  //   return phoneRegex.test(phone)
+  // };
+
+  // const validateForm = () => {
+  //   let newErrors = {};
+
+  //   if (!phone) {
+  //     newErrors.phone = "Phone number is required";
+  //   } else if (!isValidPhoneNumber(phone)) {
+  //     newErrors.phone = "Phone number must be 13 digits";
+  //   }
+
+  //   setErrors(newErrors);
+
+  //   return Object.keys(newErrors).length === 0;
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,8 +65,16 @@ const Register = () => {
     //   phone,
     //   addresses
     // );
+    // const isValid = validateForm();
+    // if (isValid) {
+    //   console.log("Form Submitted");
+    // } else {
+    //   console.log("Form Validation Failed");
+    // }
+  
 
     try {
+      
       const res = await axios.post(`http://localhost:3000/user/register`, {
         username,
         email,
@@ -122,14 +155,18 @@ const Register = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="inputName">Phone</label>
+                    <label htmlFor="inputName">Mobile number</label>
                     <input
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      type="text"
+                      type="tel"
+                      maxLength={13}
                       id="inputName"
                       className="form-control"
                     />
+                    {/* {errors.phone && (
+          <div className="error">{errors.phone}</div>
+        )} */}
                   </div>
                   <div className="form-group">
                     <label htmlFor="inputStatus">User Type</label>
