@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 const Register = () => {
   // User state
   const [firstName, setFirstName] = useState("");
@@ -13,6 +13,7 @@ const Register = () => {
   const [role, setRole] = useState("client");
   const [subscription, setSubscription] = useState([]);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
+  const navigate = useNavigate();
 
   const [addresses, setAddresses] = useState([
     {
@@ -54,6 +55,7 @@ const Register = () => {
         addresses,
       });
       console.log(res);
+      navigate("/admin-dashboard/allusers");
     } catch (error) {
       console.log(error);
     }
