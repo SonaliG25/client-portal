@@ -16,6 +16,8 @@ import UpdateForm from "./admin/UpdateForm";
 import Proposaltemplete from "./admin/Proposaltemplete";
 import NewProposalTemplete from "./admin/NewProposalTemplate";
 import View from "./admin/View";
+import UpdateProposalTemplate from "./admin/UpdateProposalTemplate";
+import ViewProposalTemplete from "./admin/ViewProposalTemplete";
 
 function App() {
   const router = createBrowserRouter([
@@ -62,6 +64,14 @@ function App() {
         {
           path: "Update", // Route for Update
           element: <UpdateForm />, // Render the Login component
+        },
+        {
+          path: "updateproposaltemplete", // Route for Update
+          element: <UpdateProposalTemplate />, // Render the Login component
+        },
+        {
+          path: "viewproposaltemplete", // Route for Update
+          element: <ViewProposalTemplete />, // Render the Login component
         },
 
       ],

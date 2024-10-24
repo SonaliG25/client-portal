@@ -3,9 +3,10 @@ const EditUserContext = createContext();
 
 const EditUserProvider = ({ children }) => {
   const [UserDetails, setUserDetails] = useState(null);
+  const [proposalTemplateDetails,setPropposalTempleteDetails] = useState()
 
   return (
-    <EditUserContext.Provider value={[UserDetails, setUserDetails]}>
+    <EditUserContext.Provider value={[UserDetails, setUserDetails,proposalTemplateDetails,setPropposalTempleteDetails]}>
       {children}
     </EditUserContext.Provider>
   );
