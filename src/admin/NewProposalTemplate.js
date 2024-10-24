@@ -2,7 +2,7 @@ import React, { useState,useRef, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 
-import JoditEditor from "jodit-react"
+import JoditEditor from "jodit-react";
 
 function NewProposalTemplete  ()  {
   // User state

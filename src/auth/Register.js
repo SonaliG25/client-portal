@@ -6,13 +6,13 @@ const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState();
-  const [userType, setUserType] = useState("lead");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("client");
   const [subscription, setSubscription] = useState([]);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
+  const navigate = useNavigate();
   const [errors, setErrors] = useState();
   const [addresses, setAddresses] = useState([
     {
@@ -25,51 +25,10 @@ const Register = () => {
     },
   ]);
 
-  
-
-  // const isValidPhoneNumber = (phone) => {
-  //   const phoneRegex = /^\d{13}$/
-  //   return phoneRegex.test(phone)
-  // };
-
-  // const validateForm = () => {
-  //   let newErrors = {};
-
-  //   if (!phone) {
-  //     newErrors.phone = "Phone number is required";
-  //   } else if (!isValidPhoneNumber(phone)) {
-  //     newErrors.phone = "Phone number must be 13 digits";
-  //   }
-
-  //   setErrors(newErrors);
-
-  //   return Object.keys(newErrors).length === 0;
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log(
-    //   username,
-    //   email,
-    //   password,
-    //   role,
-    //   subscription,
-    //   purchaseHistory,
-    //   firstName,
-    //   lastName,
-    //   phone,
-    //   addresses
-    // );
-    // const isValid = validateForm();
-    // if (isValid) {
-    //   console.log("Form Submitted");
-    // } else {
-    //   console.log("Form Validation Failed");
-    // }
-  
 
     try {
-      
       const res = await axios.post(`http://localhost:3000/user/register`, {
         username,
         email,
@@ -159,27 +118,8 @@ const Register = () => {
                       id="inputName"
                       className="form-control"
                     />
-                    {/* {errors.phone && (
-          <div className="error">{errors.phone}</div>
-        )} */}
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="inputStatus">User Type</label>
-                    <select
-                      value={userType}
-                      onChange={(e) => setUserType(e.target.value)}
-                      id="inputStatus"
-                      className="form-control custom-select"
-                    >
-                      <option selected disabled>
-                        Select one
-                      </option>
-                      <option value="lead">Lead</option>
-                      <option value="prospect">Prospect</option>
-                      <option value="opportunity">Opportunity</option>
-                      <option value="customer">Customer</option>
-                    </select>
-                  </div>
+                 
                   <div className="form-group">
                     <label htmlFor="inputName">UserName</label>
                     <input
@@ -328,213 +268,6 @@ const Register = () => {
       </div>
     </>
   );
-  //   <div
-  //     className="hold-transition login-page"
-  //     style={{ minHeight: "100vh", backgroundColor: "#f4f6f9" }}
-  //   >
-  //     <div className="register-box">
-  //       <div className="register-logo">
-  //         <a href="/">
-  //           <b>Admin</b>LTE
-  //         </a>
-  //       </div>
-  //       <div className="card">
-  //         <div className="card-body register-card-body">
-  //           <p className="login-box-msg">Register a new membership</p>
-  //           <form onSubmit={handleSubmit}>
-  //             {/* First Row */}
-  //             <div className="row">
-  //               <div className="col-xs-12 col-sm-6">
-  //                 <div className="form-group">
-  //                   <input
-  //                     type="text"
-  //                     className="form-control"
-  //                     placeholder="First Name"
-  //                     value={firstName}
-  //                     onChange={(e) => setFirstName(e.target.value)}
-  //                     required
-  //                   />
-  //                 </div>
-  //               </div>
-  //               <div className="col-xs-12 col-sm-6">
-  //                 <div className="form-group">
-  //                   <input
-  //                     type="text"
-  //                     className="form-control"
-  //                     placeholder="Last Name"
-  //                     value={lastName}
-  //                     onChange={(e) => setLastName(e.target.value)}
-  //                     required
-  //                   />
-  //                 </div>
-  //               </div>
-  //               <div className="col-xs-12 col-sm-6">
-  //                 <div className="form-group">
-  //                   <input
-  //                     type="text"
-  //                     className="form-control"
-  //                     placeholder="Phone"
-  //                     value={phone}
-  //                     onChange={(e) => setPhone(e.target.value)}
-  //                     required
-  //                   />
-  //                 </div>
-  //               </div>
-  //               <div className="col-xs-12 col-sm-6">
-  //                 <div className="form-group">
-  //                   <input
-  //                     type="text"
-  //                     className="form-control"
-  //                     placeholder="Username"
-  //                     value={username}
-  //                     onChange={(e) => setUsername(e.target.value)}
-  //                     required
-  //                   />
-  //                 </div>
-  //               </div>
-  //               <div className="col-xs-12 col-sm-6">
-  //                 <div className="form-group">
-  //                   <input
-  //                     type="email"
-  //                     className="form-control"
-  //                     placeholder="Email"
-  //                     value={email}
-  //                     onChange={(e) => setEmail(e.target.value)}
-  //                     required
-  //                   />
-  //                 </div>
-  //               </div>
-  //               <div className="col-xs-12 col-sm-6">
-  //                 <div className="form-group">
-  //                   <input
-  //                     type="password"
-  //                     className="form-control"
-  //                     placeholder="Password"
-  //                     value={password}
-  //                     onChange={(e) => setPassword(e.target.value)}
-  //                     required
-  //                   />
-  //                 </div>
-  //               </div>
-  //               <div className="col-xs-12 col-sm-6">
-  //                 <div className="form-group">
-  //                   <select
-  //                     className="form-control"
-  //                     value={userType}
-  //                     onChange={(e) => setUserType(e.target.value)}
-  //                   >
-  //                     <option value="lead">Lead</option>
-  //                     <option value="prospect">Prospect</option>
-  //                     <option value="opportunity">Opportunity</option>
-  //                     <option value="customer">Customer</option>
-  //                   </select>
-  //                 </div>
-  //               </div>
-  //               <div className="col-xs-12 col-sm-6">
-  //                 <div className="form-group">
-  //                   <select
-  //                     className="form-control"
-  //                     value={role}
-  //                     onChange={(e) => setRole(e.target.value)}
-  //                   >
-  //                     <option value="client">Client</option>
-  //                     <option value="admin">Admin</option>
-  //                     <option value="manager">Manager</option>
-  //                     <option value="developer">Developer</option>
-  //                   </select>
-  //                 </div>
-  //               </div>
-  //             </div>
-
-  //             {/* Second Row for Addresses  */}
-  //             <div className="row">
-  //               <div className="col-xs-12 col-sm-12">
-  //                 <h5>Addresses</h5>
-
-  //                 <div className="form-group">
-  //                   <input
-  //                     type="text"
-  //                     className="form-control"
-  //                     placeholder="Street"
-  //                     value={addresses.street}
-  //                     onChange={(e) =>
-  //                       setAddresses({ ...addresses, street: e.target.value })
-  //                     }
-  //                     required
-  //                   />
-  //                 </div>
-  //                 <div className="form-group">
-  //                   <input
-  //                     type="text"
-  //                     className="form-control"
-  //                     placeholder="City"
-  //                     value={addresses.city}
-  //                     onChange={(e) =>
-  //                       setAddresses({ ...addresses, city: e.target.value })
-  //                     }
-  //                     required
-  //                   />
-  //                 </div>
-  //                 <div className="form-group">
-  //                   <input
-  //                     type="text"
-  //                     className="form-control"
-  //                     placeholder="State"
-  //                     value={addresses.state}
-  //                     onChange={(e) =>
-  //                       setAddresses({ ...addresses, state: e.target.value })
-  //                     }
-  //                     required
-  //                   />
-  //                 </div>
-  //                 <div className="form-group">
-  //                   <input
-  //                     type="text"
-  //                     className="form-control"
-  //                     placeholder="Zip Code"
-  //                     value={addresses.zipCode}
-  //                     onChange={(e) =>
-  //                       setAddresses({ ...addresses, zipCode: e.target.value })
-  //                     }
-  //                     required
-  //                   />
-  //                 </div>
-  //                 <div className="form-group">
-  //                   <input
-  //                     type="text"
-  //                     className="form-control"
-  //                     placeholder="country"
-  //                     value={addresses.country}
-  //                     onChange={(e) =>
-  //                       setAddresses({ ...addresses, country: e.target.value })
-  //                     }
-  //                     required
-  //                   />
-  //                 </div>
-  //               </div>
-  //             </div>
-
-  //             {/* Submit Button */}
-  //             <div className="d-flex justify-content-between">
-  //               <button
-  //                 type="submit"
-  //                 className=" px-5 py-2 btn  btn-lg btn-primary"
-  //               >
-  //                 Create
-  //               </button>
-  //               <button
-  //                 type="submit"
-  //                 className="px-5 py-2  btn btn-lg btn-dark"
-  //               >
-  //                 Edit
-  //               </button>
-  //             </div>
-  //           </form>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
 };
 
 export default Register;

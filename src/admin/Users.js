@@ -279,6 +279,7 @@ const Users = () => {
         },
       });
       setUserdata(res.data);
+      console.log("userdata", res.data);
     } catch (error) {
       console.error(error);
     }
@@ -302,6 +303,7 @@ const Users = () => {
     if (auth?.token) {
       getUser();
     }
+    console.log(UserDetails);
   }, [auth]);
 
   const handleAddUser = () => {
@@ -398,6 +400,7 @@ const Users = () => {
                               <th>Last Name</th>
                               <th>First Name</th>
                               <th>Phone</th>
+                              <th>UserType</th>
                               <th>Number of Subscriptions</th>
                               <th>Action</th>
                             </tr>
@@ -408,6 +411,7 @@ const Users = () => {
                                 <td>{data.lastName}</td>
                                 <td>{data.firstName}</td>
                                 <td>{data.phone}</td>
+                                <td>{data.userType}</td>
                                 <td>{data.subscription.length}</td>
                                 <td>
                                   <div className="d-flex justify-content-center">
@@ -439,8 +443,9 @@ const Users = () => {
                         </table>
 
                         {/* Pagination Controls */}
-                        <div className="pagination ">
+                        <div className="pagination m-2">
                           <button
+                            className="text-blue"
                             disabled={currentPage === 1}
                             onClick={() => setCurrentPage(currentPage - 1)}
                           >
@@ -450,14 +455,17 @@ const Users = () => {
                             <button
                               key={index + 1}
                               onClick={() => setCurrentPage(index + 1)}
-                              className={
-                                currentPage === index + 1 ? "active" : ""
-                              }
+                              className={`text-blue ${
+                                currentPage === index + 1
+                                  ? "active bg-blue"
+                                  : ""
+                              }`}
                             >
                               {index + 1}
                             </button>
                           ))}
                           <button
+                            className="text-blue"
                             disabled={currentPage === totalPages}
                             onClick={() => setCurrentPage(currentPage + 1)}
                           >
