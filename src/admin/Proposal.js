@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import ProposalTemplate from "../components/ProposalTemplate.js";
 
 const Proposals = () => {
-<<<<<<< HEAD
-  return <></>;
+
+  // return <></>;
 };
-=======
+
   const tableRef = useRef(null); // Create a ref for the table
 
   // useEffect(() => {
@@ -494,6 +494,6 @@ const Proposals = () => {
 
       )
 }
->>>>>>> 83d15428af1c2d5eac33202bdb519c0bfe9d5d36
+//  83d15428af1c2d5eac33202bdb519c0bfe9d5d36
 
 export default Proposals;

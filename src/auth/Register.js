@@ -13,12 +13,7 @@ const Register = () => {
   const [role, setRole] = useState("client");
   const [subscription, setSubscription] = useState([]);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
-<<<<<<< HEAD
-  const navigate = useNavigate();
-
-=======
   const [errors, setErrors] = useState();
->>>>>>> 83d15428af1c2d5eac33202bdb519c0bfe9d5d36
   const [addresses, setAddresses] = useState([
     {
       street: "",
