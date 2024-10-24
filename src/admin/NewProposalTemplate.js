@@ -1,10 +1,12 @@
-import React, { useState,useRef } from "react";
+import React, { useState,useRef, useEffect } from "react";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 import JoditEditor from "jodit-react"
 
 function NewProposalTemplete  ()  {
   // User state
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("");
@@ -12,6 +14,7 @@ function NewProposalTemplete  ()  {
   const [updatedAt, setUpdatedAt] = useState("");
   const [content,setContent] =useState('')
   const editor =useRef(null)
+  const [auth] = useAuth();
   const config={
         placeholder:"Start typing...",
 
@@ -26,12 +29,19 @@ function NewProposalTemplete  ()  {
         status,
         createdAt,
         updatedAt
-      });
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        }
+    });
       console.log(res);
     } catch (error) {
       console.log(error);
     }
   };
+
+ 
 
   return (
     <>
@@ -85,12 +95,14 @@ function NewProposalTemplete  ()  {
                   </div>
                   <div className="form-group">
                     <label htmlFor="inputName">description</label>
-                    <JoditEditor
+           
+                                <JoditEditor
                                 ref={editor}
                                 value={description}
-                                config={config}
+                                
                                 onChange={(newContent) => setDescription(newContent)}
-                            />
+                              />
+
                         
                     {/* <input
                       value={description}
@@ -101,7 +113,7 @@ function NewProposalTemplete  ()  {
                     /> */}
                     
                   </div>
-                  <div className="form-group">
+                  {/* <div className="form-group">
                     <label htmlFor="inputName">Status</label>
                     <input
                       value={status}
@@ -110,9 +122,9 @@ function NewProposalTemplete  ()  {
                       id="Status"
                       className="form-control"
                     />
-                  </div>
+                  </div> */}
         
-                  <div className="form-group">
+                  {/* <div className="form-group">
                     <label htmlFor="inputName">Created At</label>
                     <input
                       value={createdAt}
@@ -121,8 +133,8 @@ function NewProposalTemplete  ()  {
                       id="createdAt"
                       className="form-control"
                     />
-                  </div>
-                  <div className="form-group">
+                  </div> */}
+                  {/* <div className="form-group">
                     <label htmlFor="inputName">Updated At</label>
                     <input
                       value={updatedAt}
@@ -131,7 +143,7 @@ function NewProposalTemplete  ()  {
                       id="updatedAt"
                       className="form-control"
                     />
-                  </div>
+                  </div> */}
                  
                  
                 </div>
@@ -142,7 +154,7 @@ function NewProposalTemplete  ()  {
             </div>
            
           <div className="row">
-            <div className="col-12">
+            <div className="col-2">
               <button
                 onClick={handleSubmit}
                 className="btn btn-success btn-block"

@@ -15,6 +15,7 @@ import Register from "./auth/Register";
 import UpdateForm from "./admin/UpdateForm";
 import Proposaltemplete from "./admin/Proposaltemplete";
 import NewProposalTemplete from "./admin/NewProposalTemplate";
+import View from "./admin/View";
 
 function App() {
   const router = createBrowserRouter([
@@ -55,7 +56,11 @@ function App() {
           element: <Users />, // Render the Login component
         },
         {
-          path: "Update", // Route for login
+          path: "view", // Route for view
+          element: <View />, // Render the Login component
+        },
+        {
+          path: "Update", // Route for Update
           element: <UpdateForm />, // Render the Login component
         },
 
