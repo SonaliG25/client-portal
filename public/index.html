@@ -104,6 +104,14 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
     <!-- jQuery -->
+     
+<!-- Preview Script for New Image -->
+<script>
+  function previewImage(event) {
+      const imagePreview = document.getElementById('productImagePreview');
+      imagePreview.src = URL.createObjectURL(event.target.files[0]);
+  }
+</script>
     <script src="%PUBLIC_URL%/plugins/jquery/jquery.min.js"></script>
     <!-- jQuery UI 1.11.4 -->
     <script src="%PUBLIC_URL%/plugins/jquery-ui/jquery-ui.min.js"></script>
