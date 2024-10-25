@@ -13,10 +13,13 @@ import ClientDashboard from "./client/ClientDashboard";
 import Home from "./components/Home";
 import Register from "./auth/Register";
 import UpdateForm from "./admin/UpdateForm";
+import Proposaltemplete from "./admin/Proposaltemplete";
+import NewProposalTemplete from "./admin/NewProposalTemplate";
+import View from "./admin/View";
 
 function App() {
   const router = createBrowserRouter([
-    { path: "/", element: <Home /> },
+    { path: "/", element: <Login /> },
     {
       path: "/login", // Route for login
       element: <Login />, // Render the Login component
@@ -35,6 +38,16 @@ function App() {
           element: <Proposals />,
         },
         {
+          path:'newproposaltemplete',
+          element:<NewProposalTemplete />
+        }
+        ,
+        {
+          path:'proposaltemplete',
+          element:<Proposaltemplete />
+        }
+        ,
+        {
           path: "newuser",
           element: <Register />,
         },
@@ -43,9 +56,14 @@ function App() {
           element: <Users />, // Render the Login component
         },
         {
-          path: "Update", // Route for login
+          path: "view", // Route for view
+          element: <View />, // Render the Login component
+        },
+        {
+          path: "Update", // Route for Update
           element: <UpdateForm />, // Render the Login component
         },
+
       ],
     },
   ]);

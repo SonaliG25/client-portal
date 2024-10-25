@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 
 const Proposals = () => {
+
+  // return <></>;
+};
+
   const tableRef = useRef(null); // Create a ref for the table
 
 
@@ -42,5 +46,6 @@ const Proposals = () => {
 
       )
 }
+//  83d15428af1c2d5eac33202bdb519c0bfe9d5d36
 
 export default Proposals;

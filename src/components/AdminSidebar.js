@@ -46,6 +46,12 @@ const AdminSidebar = () => {
                 <p>Proposals</p>
               </Link>
             </li>
+            <li className="nav-item ">
+              <Link to="proposaltemplete" className="nav-link">
+                <i className="nav-icon fas fa-tachometer-alt"></i>
+                <p>Proposal Template</p>
+              </Link>
+            </li>
             <li className="nav-item">
               <Link to="newuser" className="nav-link">
                 <i className="nav-icon fas fa-users"></i>

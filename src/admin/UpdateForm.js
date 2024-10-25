@@ -1,68 +1,349 @@
+// import React, { useEffect, useState } from "react";
+// import { useEditUserContext } from "../context/EditUserContext.jsx";
+// import axios from "axios";
+// import { useAuth } from "../context/AuthContext.jsx";
+// import { useNavigate } from "react-router-dom";
+
+// function UpdateForm() {
+//   const [UserDetails] = useEditUserContext(); // Get user details from context
+//   const [auth] = useAuth(); // Get auth context (token)
+//   const navigate = useNavigate();
+
+//   const [userForm, setUserForm] = useState({
+//     firstName: "",
+//     lastName: "",
+//     phone: "",
+//     addresses: [{ city: "", street: "", state: "", zipCode: "", country: "" }],
+//     subscription: 0,
+//   });
+
+//   useEffect(() => {
+//     if (UserDetails) {
+//       setUserForm({
+//         firstName: UserDetails.firstName || "",
+//         lastName: UserDetails.lastName || "",
+//         phone: UserDetails.phone || "",
+//         addresses: [
+//           {
+//             city: UserDetails?.addresses?.[0]?.city || "",
+//             street: UserDetails?.addresses?.[0]?.street || "",
+//             state: UserDetails?.addresses?.[0]?.state || "",
+//             zipCode: UserDetails?.addresses?.[0]?.zipCode || "",
+//             country: UserDetails?.addresses?.[0]?.country || "",
+//           },
+//         ],
+//         subscription: UserDetails.subscription?.length || 0,
+//       });
+//     }
+//   }, [UserDetails, auth?.token]);
+
+//   // Handle update request
+//   const handleUpdate = async () => {
+//     try {
+//       const res = await axios.patch(
+//         `http://localhost:3000/user/${UserDetails?._id}`,
+//         {
+//           firstName: userForm.firstName,
+//           lastName: userForm.lastName,
+//           phone: userForm.phone,
+//           addresses: [userForm.addresses[0]], // Send the updated address
+//           subscription: [], // Update subscription as needed
+//         },
+//         {
+//           headers: {
+//             Authorization: `Bearer ${auth?.token}`,
+//           },
+//         }
+//       );
+
+//       const updatedUser =
+//         typeof res.data === "string" ? JSON.parse(res.data) : res.data;
+
+//       console.log("Updated User:", updatedUser);
+//       navigate("/admin-dashboard/allusers");
+//     } catch (error) {
+//       console.error("Error data:", error.response?.data);
+//       console.error("Error updating user:", error);
+//     }
+//   };
+
+//   // Handle input changes for form
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setUserForm((prevForm) => ({
+//       ...prevForm,
+//       [name]: value,
+//     }));
+//   };
+
+//   // Handle address input changes
+//   const handleAddressChange = (e) => {
+//     const { name, value } = e.target;
+//     setUserForm((prevForm) => ({
+//       ...prevForm,
+//       addresses: [{ ...prevForm.addresses[0], [name]: value }],
+//     }));
+//   };
+
+//   return (
+//     <div className="content-wrapper">
+//       <section className="content-header">
+//         <div className="container-fluid">
+//           <div className="row mb-2">
+//             <div className="col-sm-6">
+//               <h1 className="text-dark">Update User</h1>
+//             </div>
+//             <div className="col-sm-6">
+//               <ol className="breadcrumb float-sm-right">
+//                 <li className="breadcrumb-item">
+//                   <a href="#">Home</a>
+//                 </li>
+//                 <li className="breadcrumb-item active">Update User</li>
+//               </ol>
+//             </div>
+//           </div>
+//         </div>
+//         {/* /.container-fluid */}
+//       </section>
+//       {/* Main content */}
+//       <section className="content">
+//         <div className="row">
+//           <div className="col-md-6">
+//             <div className="card card-primary">
+//               <div className="card-header">
+//                 <h3 className="card-title">Person Information</h3>
+//                 <div className="card-tools">
+//                   <button
+//                     type="button"
+//                     className="btn btn-tool"
+//                     data-card-widget="collapse"
+//                     title="Collapse"
+//                   >
+//                     <i className="fas fa-minus" />
+//                   </button>
+//                 </div>
+//               </div>
+//               <div className="card-body">
+//                 <div className="form-group">
+//                   <label htmlFor="firstName">First Name</label>
+//                   <input
+//                     type="text"
+//                     id="firstName"
+//                     name="firstName"
+//                     value={userForm.firstName}
+//                     onChange={handleInputChange}
+//                     className="form-control"
+//                   />
+//                 </div>
+//                 <div className="form-group">
+//                   <label htmlFor="lastName">Last Name</label>
+//                   <input
+//                     type="text"
+//                     id="lastName"
+//                     name="lastName"
+//                     value={userForm.lastName}
+//                     onChange={handleInputChange}
+//                     className="form-control"
+//                   />
+//                 </div>
+//                 <div className="form-group">
+//                   <label htmlFor="phone">Phone</label>
+//                   <input
+//                     type="text"
+//                     id="phone"
+//                     name="phone"
+//                     value={userForm.phone}
+//                     onChange={handleInputChange}
+//                     className="form-control"
+//                   />
+//                 </div>
+//               </div>
+//               {/* /.card-body */}
+//             </div>
+//             {/* /.card */}
+//           </div>
+//           <div className="col-md-6">
+//             <div className="card card-secondary">
+//               <div className="card-header">
+//                 <h3 className="card-title">Address</h3>
+//                 <div className="card-tools">
+//                   <button
+//                     type="button"
+//                     className="btn btn-tool"
+//                     data-card-widget="collapse"
+//                     title="Collapse"
+//                   >
+//                     <i className="fas fa-minus" />
+//                   </button>
+//                 </div>
+//               </div>
+//               <div className="card-body">
+//                 <div className="form-group">
+//                   <label htmlFor="street">Street</label>
+//                   <input
+//                     type="text"
+//                     id="street"
+//                     name="street"
+//                     value={userForm.addresses[0].street}
+//                     onChange={handleAddressChange}
+//                     className="form-control"
+//                   />
+//                 </div>
+//                 <div className="form-group">
+//                   <label htmlFor="city">City</label>
+//                   <input
+//                     type="text"
+//                     id="city"
+//                     name="city"
+//                     value={userForm.addresses[0].city}
+//                     onChange={handleAddressChange}
+//                     className="form-control"
+//                   />
+//                 </div>
+//                 <div className="form-group">
+//                   <label htmlFor="state">State</label>
+//                   <input
+//                     type="text"
+//                     id="state"
+//                     name="state"
+//                     value={userForm.addresses[0].state}
+//                     onChange={handleAddressChange}
+//                     className="form-control"
+//                   />
+//                 </div>
+//                 <div className="form-group">
+//                   <label htmlFor="zipCode">ZipCode</label>
+//                   <input
+//                     type="text"
+//                     id="zipCode"
+//                     name="zipCode"
+//                     value={userForm.addresses[0].zipCode}
+//                     onChange={handleAddressChange}
+//                     className="form-control"
+//                   />
+//                 </div>
+//                 <div className="form-group">
+//                   <label htmlFor="country">Country</label>
+//                   <input
+//                     type="text"
+//                     id="country"
+//                     name="country"
+//                     value={userForm.addresses[0].country}
+//                     onChange={handleAddressChange}
+//                     className="form-control"
+//                   />
+//                 </div>
+//               </div>
+//               {/* /.card-body */}
+//             </div>
+//             {/* /.card */}
+//           </div>
+//         </div>
+//         <div className="row">
+//           <div className="col-12">
+//             <button
+//               className="btn btn-success btn-block"
+//               onClick={handleUpdate}
+//             >
+//               Update
+//             </button>
+//           </div>
+//         </div>
+//       </section>
+//     </div>
+//   );
+// }
+
+// export default UpdateForm;
+
 import React, { useEffect, useState } from "react";
 import { useEditUserContext } from "../context/EditUserContext.jsx";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 function UpdateForm() {
   const [UserDetails] = useEditUserContext(); // Get user details from context
   const [auth] = useAuth(); // Get auth context (token)
+  const navigate = useNavigate();
 
-  // Create a new local state to hold extracted values from UserDetails
   const [userForm, setUserForm] = useState({
     firstName: "",
     lastName: "",
     phone: "",
-    addresses: [{ city: "" }],
+    addresses: [{ city: "", street: "", state: "", zipCode: "", country: "" }],
     subscription: 0,
   });
 
-  // Extract data from UserDetails and set in new state when component mounts
-  useEffect(() => {
-    console.log("token", auth?.token);
-    console.log("userDetails", UserDetails);
+  const [errors, setErrors] = useState({}); // State for error messages
 
+  useEffect(() => {
     if (UserDetails) {
       setUserForm({
-        purchaseHistory: [], // Assuming this field is required
-        subscription: UserDetails?.subscription?.length || 0, // Assuming subscription is an array
         firstName: UserDetails.firstName || "",
         lastName: UserDetails.lastName || "",
         phone: UserDetails.phone || "",
-        addresses: [{ city: UserDetails?.addresses?.[0]?.city || "" }],
-        userId: UserDetails._id,
+        addresses: [
+          {
+            city: UserDetails?.addresses?.[0]?.city || "",
+            street: UserDetails?.addresses?.[0]?.street || "",
+            state: UserDetails?.addresses?.[0]?.state || "",
+            zipCode: UserDetails?.addresses?.[0]?.zipCode || "",
+            country: UserDetails?.addresses?.[0]?.country || "",
+          },
+        ],
+        subscription: UserDetails.subscription?.length || 0,
       });
-      console.log("userid:", userForm.userId);
     }
-  }, [UserDetails, auth?.token]); // Add dependencies to rerun effect on change
+  }, [UserDetails, auth?.token]);
+
+  // Validation function
+  const validate = () => {
+    const newErrors = {};
+    if (!userForm.firstName) newErrors.firstName = "First name is required.";
+    if (!userForm.lastName) newErrors.lastName = "Last name is required.";
+    if (!userForm.phone) newErrors.phone = "Phone number is required.";
+    if (!userForm.addresses[0].street) newErrors.street = "Street is required.";
+    if (!userForm.addresses[0].city) newErrors.city = "City is required.";
+    if (!userForm.addresses[0].state) newErrors.state = "State is required.";
+    if (!userForm.addresses[0].zipCode)
+      newErrors.zipCode = "Zip code is required.";
+    if (!userForm.addresses[0].country)
+      newErrors.country = "Country is required.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Returns true if no errors
+  };
 
   // Handle update request
   const handleUpdate = async () => {
+    if (!validate()) return; // Validate before sending the request
+
     try {
       const res = await axios.patch(
-        // Change PUT to PATCH
-        `http://localhost:3000/user/${UserDetails?._id}`, // API endpoint with user's ID
+        `http://localhost:3000/user/${UserDetails?._id}`,
         {
-          // Data you're sending in the request
-          purchaseHistory: [], // Example empty array, change if necessary
-          subscription: userForm.subscription, // Send updated subscription count
-          firstName: userForm.firstName, // Send updated first name
-          lastName: userForm.lastName, // Send updated last name
-          phone: userForm.phone, // Send updated phone
-          addresses: [{ city: userForm.addresses[0].city }], // Send updated address (only first one)
+          firstName: userForm.firstName,
+          lastName: userForm.lastName,
+          phone: userForm.phone,
+          addresses: [userForm.addresses[0]], // Send the updated address
+          subscription: [], // Update subscription as needed
         },
         {
           headers: {
-            Authorization: `Bearer ${auth?.token}`, // Include the token for authentication
+            Authorization: `Bearer ${auth?.token}`,
           },
         }
       );
+
       const updatedUser =
         typeof res.data === "string" ? JSON.parse(res.data) : res.data;
 
-      console.log("Updated User:", updatedUser); // Log the response to ensure success
+      console.log("Updated User:", updatedUser);
+      navigate("/admin-dashboard/allusers");
     } catch (error) {
-      console.error("Error data:", error.response.data); // Log errors for debugging
-      console.error("Error updating user:", error); // Log errors for debugging
+      console.error("Error data:", error.response?.data);
+      console.error("Error updating user:", error);
     }
   };
 
@@ -71,8 +352,19 @@ function UpdateForm() {
     const { name, value } = e.target;
     setUserForm((prevForm) => ({
       ...prevForm,
-      [name]: value, // Update the respective field
+      [name]: value,
     }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); // Clear error on change
+  };
+
+  // Handle address input changes
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setUserForm((prevForm) => ({
+      ...prevForm,
+      addresses: [{ ...prevForm.addresses[0], [name]: value }],
+    }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); // Clear error on change
   };
 
   return (
@@ -93,104 +385,195 @@ function UpdateForm() {
             </div>
           </div>
         </div>
+        {/* /.container-fluid */}
       </section>
-
+      {/* Main content */}
       <section className="content">
         <div className="row">
-          <div className="col-md-12">
-            <div className="card card-light">
+          <div className="col-md-6">
+            <div className="card card-primary">
               <div className="card-header">
-                <h3 className="card-title">Personal Information</h3>
+                <h3 className="card-title">Person Information</h3>
+                <div className="card-tools">
+                  <button
+                    type="button"
+                    className="btn btn-tool"
+                    data-card-widget="collapse"
+                    title="Collapse"
+                  >
+                    <i className="fas fa-minus" />
+                  </button>
+                </div>
               </div>
               <div className="card-body">
-                {/* First Name */}
                 <div className="form-group">
-                  <label htmlFor="inputFirstName">First Name</label>
+                  <label htmlFor="firstName">First Name</label>
                   <input
+                    type="text"
+                    id="firstName"
                     name="firstName"
-                    value={userForm.firstName} // Controlled input for first name
+                    value={userForm.firstName}
                     onChange={handleInputChange}
-                    type="text"
-                    className="form-control"
-                    id="inputFirstName"
+                    className={`form-control ${
+                      errors.firstName ? "is-invalid" : ""
+                    }`}
                   />
+                  {errors.firstName && (
+                    <div className="invalid-feedback">{errors.firstName}</div>
+                  )}
                 </div>
-
-                {/* Last Name */}
                 <div className="form-group">
-                  <label htmlFor="inputLastName">Last Name</label>
+                  <label htmlFor="lastName">Last Name</label>
                   <input
+                    type="text"
+                    id="lastName"
                     name="lastName"
-                    value={userForm.lastName} // Controlled input for last name
+                    value={userForm.lastName}
                     onChange={handleInputChange}
-                    type="text"
-                    className="form-control"
-                    id="inputLastName"
+                    className={`form-control ${
+                      errors.lastName ? "is-invalid" : ""
+                    }`}
                   />
+                  {errors.lastName && (
+                    <div className="invalid-feedback">{errors.lastName}</div>
+                  )}
                 </div>
-
-                {/* Phone */}
                 <div className="form-group">
-                  <label htmlFor="inputPhone">Phone</label>
+                  <label htmlFor="phone">Phone</label>
                   <input
+                    type="text"
+                    id="phone"
                     name="phone"
-                    value={userForm.phone} // Controlled input for phone
+                    value={userForm.phone}
                     onChange={handleInputChange}
-                    type="text"
-                    className="form-control"
-                    id="inputPhone"
+                    className={`form-control ${
+                      errors.phone ? "is-invalid" : ""
+                    }`}
                   />
-                </div>
-
-                {/* Address */}
-                <div className="form-group">
-                  <label htmlFor="inputAddress">Address</label>
-                  <input
-                    name="city"
-                    value={userForm.addresses[0].city} // Controlled input for address
-                    onChange={(e) =>
-                      setUserForm((prevForm) => ({
-                        ...prevForm,
-                        addresses: [{ city: e.target.value }], // Update address (city)
-                      }))
-                    }
-                    type="text"
-                    className="form-control"
-                    id="inputAddress"
-                  />
-                </div>
-
-                {/* Subscription (number of subscriptions) */}
-                <div className="form-group">
-                  <label htmlFor="inputSubscription">Subscription</label>
-                  <input
-                    name="subscription"
-                    value={userForm.subscription} // Controlled input for subscription count
-                    onChange={(e) =>
-                      setUserForm((prevForm) => ({
-                        ...prevForm,
-                        subscription: parseInt(e.target.value, 10) || 0, // Update subscription with new length
-                      }))
-                    }
-                    type="number"
-                    className="form-control"
-                    id="inputSubscription"
-                  />
+                  {errors.phone && (
+                    <div className="invalid-feedback">{errors.phone}</div>
+                  )}
                 </div>
               </div>
+              {/* /.card-body */}
             </div>
+            {/* /.card */}
+          </div>
+          <div className="col-md-6">
+            <div className="card card-secondary">
+              <div className="card-header">
+                <h3 className="card-title">Address</h3>
+                <div className="card-tools">
+                  <button
+                    type="button"
+                    className="btn btn-tool"
+                    data-card-widget="collapse"
+                    title="Collapse"
+                  >
+                    <i className="fas fa-minus" />
+                  </button>
+                </div>
+              </div>
+              <div className="card-body">
+                <div className="form-group">
+                  <label htmlFor="street">Street</label>
+                  <input
+                    type="text"
+                    id="street"
+                    name="street"
+                    value={userForm.addresses[0].street}
+                    onChange={handleAddressChange}
+                    className={`form-control ${
+                      errors.street ? "is-invalid" : ""
+                    }`}
+                  />
+                  {errors.street && (
+                    <div className="invalid-feedback">{errors.street}</div>
+                  )}
+                </div>
+                <div className="form-group">
+                  <label htmlFor="city">City</label>
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    value={userForm.addresses[0].city}
+                    onChange={handleAddressChange}
+                    className={`form-control ${
+                      errors.city ? "is-invalid" : ""
+                    }`}
+                  />
+                  {errors.city && (
+                    <div className="invalid-feedback">{errors.city}</div>
+                  )}
+                </div>
+                <div className="form-group">
+                  <label htmlFor="state">State</label>
+                  <input
+                    type="text"
+                    id="state"
+                    name="state"
+                    value={userForm.addresses[0].state}
+                    onChange={handleAddressChange}
+                    className={`form-control ${
+                      errors.state ? "is-invalid" : ""
+                    }`}
+                  />
+                  {errors.state && (
+                    <div className="invalid-feedback">{errors.state}</div>
+                  )}
+                </div>
+                <div className="form-group">
+                  <label htmlFor="zipCode">Zip Code</label>
+                  <input
+                    type="text"
+                    id="zipCode"
+                    name="zipCode"
+                    value={userForm.addresses[0].zipCode}
+                    onChange={handleAddressChange}
+                    className={`form-control ${
+                      errors.zipCode ? "is-invalid" : ""
+                    }`}
+                  />
+                  {errors.zipCode && (
+                    <div className="invalid-feedback">{errors.zipCode}</div>
+                  )}
+                </div>
+                <div className="form-group">
+                  <label htmlFor="country">Country</label>
+                  <input
+                    type="text"
+                    id="country"
+                    name="country"
+                    value={userForm.addresses[0].country}
+                    onChange={handleAddressChange}
+                    className={`form-control ${
+                      errors.country ? "is-invalid" : ""
+                    }`}
+                  />
+                  {errors.country && (
+                    <div className="invalid-feedback">{errors.country}</div>
+                  )}
+                </div>
+              </div>
+              {/* /.card-body */}
+            </div>
+            {/* /.card */}
           </div>
         </div>
-
-        {/* Update Button */}
         <div className="row">
           <div className="col-12">
-            <button className="btn btn-dark btn-block" onClick={handleUpdate}>
-              Update
+            <button
+              type="button"
+              className="btn btn-success float-right"
+              onClick={handleUpdate}
+            >
+              Update User
             </button>
           </div>
         </div>
       </section>
+      {/* /.content */}
     </div>
   );
 }
