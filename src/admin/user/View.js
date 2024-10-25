@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useEditUserContext } from "../context/EditUserContext";
+import { useEditUserContext } from "../../context/EditUserContext";
 
 function View() {
   const [UserDetails, setUserDetails] = useEditUserContext();

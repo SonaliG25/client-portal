@@ -1,23 +1,18 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "./context/AuthContext";
-import UserCreationForm from "./admin/NewUser";
-
 import { Login } from "./auth/login";
 import Dashboard from "./admin/Dashboard";
-import Users from "./admin/Users";
 import Orders from "./admin/Orders";
 import Proposals from "./admin/Proposal";
 import ClientDashboard from "./client/ClientDashboard";
-import Home from "./components/Home";
 import Register from "./auth/Register";
-import UpdateForm from "./admin/UpdateForm";
-import Proposaltemplete from "./admin/Proposaltemplete";
-import NewProposalTemplete from "./admin/NewProposalTemplate";
-import View from "./admin/View";
-import UpdateProposalTemplate from "./admin/UpdateProposalTemplate";
-import ViewProposalTemplete from "./admin/ViewProposalTemplete";
+import Users from "./admin/user/Users";
+import UpdateForm from "./admin/user/UpdateUser";
+import View from "./admin/user/View";
+import Proposaltemplete from "./admin/proposalTemplate/Proposaltemplete"
+import NewProposalTemplete from "./admin/proposalTemplate/NewProposalTemplate";
+import UpdateProposalTemplate from "./admin/proposalTemplate/UpdateProposalTemplate";
+import ViewProposalTemplete from "./admin/proposalTemplate/ViewProposalTemplete";
 
 function App() {
   const router = createBrowserRouter([
@@ -50,6 +45,14 @@ function App() {
         }
         ,
         {
+          path: "updateproposaltemplete", // Route for Update
+          element: <UpdateProposalTemplate />, // Render the Login component
+        },
+        {
+          path: "viewproposaltemplete", // Route for Update
+          element: <ViewProposalTemplete />, // Render the Login component
+        },
+        {
           path: "newuser",
           element: <Register />,
         },
@@ -65,14 +68,7 @@ function App() {
           path: "Update", // Route for Update
           element: <UpdateForm />, // Render the Login component
         },
-        {
-          path: "updateproposaltemplete", // Route for Update
-          element: <UpdateProposalTemplate />, // Render the Login component
-        },
-        {
-          path: "viewproposaltemplete", // Route for Update
-          element: <ViewProposalTemplete />, // Render the Login component
-        },
+       
 
       ],
     },

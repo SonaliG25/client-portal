@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useEditUserContext } from "../context/EditUserContext.jsx";
+import { useEditUserContext } from "../../context/EditUserContext.jsx";
 import axios from "axios";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 
 function UpdateForm() {
