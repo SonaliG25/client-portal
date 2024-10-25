@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import { useEditUserContext } from '../context/EditUserContext';
+import { useEditUserContext } from '../../context/EditUserContext';
 
 function ViewProposalTemplete() {
 

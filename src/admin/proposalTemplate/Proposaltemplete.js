@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
-import { useEditUserContext } from "../context/EditUserContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { useEditUserContext } from "../../context/EditUserContext.jsx";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -33,7 +33,7 @@ const Proposaltemplete = () => {
   };
 
   useEffect(() => {
-    console.log("auth-test", auth);
+    // console.log("auth-test", auth);
     if (auth?.token) {
       getProposalTemplete();
     }
