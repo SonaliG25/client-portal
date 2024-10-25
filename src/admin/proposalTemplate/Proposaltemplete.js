@@ -31,7 +31,7 @@ const Proposaltemplete = () => {
   };
 
   useEffect(() => {
-    console.log("auth-test", auth);
+    // console.log("auth-test", auth);
     if (auth?.token) {
       getProposalTemplete();
     }

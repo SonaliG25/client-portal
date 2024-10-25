@@ -31,14 +31,14 @@ function View() {
           <div className="container-fluid">
             <div className="row mb-2">
               <div className="col-sm-6">
-                <h1 className="text-dark">View</h1>
+                <h1 className="text-dark">User Details</h1>
               </div>
               <div className="col-sm-6">
                 <ol className="breadcrumb float-sm-right">
                   <li className="breadcrumb-item">
                     <a href="#">Home</a>
                   </li>
-                  <li className="breadcrumb-item active">View User</li>
+                  <li className="breadcrumb-item active">User Details</li>
                 </ol>
               </div>
             </div>
@@ -104,16 +104,7 @@ function View() {
                       readOnly
                     />
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="inputPassword">Password</label>
-                    <input
-                      type="text"
-                      id="inputPassword"
-                      className="form-control"
-                      value={viewInfo?.password || ""}
-                      readOnly
-                    />
-                  </div>
+               
                   <div className="form-group">
                     <label htmlFor="inputEmail">Email</label>
                     <input

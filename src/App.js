@@ -8,7 +8,7 @@ import ClientDashboard from "./client/ClientDashboard";
 import Register from "./auth/Register";
 import Users from "./admin/user/Users";
 import UpdateForm from "./admin/user/UpdateUser";
-import View from "./admin/user/View";
+import View from "./admin/user/UserDetails";
 import Proposaltemplete from "./admin/proposalTemplate/Proposaltemplete"
 import NewProposalTemplete from "./admin/proposalTemplate/NewProposalTemplate";
 import UpdateProposalTemplate from "./admin/proposalTemplate/UpdateProposalTemplate";

@@ -88,9 +88,10 @@ const Users = () => {
       <div className="content-wrapper">
         <section className="content">
           <div className="container-fluid">
-            <h1 className=" py-2  text-center">User List</h1>
+            
+            <div className="m-2 d-flex  align-items-center">
+            <h2 className="py-2 text-center">Clients</h2>
 
-            <div className="m-2 d-flex justify-content-center align-items-center">
               <form className="flex-grow-1 mr-2">
                 <div className="row justify-content-center">
                   <div className="col-md-6">
@@ -121,7 +122,7 @@ const Users = () => {
                 onClick={handleAddUser}
                 className="font-weight-bold btn btn-secondary px-4 py-2"
               >
-                Add User
+                Add Client
               </button>
             </div>
 
