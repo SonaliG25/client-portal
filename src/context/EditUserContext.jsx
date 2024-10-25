@@ -4,9 +4,10 @@ const EditUserContext = createContext();
 const EditUserProvider = ({ children }) => {
   const [UserDetails, setUserDetails] = useState(null);
   const [proposalTemplateDetails,setPropposalTempleteDetails] = useState()
+  const [productDetails,setProductDetails] = useState([])
 
   return (
-    <EditUserContext.Provider value={[UserDetails, setUserDetails,proposalTemplateDetails,setPropposalTempleteDetails]}>
+    <EditUserContext.Provider value={[UserDetails, setUserDetails,proposalTemplateDetails,setPropposalTempleteDetails,productDetails,setProductDetails]}>
       {children}
     </EditUserContext.Provider>
   );

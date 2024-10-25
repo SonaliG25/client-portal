@@ -137,6 +137,7 @@ function UpdateProposalTemplate() {
                     value={templete.status}
                     onChange={handleInputChange}
                     className="form-control"
+                    readOnly
                   />
                 </div>
                 <div className="form-group">
@@ -148,6 +149,7 @@ function UpdateProposalTemplate() {
                     value={templete.createdAt}
                     onChange={handleInputChange}
                     className="form-control"
+                    readOnly
                   />
                 </div>
                 <div className="form-group">
@@ -159,6 +161,7 @@ function UpdateProposalTemplate() {
                     value={templete.updatedAt}
                     onChange={handleInputChange}
                     className="form-control"
+                    readOnly
                   />
                 </div>
               </div>

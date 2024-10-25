@@ -7,6 +7,7 @@ import axios from "axios";
 const Proposaltemplete = () => {
   const [proposalTemplateDetails,setProposalTempleteDetails] = useEditUserContext(); // Destructure setTempleteDetails
   console.log("temple",proposalTemplateDetails)
+  const [loader,setLoader] = useState(true)
   const [proposalTemplete, setProposalTemplete] = useState([]);
   const navigate = useNavigate();
   const [auth] = useAuth();
@@ -25,6 +26,7 @@ const Proposaltemplete = () => {
 
       setProposalTemplete(res.data);
       console.log("proposaltemplete:", res.data);
+      setLoader(false)
     } catch (error) {
       console.error(error); // Log the error for debugging
     }
@@ -74,7 +76,7 @@ const Proposaltemplete = () => {
               <div className="col-12">
                 <div className="card">
                   <div className="card-body">
-                    {!proposalTemplete.length ? (
+                    {loader ? (
                       <div className="spinner-border" role="status">
                         <span className="sr-only">Loading...</span>
                       </div>
@@ -91,7 +93,8 @@ const Proposaltemplete = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {proposalTemplete.map((data) => (
+                          {/* {proposalTemplete.length == 0 ? <tr><td>Data not available</td></tr>} */}
+                          {proposalTemplete?.map((data) => (
                             <tr key={data._id}>
                               <td>{data.title}</td>
                               <td>{data.description}</td>

@@ -73,7 +73,7 @@ function NewProposalTemplete  ()  {
             <div className="col-md-12">
               <div className="card card-primary">
                 <div className="card-header">
-                  <h3 className="card-title">Person Information</h3>
+                  <h3 className="card-title">New Templete</h3>
                   <div className="card-tools">
                     <button
                       type="button"
