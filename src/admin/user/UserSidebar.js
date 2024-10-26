@@ -61,50 +61,6 @@ function UserSidebar() {
                 <p>Proposals</p>
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink
-                to="proposaltempletes"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                <i className="nav-icon fas fa-tachometer-alt"></i>
-                <p>Proposal Templates</p>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="allusers"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                <i className="nav-icon fas fa-users"></i>
-                <p>Clients</p>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="product"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                <i className="nav-icon fas fa-users"></i>
-                <p>Products</p>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="orders"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                <i className="nav-icon fas fa-cogs"></i>
-                <p>Orders</p>
-              </NavLink>
-            </li>
           </ul>
         </nav>
       </div>

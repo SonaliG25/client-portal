@@ -21,6 +21,7 @@ import ProtectedRoute from "./auth/ProtectedRoute";
 import * as Routes from "./routeNames";
 import UserLayout from "./admin/user/UserLayout";
 import GetProposal from "./admin/user/GetProposal";
+import ProposalInfo from "./admin/user/ProposalInfo";
 
 function App() {
   const router = createBrowserRouter([
@@ -32,6 +33,10 @@ function App() {
         {
           path: "proposal",
           element: <GetProposal />,
+        },
+        {
+          path: "proposal-view",
+          element: <ProposalInfo />,
         },
       ],
     },
