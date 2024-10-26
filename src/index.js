@@ -22,12 +22,16 @@ import reportWebVitals from "./reportWebVitals";
 
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { EditUserProvider } from "./context/EditUserContext.jsx";
+import { ProposalViewProvider } from "./context/ProposalViewContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
       <EditUserProvider>
-        <App />
+        <ProposalViewProvider>
+          <App />
+        </ProposalViewProvider>
+        /
       </EditUserProvider>
     </AuthProvider>
   </React.StrictMode>
