@@ -6,12 +6,6 @@ import Orders from "./admin/Orders";
 import Proposals from "./admin/Proposal";
 import ClientDashboard from "./client/ClientDashboard";
 import Register from "./auth/Register";
-import UpdateForm from "./admin/UpdateForm";
-import Proposaltemplete from "./admin/Proposaltemplete";
-import NewProposalTemplete from "./admin/NewProposalTemplate";
-import View from "./admin/View";
-import UpdateProposalTemplate from "./admin/UpdateProposalTemplate";
-import ViewProposalTemplete from "./admin/ViewProposalTemplete";
 import ViewProduct from "./admin/product/ViewProduct";
 import Products from "./admin/product/Products";
 import Users from "./admin/user/Users";
@@ -21,6 +15,7 @@ import Proposaltemplete from "./admin/proposalTemplate/Proposaltemplete"
 import NewProposalTemplete from "./admin/proposalTemplate/NewProposalTemplate";
 import UpdateProposalTemplate from "./admin/proposalTemplate/UpdateProposalTemplate";
 import ViewProposalTemplete from "./admin/proposalTemplate/ViewProposalTemplete";
+import UpdateProduct from "./admin/product/updateProduct";
 
 function App() {
   const router = createBrowserRouter([
@@ -91,6 +86,10 @@ function App() {
         {
           path: "viewproduct", // Route for Update
           element: <ViewProduct />, // Render the Login component
+        },
+        {
+          path: "updateproduct", // Route for Update
+          element: <UpdateProduct />, // Render the Login component
         },
        
 
