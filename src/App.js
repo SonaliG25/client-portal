@@ -1,82 +1,56 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "./context/AuthContext";
-import UserCreationForm from "./admin/NewUser";
-
 import { Login } from "./auth/login";
-import Dashboard from "./admin/Dashboard";
-import Users from "./admin/Users";
+import AdminLayout from "./admin/AdminLayout";
 import Orders from "./admin/Orders";
 import Proposals from "./admin/Proposal";
 import ClientDashboard from "./client/ClientDashboard";
-import Home from "./components/Home";
-import Register from "./auth/Register";
-import UpdateForm from "./admin/UpdateForm";
-import Proposaltemplete from "./admin/Proposaltemplete";
-import NewProposalTemplete from "./admin/NewProposalTemplate";
-import View from "./admin/View";
-import Products from "./admin/Products";
-import Productlist from "./admin/Productlist";
+import Register from "./admin/user/NewUser";
+import Users from "./admin/user/Users";
+import UpdateForm from "./admin/user/UpdateUser";
+import View from "./admin/user/UserDetails";
+import Proposaltemplete from "./admin/proposalTemplate/Proposaltemplete"
+import NewProposalTemplete from "./admin/proposalTemplate/NewProposalTemplate";
+import UpdateProposalTemplate from "./admin/proposalTemplate/UpdateProposalTemplate";
+import ViewProposalTemplete from "./admin/proposalTemplate/ViewProposalTemplete";
+import NewProduct from "./admin/product/NewProduct";
+import Products from "./admin/product/Products";
+import ProtectedRoute from './auth/ProtectedRoute';
+
+// Import route names
+import * as Routes from './routeNames';
 
 function App() {
   const router = createBrowserRouter([
-    { path: "/", element: <Login /> },
+    { path: Routes.LOGIN, element: <Login /> },
     {
-      path: "/login", // Route for login
-      element: <Login />, // Render the Login component
-    },
-
-    {
-      path: "/user-dashboard",
-      element: <ClientDashboard />,
-    },
-    {
-      path: "/admin-dashboard",
-      element: <Dashboard />,
+      path: Routes.ADMIN_DASHBOARD,
+      element: <AdminLayout />, // Use ProtectedRoute with role-based access
       children: [
-        {
-          path: "proposal",
-          element: <Proposals />,
-        },
-        {
-          path: "newproposaltemplete",
-          element: <NewProposalTemplete />,
-        },
-        {
-          path: "proposaltemplete",
-          element: <Proposaltemplete />,
-        },
-        {
-          path: "newuser",
-          element: <Register />,
-        },
-        {
-          path: "allusers", // Route for login
-          element: <Users />, // Render the Login component
-        },
-        {
-          path: "view", // Route for view
-          element: <View />, // Render the Login component
-        },
-        {
-          path: "products", // Route for Update
-          element: <Products />, // Render the Login component
-        },
-        {
-          path: "productlist", // Route for Update
-          element: <Productlist />, // Render the Login component
-        },
-
-        {
-          path: "Update", // Route for Update
-          element: <UpdateForm />, // Render the Login component
-        },
+        { path: Routes.PROPOSALS, element: <Proposals /> },
+        { path: Routes.NEW_PROPOSAL_TEMPLATE, element: <NewProposalTemplete /> },
+        { path: Routes.PROPOSAL_TEMPLATES, element: <Proposaltemplete /> },
+        { path: Routes.UPDATE_PROPOSAL_TEMPLATE, element: <UpdateProposalTemplate /> },
+        { path: Routes.VIEW_PROPOSAL_TEMPLATE, element: <ViewProposalTemplete /> },
+        { path: Routes.NEW_USER, element: <Register /> },
+        { path: Routes.ALL_USERS, element: <Users /> },
+        { path: Routes.VIEW_USER, element: <View /> },
+        { path: Routes.UPDATE_USER, element: <UpdateForm /> },
+        { path: Routes.NEW_PRODUCT, element: <NewProduct /> },
+        { path: Routes.ALL_PRODUCTS, element: <Products /> },
+        { path: Routes.ALL_ORDERS, element: <Orders /> },
       ],
     },
+    // {
+    //   path: Routes.USER_DASHBOARD,
+    //   element: <ProtectedRoute role="client" />,
+    //   children: [
+    //     // Add user-specific routes here if any
+    //   ],
+    // },
+    { path: Routes.NOT_FOUND, element: <Login /> }, // Fallback for unmatched routes
   ]);
 
-  // The `RouterProvider` component is responsible for rendering the `router` we defined above.
   return <RouterProvider router={router} />;
 }
 

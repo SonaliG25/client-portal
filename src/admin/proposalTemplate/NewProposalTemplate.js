@@ -1,8 +1,8 @@
 import React, { useState,useRef, useEffect } from "react";
 import axios from "axios";
-import { useAuth } from "../context/AuthContext";
-
-import JoditEditor from "jodit-react";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import JoditEditor from "jodit-react"
 
 function NewProposalTemplete  ()  {
   // User state
@@ -15,6 +15,7 @@ function NewProposalTemplete  ()  {
   const [content,setContent] =useState('')
   const editor =useRef(null)
   const [auth] = useAuth();
+  const navigate = useNavigate()
   const config={
         placeholder:"Start typing...",
 
@@ -34,8 +35,10 @@ function NewProposalTemplete  ()  {
         headers: {
           Authorization: `Bearer ${auth?.token}`,
         }
+        
     });
       console.log(res);
+      navigate("/admin-dashboard/proposaltemplete");
     } catch (error) {
       console.log(error);
     }
@@ -70,7 +73,7 @@ function NewProposalTemplete  ()  {
             <div className="col-md-12">
               <div className="card card-primary">
                 <div className="card-header">
-                  <h3 className="card-title">Person Information</h3>
+                  <h3 className="card-title">New Templete</h3>
                   <div className="card-tools">
                     <button
                       type="button"
