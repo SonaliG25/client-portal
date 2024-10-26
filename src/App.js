@@ -6,6 +6,8 @@ import Orders from "./admin/Orders";
 import Proposals from "./admin/Proposal";
 import ClientDashboard from "./client/ClientDashboard";
 import Register from "./admin/user/NewUser";
+import ViewProduct from "./admin/product/ViewProduct";
+import Products from "./admin/product/Products";
 import Users from "./admin/user/Users";
 import UpdateForm from "./admin/user/UpdateUser";
 import View from "./admin/user/UserDetails";
@@ -14,7 +16,6 @@ import NewProposalTemplete from "./admin/proposalTemplate/NewProposalTemplate";
 import UpdateProposalTemplate from "./admin/proposalTemplate/UpdateProposalTemplate";
 import ViewProposalTemplete from "./admin/proposalTemplate/ViewProposalTemplete";
 import NewProduct from "./admin/product/NewProduct";
-import Products from "./admin/product/Products";
 import ProtectedRoute from "./auth/ProtectedRoute";
 
 // Import route names
@@ -22,6 +23,7 @@ import * as Routes from "./routeNames";
 import UserLayout from "./admin/user/UserLayout";
 import GetProposal from "./admin/user/GetProposal";
 import ProposalInfo from "./admin/user/ProposalInfo";
+import UpdateProduct from "./admin/product/updateProduct";
 
 function App() {
   const router = createBrowserRouter([
@@ -65,15 +67,17 @@ function App() {
         { path: Routes.NEW_PRODUCT, element: <NewProduct /> },
         { path: Routes.ALL_PRODUCTS, element: <Products /> },
         { path: Routes.ALL_ORDERS, element: <Orders /> },
+        { path: "newuser", element: <Register /> },
+        { path: "allusers", element: <Users /> },
+        { path: "view", element: <View /> },
+        { path: "Update", element: <UpdateForm /> },
+        { path: "updateproposaltemplete", element: <UpdateProposalTemplate /> },
+        { path: "viewproposaltemplete", element: <ViewProposalTemplete /> },
+        { path: "product", element: <Products /> },
+        { path: "viewproduct", element: <ViewProduct /> },
+        { path: "updateproduct", element: <UpdateProduct /> },
       ],
     },
-    // {
-    //   path: Routes.USER_DASHBOARD,
-    //   element: <ProtectedRoute role="client" />,
-    //   children: [
-    //     // Add user-specific routes here if any
-    //   ],
-    // },
     { path: Routes.NOT_FOUND, element: <Login /> }, // Fallback for unmatched routes
   ]);
 
