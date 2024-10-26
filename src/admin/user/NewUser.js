@@ -62,7 +62,7 @@ const Register = () => {
                   <li className="breadcrumb-item">
                     <a href="#">Home</a>
                   </li>
-                  <li className="breadcrumb-item active">Project Add</li>
+                  <li className="breadcrumb-item active">Add User</li>
                 </ol>
               </div>
             </div>
@@ -75,7 +75,7 @@ const Register = () => {
             <div className="col-md-6">
               <div className="card card-primary">
                 <div className="card-header">
-                  <h3 className="card-title">Person Information</h3>
+                  <h3 className="card-title">Personal Information</h3>
                   <div className="card-tools">
                     <button
                       type="button"

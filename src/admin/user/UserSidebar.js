@@ -1,8 +1,7 @@
-// src/components/Sidebar.js
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
-const AdminSidebar = () => {
+function UserSidebar() {
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
       {/* Brand Logo */}
@@ -40,53 +39,77 @@ const AdminSidebar = () => {
             role="menu"
             data-accordion="false"
           >
-            <li className="nav-item ">
-              <Link to="proposal" className="nav-link active">
+            <li className="nav-item">
+              <NavLink
+                to="/user-dashboard"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                <i className="nav-icon fas fa-tachometer-alt"></i>
+                <p>Dashboard</p>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="proposal"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
                 <i className="nav-icon fas fa-tachometer-alt"></i>
                 <p>Proposals</p>
-              </Link>
-            </li>
-            <li className="nav-item ">
-              <Link to="proposaltemplete" className="nav-link">
-                <i className="nav-icon fas fa-tachometer-alt"></i>
-                <p>Proposal Template</p>
-              </Link>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <Link to="products" className="nav-link">
+              <NavLink
+                to="proposaltempletes"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                <i className="nav-icon fas fa-tachometer-alt"></i>
+                <p>Proposal Templates</p>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="allusers"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                <i className="nav-icon fas fa-users"></i>
+                <p>Clients</p>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="product"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
                 <i className="nav-icon fas fa-users"></i>
                 <p>Products</p>
-              </Link>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <Link to="productlist" className="nav-link">
-                <i className="nav-icon fas fa-users"></i>
-                <p>Productslist</p>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="allusers" className="nav-link">
-                <i className="nav-icon fas fa-users"></i>
-                <p>Users</p>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/orders" className="nav-link">
+              <NavLink
+                to="orders"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
                 <i className="nav-icon fas fa-cogs"></i>
                 <p>Orders</p>
-              </Link>
+              </NavLink>
             </li>
-            {/* <li className="nav-item">
-              <Link to="/support" className="nav-link">
-                <i className="nav-icon fas fa-cogs"></i>
-                <p>Support</p>
-              </Link>
-            </li> */}
           </ul>
         </nav>
       </div>
     </aside>
   );
-};
+}
 
-export default AdminSidebar;
+export default UserSidebar;

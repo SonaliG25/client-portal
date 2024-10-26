@@ -1,39 +1,54 @@
-import React, { useState } from "react";
+import React, { useState,useEffect  } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
-
 import axios from "axios";
 
 export const Login = () => {
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [auth, setAuth] = useAuth();
-
   const navigate = useNavigate();
-
+  useEffect(() => {
+    // Redirect to dashboard if already authenticated
+    if (auth?.user) {
+      auth.user.role === "admin"
+        ? navigate("/admin-dashboard")
+        : navigate("/user-dashboard");
+    }
+  }, [auth, navigate]);
   const handleLogin = async (e) => {
     e.preventDefault();
-    // Placeholder login logic, replace with actual authentication logic
-    const response = await axios.post("http://localhost:3000/user/login", {
-      email,
-      password,
-    });
-    if (response.status === 200) {
-      localStorage.setItem("auth", JSON.stringify(response.data.userInfo));
-      localStorage.setItem("token", response.data.token);
-      setAuth({
-        user: response.data.userInfo,
-        token: response.data.token,
+    setError(""); // Clear previous errors
+
+    try {
+      const response = await axios.post("http://localhost:3000/user/login", {
+        email,
+        password,
       });
-      response.data.userInfo.role == "admin"
-        ? navigate("/admin-dashboard")
-        : navigate("/user-dashboard"); // Redirect to the dashboard or home page
-    } else {
-      setError("Invalid email or password");
+      console.log("loginnnnn")
+      if (response.status === 200) {
+        localStorage.setItem("auth", JSON.stringify(response.data.userInfo));
+        localStorage.setItem("token", response.data.token);
+        setAuth({
+          user: response.data.userInfo,
+          token: response.data.token,
+        });
+
+        response.data.userInfo.role === "admin"
+          ? navigate("/admin-dashboard")
+          : navigate("/user-dashboard");
+      } else {
+        setError("Invalid email or password");
+      }
+    } catch (err) {
+      if (err.response && err.response.data) {
+        setError( "Login failed. Please try again.");
+      } else {
+        setError("An error occurred. Please check your network and try again.");
+      }
     }
-    // console.log(err);
-    // setError("An error occurred, please try again later");
   };
 
   return (
@@ -50,6 +65,12 @@ export const Login = () => {
         <div className="card">
           <div className="card-body login-card-body">
             <p className="login-box-msg">Sign in to start your session</p>
+
+            {error && (
+              <div className="alert alert-danger text-center" role="alert">
+                {error}
+              </div>
+            )}
 
             <form onSubmit={handleLogin}>
               <div className="input-group mb-3">
@@ -83,11 +104,7 @@ export const Login = () => {
                   </div>
                 </div>
               </div>
-              {error && (
-                <div className="text-danger" role="alert">
-                  {error}
-                </div>
-              )}
+
               <div className="row">
                 <div className="col-8">
                   <div className="icheck-primary">
@@ -95,7 +112,6 @@ export const Login = () => {
                     <label htmlFor="remember">Remember Me</label>
                   </div>
                 </div>
-
                 <div className="col-4">
                   <button type="submit" className="btn btn-primary btn-block">
                     Sign In
@@ -103,17 +119,6 @@ export const Login = () => {
                 </div>
               </div>
             </form>
-
-            <div className="social-auth-links text-center mb-3">
-              <p>- OR -</p>
-              {/* <a href="#" className="btn btn-block btn-primary">
-                <i className="fab fa-facebook mr-2"></i> Sign in using Facebook
-              </a> */}
-              {/* <a href="#" className="btn btn-block btn-danger">
-                <i className="fab fa-google-plus mr-2"></i> Sign in using
-                Google+
-              </a> */}
-            </div>
 
             <p className="mb-1">
               <a href="#">I forgot my password</a>
@@ -130,4 +135,4 @@ export const Login = () => {
   );
 };
 
-//  default Login;
+export default Login;

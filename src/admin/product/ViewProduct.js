@@ -18,7 +18,7 @@ function ViewProduct() {
         <>
             <div className="content-wrapper">
                 <section className="content-header">
-                    {/* Additional content can go here */}
+                    
                 </section>
                 {/* Main content */}
                 <section className="content">
