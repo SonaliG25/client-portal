@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Login } from "./auth/login";
 import AdminLayout from "./admin/AdminLayout";
 import Orders from "./admin/Orders";
-import Proposals from "./admin/Proposal";
+import Proposals from "./admin/proposal/Proposals";
 import ClientDashboard from "./client/ClientDashboard";
 import Register from "./admin/user/NewUser";
 import Users from "./admin/user/Users";
