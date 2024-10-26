@@ -21,7 +21,7 @@ function UpdateProposalTemplate() {
         if (proposalTempleteDetails) {
           setTemplete({
             title: proposalTempleteDetails.title || "",
-            description: proposalTempleteDetails.description || "",
+            description: proposalTempleteDetails.description.replace(/<\/?[^>]+(>|$)/g, "") || "",
             status: proposalTempleteDetails.status || "",
             createdAt:proposalTempleteDetails.createdAt || "",
             updatedAt:proposalTempleteDetails.updatedAt || ""
@@ -37,8 +37,8 @@ function UpdateProposalTemplate() {
               title:templete.title,
               description:templete.description,
               status:templete.status,
-              createdAt:templete.createdAt, // Send the updated address
-              updatedAt:templete.updatedAt, // Update subscription as needed
+              createdAt:templete.createdAt, 
+              updatedAt:templete.updatedAt, 
             },
             {
               headers: {
@@ -58,7 +58,6 @@ function UpdateProposalTemplate() {
         }
       };
     
-      // Handle input changes for form
       const handleInputChange = (e) => {
         const { name, value } = e.target;
         setTemplete((prevForm) => ({

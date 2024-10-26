@@ -27,7 +27,7 @@ export const Login = () => {
         email,
         password,
       });
-
+      console.log("loginnnnn")
       if (response.status === 200) {
         localStorage.setItem("auth", JSON.stringify(response.data.userInfo));
         localStorage.setItem("token", response.data.token);

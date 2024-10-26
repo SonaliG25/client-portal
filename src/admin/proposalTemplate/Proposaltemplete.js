@@ -3,12 +3,15 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { useEditUserContext } from "../../context/EditUserContext.jsx";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import moment from "moment";
 
 const Proposaltemplete = () => {
-  const [proposalTemplateDetails,setProposalTempleteDetails] = useEditUserContext(); // Destructure setTempleteDetails
-  console.log("temple",proposalTemplateDetails)
-  const [loader,setLoader] = useState(true)
+  const [proposalTemplateDetails, setProposalTempleteDetails] = useEditUserContext();
+  const [loader, setLoader] = useState(true);
   const [proposalTemplete, setProposalTemplete] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); 
+  const [currentPage, setCurrentPage] = useState(1); 
+  const itemsPerPage = 5; 
   const navigate = useNavigate();
   const [auth] = useAuth();
 
@@ -20,33 +23,29 @@ const Proposaltemplete = () => {
     try {
       const res = await axios.get(`http://localhost:3000/proposalTemplate/templates`, {
         headers: {
-          Authorization: `Bearer ${auth?.token}`, // Sending token in Authorization header
+          Authorization: `Bearer ${auth?.token}`,
         },
       });
-
       setProposalTemplete(res.data);
-      console.log("proposaltemplete:", res.data);
-      setLoader(false)
+      setLoader(false);
     } catch (error) {
-      console.error(error); // Log the error for debugging
+      console.error(error);
     }
   };
 
   useEffect(() => {
-    // console.log("auth-test", auth);
     if (auth?.token) {
       getProposalTemplete();
     }
   }, [auth]);
 
   const handleUpdateForm = (data) => {
-     setProposalTempleteDetails(data); // Set the template data in the context
-    console.log("templetedataproposal", proposalTemplateDetails);
+    setProposalTempleteDetails(data);
     navigate("/admin-dashboard/updateproposaltemplete");
   };
 
   const HandleView = (data) => {
-    setProposalTempleteDetails(data)
+    setProposalTempleteDetails(data);
     navigate("/admin-dashboard/viewproposaltemplete");
   };
 
@@ -54,33 +53,103 @@ const Proposaltemplete = () => {
     try {
       const res = await axios.delete(`http://localhost:3000/proposalTemplate/templates/${id}`, {
         headers: {
-          Authorization: `Bearer ${auth?.token}`, // Sending token in Authorization header
+          Authorization: `Bearer ${auth?.token}`,
         },
       });
-      console.log("delete Successful:", res);
       getProposalTemplete();
     } catch (error) {
       console.log(error);
     }
-  }
+  };
+
+  
+  const filteredTemplates = proposalTemplete?.filter((template) => {
+    const searchLower = searchQuery.toLowerCase();
+    const titleMatch = template.title.toLowerCase().includes(searchLower);
+    const descriptionMatch = template.description
+      .replace(/<\/?[^>]+(>|$)/g, "")
+      .toLowerCase()
+      .includes(searchLower);
+    const statusMatch = template.status.toLowerCase().includes(searchLower);
+    const createdAtMatch = moment(template.createdAt).format("MMMM DD, YYYY").toLowerCase().includes(searchLower);
+    const updatedAtMatch = moment(template.updatedAt).format("MMMM DD, YYYY").toLowerCase().includes(searchLower);
+
+    return (
+      titleMatch ||
+      descriptionMatch ||
+      statusMatch ||
+      createdAtMatch ||
+      updatedAtMatch
+    );
+  });
+
+  
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentTemplates = filteredTemplates?.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredTemplates?.length / itemsPerPage);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   return (
-    <div>
-      <div className="content-wrapper">
-        <section className="content-header">
-          <div className="container-fluid">
-            <div className="row m-2">
-              <button onClick={handleClick} className="btn btn-lg btn-success">
-                Add ProposalTemplate
+    <div className="content-wrapper">
+      <section className="content-header">
+        <div className="container-fluid">
+          <div className="row align-items-center justify-content-between my-3">
+            {/* Title */}
+            <div className="col-md-4">
+              <h1 className="text-left">Proposal Template</h1>
+            </div>
+
+            {/* Add Button and Search Bar */}
+            <div className="col-md-8 d-flex justify-content-end">
+              {/* Add Proposal Button */}
+              <button onClick={handleClick} className="btn btn-success mr-3">
+                Add Proposal Template
               </button>
-              <div className="col-12">
-                <div className="card">
-                  <div className="card-body">
-                    {loader ? (
-                      <div className="spinner-border" role="status">
-                        <span className="sr-only">Loading...</span>
-                      </div>
-                    ) : (
+
+              {/* Search Bar */}
+              <div className="form-group mb-0 flex-grow-1">
+                <div className="input-group input-group-lg">
+                  <input
+                    type="search"
+                    className="form-control form-control-lg"
+                    placeholder="Search by Title, Description, Status, CreatedAt, UpdatedAt"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <div className="input-group-append">
+                    <button className="btn btn-outline-secondary btn-lg" type="button">
+                      <i className="fa fa-search" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Table Content */}
+          <div className="row m-2">
+            <div className="col-12">
+              <div className="card">
+                <div className="card-body">
+                  {loader ? (
+                    <div className="spinner-border" role="status">
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  ) : (
+                    <>
                       <table id="example2" className="table table-bordered table-hover">
                         <thead>
                           <tr>
@@ -93,42 +162,72 @@ const Proposaltemplete = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {/* {proposalTemplete.length == 0 ? <tr><td>Data not available</td></tr>} */}
-                          {proposalTemplete?.map((data) => (
-                            <tr key={data._id}>
-                              <td>{data.title}</td>
-                              <td>{data.description}</td>
-                              <td>{data.status}</td>
-                              <td>{data.createdAt}</td>
-                              <td>{data.updatedAt}</td>
-                              <td>
-                                <div className="d-flex justify-content-center">
-                                  <button className="m-1 btn btn-primary"  onClick={()=> HandleView(data)}>
-                                    View
-                                  </button>
-                                  <button className="m-1 btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter" onClick={()=>handleDelete(data?._id)}>
-                                    Delete
-                                  </button>
-                                  <button
-                                    className="m-1 btn btn-dark"
-                                    onClick={() => handleUpdateForm(data)} // Set template details and navigate to edit page
-                                  >
-                                    Edit
-                                  </button>
-                                </div>
+                          {currentTemplates.length === 0 ? (
+                            <tr>
+                              <td colSpan="6" className="text-center">
+                                No matching templates found
                               </td>
                             </tr>
-                          ))}
+                          ) : (
+                            currentTemplates?.map((data) => (
+                              <tr key={data._id}>
+                                <td>{data.title}</td>
+                                <td>{data.description.replace(/<\/?[^>]+(>|$)/g, "")}</td>
+                                <td>{data.status}</td>
+                                <td>{moment(data.createdAt).format("MMMM DD, YYYY")}</td>
+                                <td>{moment(data.updatedAt).format("MMMM DD, YYYY")}</td>
+                                <td>
+                                  <div className="d-flex justify-content-center">
+                                    <button className="m-1 btn btn-primary" onClick={() => HandleView(data)}>
+                                      View
+                                    </button>
+                                    <button
+                                      className="m-1 btn btn-danger"
+                                      data-toggle="modal"
+                                      data-target="#exampleModalCenter"
+                                      onClick={() => handleDelete(data?._id)}
+                                    >
+                                      Delete
+                                    </button>
+                                    <button className="m-1 btn btn-dark" onClick={() => handleUpdateForm(data)}>
+                                      Edit
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))
+                          )}
                         </tbody>
                       </table>
-                    )}
-                  </div>
+
+                      {/* Pagination Controls */}
+                      <div className="pagination d-flex justify-content-between m-2">
+                        <button
+                          className="btn btn-outline-secondary"
+                          disabled={currentPage === 1}
+                          onClick={handlePreviousPage}
+                        >
+                          Previous
+                        </button>
+                        <span className="align-self-center">
+                          Page {currentPage} of {totalPages}
+                        </span>
+                        <button
+                          className="btn btn-outline-secondary"
+                          disabled={currentPage === totalPages}
+                          onClick={handleNextPage}
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
 };
