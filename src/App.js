@@ -16,6 +16,8 @@ import UpdateForm from "./admin/UpdateForm";
 import Proposaltemplete from "./admin/Proposaltemplete";
 import NewProposalTemplete from "./admin/NewProposalTemplate";
 import View from "./admin/View";
+import Products from "./admin/Products";
+import Productlist from "./admin/Productlist";
 
 function App() {
   const router = createBrowserRouter([
@@ -38,15 +40,13 @@ function App() {
           element: <Proposals />,
         },
         {
-          path:'newproposaltemplete',
-          element:<NewProposalTemplete />
-        }
-        ,
+          path: "newproposaltemplete",
+          element: <NewProposalTemplete />,
+        },
         {
-          path:'proposaltemplete',
-          element:<Proposaltemplete />
-        }
-        ,
+          path: "proposaltemplete",
+          element: <Proposaltemplete />,
+        },
         {
           path: "newuser",
           element: <Register />,
@@ -60,10 +60,18 @@ function App() {
           element: <View />, // Render the Login component
         },
         {
+          path: "products", // Route for Update
+          element: <Products />, // Render the Login component
+        },
+        {
+          path: "productlist", // Route for Update
+          element: <Productlist />, // Render the Login component
+        },
+
+        {
           path: "Update", // Route for Update
           element: <UpdateForm />, // Render the Login component
         },
-
       ],
     },
   ]);
