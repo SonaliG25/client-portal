@@ -3,6 +3,7 @@ import { useEditUserContext } from "../../context/EditUserContext";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
+import { BASE_URL } from "../../utils/routeNames.js";
 function ViewProduct() {
   const [productDetails] = useEditUserContext();
   const product = [productDetails];
@@ -30,17 +31,14 @@ function ViewProduct() {
                 <h3>{data.name}</h3>
                 <div className="card">
                   <div className="mb-2 ml-2"></div>
-                  <div className="m-2">
+                  <div className="m-2 d-flex justify-content-center">
                     <img
                       className="img img-fluid img-cover"
-                      src={
-                        data.imgUrl !== undefined
-                          ? data.imgUrl
-                          : "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"
-                      }
+                      src={BASE_URL + data.imageUrl} // Use data.imgUrl for the correct image source
                       alt="product image"
                     />
                   </div>
+
                   <div className="m-2">
                     <div className="d-flex text-start mb-1">
                       <h6 className="w-25">Description</h6>

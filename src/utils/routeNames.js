@@ -1,5 +1,5 @@
 // src/constants/routeNames.js
-
+export const BASE_URL = "http://localhost:3000";
 // Auth Routes
 export const LOGIN = "/login";
 export const REGISTER = "/register";

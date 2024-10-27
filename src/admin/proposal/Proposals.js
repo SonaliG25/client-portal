@@ -1,7 +1,5 @@
 import React from "react";
 
-function Proposal() {
-  return <div className="content-wrapper"></div>;
 function Proposals() {
   return (
     <div className="content-wrapper">

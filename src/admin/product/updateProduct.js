@@ -3,6 +3,9 @@ import { useEditUserContext } from "../../context/EditUserContext";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Typeahead } from "react-bootstrap-typeahead";
+import { BASE_URL } from "../../utils/routeNames.js";
+import "react-bootstrap-typeahead/css/Typeahead.css";
 
 function UpdateProduct() {
   const [productDetails, setProductDetails] = useEditUserContext();
@@ -11,6 +14,9 @@ function UpdateProduct() {
   const [error, setError] = useState(null);
   const [auth] = useAuth();
   const navigate = useNavigate();
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     if (productDetails) {
@@ -62,134 +68,284 @@ function UpdateProduct() {
 
   return (
     <div className="content-wrapper">
-      <section className="content">
-        <div className="container">
-          <h3>Update Product</h3>
-          <form onSubmit={handleSubmit} className="row">
-            <div className="col-md-6">
-              <div className="form-group">
-                <label>Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  className="form-control"
-                  value={product.name}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Description</label>
-                <textarea
-                  name="description"
-                  className="form-control"
-                  value={product.description}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Tags</label>
-                <input
-                  type="text"
-                  name="tags"
-                  className="form-control"
-                  value={product.tags}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Keywords</label>
-                <input
-                  type="text"
-                  name="keywords"
-                  className="form-control"
-                  value={product.keywords}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>SKU</label>
-                <input
-                  type="text"
-                  name="sku"
-                  className="form-control"
-                  value={product.sku}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Purchase Price</label>
-                <input
-                  type="number"
-                  name="purchasePrice"
-                  className="form-control"
-                  value={product.purchasePrice}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>MRP</label>
-                <input
-                  type="number"
-                  name="salePrice"
-                  className="form-control"
-                  value={product.salePrice}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+      <section className="content-header">
+        <div className="container-fluid">
+          <div className="row mb-2">
+            <div className="col-sm-6">
+              <h1 className="text-dark">Update Product</h1>
             </div>
-
-            <div className="col-md-6">
-              <div className="form-group">
-                <label>Category</label>
-                <input
-                  type="text"
-                  name="category"
-                  className="form-control"
-                  value={product.category}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Purchase Type</label>
-                <input
-                  type="text"
-                  name="purchaseType"
-                  className="form-control"
-                  value={product.purchaseType}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Stock</label>
-                <input
-                  type="number"
-                  name="stock"
-                  className="form-control"
-                  value={product.stock}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Image</label>
-                <input
-                  type="file"
-                  name="imgUrl"
-                  className="form-control"
-                  onChange={handleFileChange}
-                />
-              </div>
-              <button type="submit" className="btn btn-primary mt-3">
-                Update Product
-              </button>
+            <div className="col-sm-6">
+              <ol className="breadcrumb float-sm-right">
+                <li className="breadcrumb-item">
+                  <a href="#">Home</a>
+                </li>
+                <li className="breadcrumb-item active">Update Product</li>
+              </ol>
             </div>
-          </form>
+          </div>
         </div>
+      </section>
+
+      <section className="content">
+        <form
+          id="productForm"
+          onSubmit={handleSubmit}
+          className="card card-primary"
+        >
+          <div className="card-header">
+            <h3 className="card-title">Update Product</h3>
+          </div>
+          <div className="card-body">
+            <div className="row">
+              {/* Left Column */}
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label htmlFor="sku">SKU</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="sku"
+                    name="sku"
+                    readOnly={true}
+                    value={product.sku}
+                    onChange={handleChange}
+                    placeholder="Enter SKU"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="name">Product Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="name"
+                    name="name"
+                    value={product.name}
+                    onChange={handleChange}
+                    placeholder="Enter Product Name"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="description">Description</label>
+                  <textarea
+                    className="form-control"
+                    id="description"
+                    name="description"
+                    value={product.description}
+                    onChange={handleChange}
+                    rows="3"
+                    placeholder="Enter Description"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="currency">Currency</label>
+                  <select
+                    className="form-control"
+                    id="currency"
+                    name="currency"
+                    value={product.currency}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="USD">USD - United States Dollar</option>
+                    <option value="EUR">EUR - Euro</option>
+                    <option value="GBP">GBP - British Pound</option>
+                    <option value="INR">INR - Indian Rupee</option>
+                    <option value="JPY">JPY - Japanese Yen</option>
+                    <option value="CAD">CAD - Canadian Dollar</option>
+                    <option value="AUD">AUD - Australian Dollar</option>
+                    <option value="CNY">CNY - Chinese Yuan</option>
+                    <option value="SGD">SGD - Singapore Dollar</option>
+                    <option value="AED">AED - UAE Dirham</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="purchasePrice">Purchase Price</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="purchasePrice"
+                    name="purchasePrice"
+                    value={product.purchasePrice}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter Purchase Price"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="mrp">MRP</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="mrp"
+                    name="mrp"
+                    value={product.mrp}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter MRP"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="salePrice">Sale Price</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="salePrice"
+                    name="salePrice"
+                    value={product.salePrice}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter Sale Price"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      id="isAvailable"
+                      name="isAvailable"
+                      checked={product.isAvailable}
+                      onChange={handleChange}
+                    />
+                    <label className="form-check-label" htmlFor="isAvailable">
+                      Available
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column */}
+              <div className="col-md-6">
+                <div className="form-group">
+                  <img
+                    src={BASE_URL + product.imageUrl}
+                    alt="Selected Preview"
+                    className="img-thumbnail"
+                    width="100"
+                  />
+                </div>
+                <div>
+                  <div className="form-group">
+                    <label htmlFor="imageUpload">Upload Image</label>
+                    <input
+                      type="file"
+                      className="form-control-file"
+                      id="imageUpload"
+                      name="imageUpload"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      required
+                    />
+                  </div>
+
+                  {preview && (
+                    <div className="form-group">
+                      <label>Image Preview:</label>
+                      <img
+                        src={preview}
+                        alt="Selected Preview"
+                        className="img-thumbnail"
+                        width="100"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="form-group">
+                  <label htmlFor="stock">Stock</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="stock"
+                    name="stock"
+                    value={product.stock}
+                    onChange={handleChange}
+                    min="0"
+                    placeholder="Enter Stock"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="category">Category</label>
+
+                  <Typeahead
+                    value={product.category}
+                    id="category"
+                    options={categories}
+                    labelKey="name"
+                    onChange={(selected) => {
+                      setProductDetails((prevData) => ({
+                        ...prevData,
+                        category: selected[0]["name"] || "", // Set selected category or empty string
+                      }));
+                    }}
+                    selected={product.category ? [product.category] : []}
+                    placeholder="Choose a category"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="purchaseType">Purchase Type</label>
+                  <select
+                    className="form-control"
+                    id="purchaseType"
+                    name="purchaseType"
+                    value={product.purchaseType}
+                    onChange={handleChange}
+                  >
+                    <option value="one-time">One-Time</option>
+                    <option value="subscription">Subscription</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="tags">Tags</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="tags"
+                    name="tags"
+                    value={product.tags}
+                    onChange={handleChange}
+                    placeholder="Enter tags, separated by commas"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="keywords">Keywords</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="keywords"
+                    name="keywords"
+                    value={product.keywords}
+                    onChange={handleChange}
+                    placeholder="Enter keywords, separated by commas"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="card-footer">
+            <button type="submit" className="btn btn-primary">
+              Save Product
+            </button>
+          </div>
+        </form>
       </section>
     </div>
   );

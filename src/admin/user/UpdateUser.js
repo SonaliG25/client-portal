@@ -150,7 +150,7 @@ function UpdateForm() {
           <div className="col-md-6">
             <div className="card card-primary">
               <div className="card-header">
-                <h3 className="card-title">Person Information</h3>
+                <h3 className="card-title">Personal Information</h3>
                 <div className="card-tools">
                   <button
                     type="button"
