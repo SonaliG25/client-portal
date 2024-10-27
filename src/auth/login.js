@@ -1,42 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
+import axios from "axios";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [auth, setAuth] = useAuth();
   const navigate = useNavigate();
-
+  useEffect(() => {
+    // Redirect to dashboard if already authenticated
+    if (auth?.user) {
+      auth.user.role === "admin"
+        ? navigate("/admin-dashboard")
+        : navigate("/user-dashboard");
+    }
+  }, [auth, navigate]);
   const handleLogin = async (e) => {
     e.preventDefault();
-    // Placeholder login logic, replace with actual authentication logic
+    setError(""); // Clear previous errors
+
     try {
-      const response = await fetch("http://localhost:3000/user/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const response = await axios.post("http://localhost:3000/user/login", {
+        email,
+        password,
       });
-      if (response.ok) {
-        const data = await response.json(); // Store the token in localStorage
-        localStorage.setItem("token", data.token);
-        // Check if userInfo is valid
-        if (typeof data.userInfo === "object" && data.userInfo !== null) {
-          localStorage.setItem("userInfo", JSON.stringify(data.userInfo)); // Store userInfo
-        } else {
-          console.error("userInfo is not valid:", data.userInfo);
-        }
-        console.log(`userInfo :${localStorage.getItem("userInfo")}`);
-        if (data.userInfo.role === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/"); // Redirect to the dashboard or home page
-        }
+      console.log("loginnnnn");
+      if (response.status === 200) {
+        localStorage.setItem("auth", JSON.stringify(response.data.userInfo));
+        localStorage.setItem("token", response.data.token);
+        setAuth({
+          user: response.data.userInfo,
+          token: response.data.token,
+        });
+
+        response.data.userInfo.role === "admin"
+          ? navigate("/admin-dashboard")
+          : navigate("/user-dashboard");
       } else {
         setError("Invalid email or password");
       }
     } catch (err) {
-      console.log(err);
-      setError("An error occurred, please try again later");
+      if (err.response && err.response.data) {
+        setError("Login failed. Please try again.");
+      } else {
+        setError("An error occurred. Please check your network and try again.");
+      }
     }
   };
 
@@ -48,7 +58,7 @@ export const Login = () => {
       <div className="login-box">
         <div className="login-logo">
           <a href="/">
-            <b>ExcelyTech</b>
+            <b>AppName</b>
           </a>
         </div>
         <div className="card">
@@ -56,7 +66,7 @@ export const Login = () => {
             <p className="login-box-msg">Sign in to start your session</p>
 
             {error && (
-              <div className="alert alert-danger" role="alert">
+              <div className="alert alert-danger text-center" role="alert">
                 {error}
               </div>
             )}
@@ -101,7 +111,6 @@ export const Login = () => {
                     <label htmlFor="remember">Remember Me</label>
                   </div> */}
                 </div>
-
                 <div className="col-4">
                   <button type="submit" className="btn btn-primary btn-block">
                     Sign In
@@ -125,4 +134,4 @@ export const Login = () => {
   );
 };
 
-//  default Login;
+export default Login;

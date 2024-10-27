@@ -1,14 +1,25 @@
+// src/components/ProtectedRoute.js
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate, Outlet, Navigate } from "react-router-dom";
 
-export const ProtectedRoute = ({ element, allowedRoles, userRole }) => {
-  // Check if user has one of the allowed roles
-  if (allowedRoles.includes(userRole)) {
-    return element; // Render the protected component
+const ProtectedRoute = ({ role }) => {
+  const { auth } = useAuth();
+
+  // If the user is not logged in, redirect to the login page
+  if (!auth?.token) {
+    return <Navigate to="/login" replace />;
   }
 
-  // If the user is not authorized, redirect to login or another page
-  return <Navigate to="/login" />;
+  // If the user's role does not match, redirect to the correct dashboard
+  if (auth.user.role !== role) {
+    return (
+      <Navigate
+        to={auth.user.role === "admin" ? "/admin-dashboard" : "/user-dashboard"}
+        replace
+      />
+    );
+  }
 };
 
-//  default ProtectedRoute;
+export default ProtectedRoute;

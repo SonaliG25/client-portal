@@ -1,13 +1,32 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+.pagination button {
+  text-decoration: none; /* Remove underline */
+  background-color: white; /* Set background to white */
+  color: blue; /* Set text color to blue */
+  padding: 10px 15px; /* Add enough space (adjust as needed) */
+  border: 1px solid blue; /* Add border */
+  border-radius: 5px; /* Optional: rounded corners */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+.pagination button:hover {
+  background-color: blue; /* Change background to blue on hover */
+  color: white; /* Change text color to white on hover */
+}
+
+.pagination button:disabled {
+  opacity: 0.5; /* Optional: reduce opacity for disabled buttons */
+  cursor: not-allowed; /* Change cursor to indicate disabled state */
 }

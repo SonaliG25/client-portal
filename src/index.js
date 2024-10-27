@@ -20,15 +20,19 @@ import reportWebVitals from "./reportWebVitals";
 // // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 // reportWebVitals();
 
-import { AuthContextProvider } from "./context/AuthContext.jsx";
-import { SocketContextProvider } from "./context/SocketContext.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import { EditUserProvider } from "./context/EditUserContext.jsx";
+import { ProposalViewProvider } from "./context/ProposalViewContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <AuthContextProvider>
-      {/* <SocketContextProvider> */}
-      <App />
-      {/* </SocketContextProvider> */}
-    </AuthContextProvider>
+    <AuthProvider>
+      <EditUserProvider>
+        <ProposalViewProvider>
+          <App />
+        </ProposalViewProvider>
+        /
+      </EditUserProvider>
+    </AuthProvider>
   </React.StrictMode>
 );
