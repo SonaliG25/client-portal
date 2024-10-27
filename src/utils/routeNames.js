@@ -1,12 +1,12 @@
 // src/constants/routeNames.js
 
 // Auth Routes
-export const LOGIN = '/login';
-export const REGISTER = '/register';
+export const LOGIN = "/login";
+export const REGISTER = "/register";
 
 // Dashboard Routes
-export const ADMIN_DASHBOARD = '/admin-dashboard';
-export const USER_DASHBOARD = '/user-dashboard';
+export const ADMIN_DASHBOARD = "/admin-dashboard";
+export const USER_DASHBOARD = "/user-dashboard";
 
 // Admin Sub-Routes
 export const HOME = `${ADMIN_DASHBOARD}/home`;
@@ -23,13 +23,12 @@ export const VIEW_USER = `${ADMIN_DASHBOARD}/view`;
 export const UPDATE_USER = `${ADMIN_DASHBOARD}/update`;
 
 // Product Management
-export const NEW_PRODUCT = `${ADMIN_DASHBOARD}/newproduct`;
 export const ALL_PRODUCTS = `${ADMIN_DASHBOARD}/product`;
+export const NEW_PRODUCT = `${ADMIN_DASHBOARD}/newproduct`;
 export const ALL_ORDERS = `${ADMIN_DASHBOARD}/orders`;
-
 
 // Client Routes (if any other than dashboard can be added here)
 // e.g. export const CLIENT_PROFILE = '/user-dashboard/profile';
 
 // Fallback/NotFound Route
-export const NOT_FOUND = '*';
+export const NOT_FOUND = "*";

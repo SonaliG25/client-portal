@@ -1,8 +1,8 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Login } from "./auth/login";
-import AdminLayout from "./admin/AdminLayout";
-import Orders from "./admin/Orders";
+import AdminLayout from "./admin/particals/AdminLayout";
+import Orders from "./admin/orders/Orders";
 import Proposals from "./admin/proposal/Proposals";
 import ClientDashboard from "./client/ClientDashboard";
 import Register from "./admin/user/NewUser";
@@ -19,7 +19,7 @@ import NewProduct from "./admin/product/NewProduct";
 import ProtectedRoute from "./auth/ProtectedRoute";
 
 // Import route names
-import * as Routes from "./routeNames";
+import * as Routes from "./utils/routeNames";
 import UserLayout from "./client/UserLayout";
 import GetProposal from "./client/GetProposal";
 import ProposalInfo from "./client/ProposalInfo";

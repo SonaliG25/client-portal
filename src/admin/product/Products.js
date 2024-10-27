@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useEditUserContext } from "../../context/EditUserContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import * as Routes from "../../utils/routeNames";
 
 function Products() {
   const [productDetails, setProductDetails] = useEditUserContext();
@@ -38,7 +39,7 @@ function Products() {
     navigate("/admin-dashboard/viewproduct");
   };
   const handleClick = () => {
-    navigate("/admin-dashboard/newproposaltemplete");
+    navigate(Routes.NEW_PRODUCT);
   };
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -65,7 +66,7 @@ function Products() {
 
   return (
     <div className="content-wrapper">
-       <section className="content-header">
+      <section className="content-header">
         <div className="container-fluid">
           <div className="row align-items-center justify-content-between my-3">
             {/* Title */}
@@ -75,35 +76,37 @@ function Products() {
 
             {/* Add Button and Search Bar */}
             <div className="col-md-8 d-flex justify-content-end">
-             
+              {/* Search Bar */}
+              <div className="form-group mb-0 flex-grow-1 mr-3">
+                {" "}
+                {/* Add mr-3 here */}
+                <div className="input-group input-group-md">
+                  <input
+                    type="search"
+                    className="form-control form-control-md"
+                    placeholder="Search by Product Name"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <div className="input-group-append">
+                    <button
+                      className="btn btn-outline-secondary btn-md"
+                      type="button"
+                    >
+                      <i className="fa fa-search" />
+                    </button>
+                  </div>
+                </div>
+              </div>
 
-             {/* Search Bar */}
-<div className="form-group mb-0 flex-grow-1 mr-3"> {/* Add mr-3 here */}
-  <div className="input-group input-group-md">
-    <input
-      type="search"
-      className="form-control form-control-md"
-      placeholder="Search by Product Name"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-    />
-    <div className="input-group-append">
-      <button className="btn btn-outline-secondary btn-md" type="button">
-        <i className="fa fa-search" />
-      </button>
-    </div>
-  </div>
-</div>
-
-{/* Add Proposal Button */}
-<button onClick={handleClick} className="btn btn-success">
-  Add Product
-</button>
-
+              {/* Add Proposal Button */}
+              <button onClick={handleClick} className="btn btn-success">
+                Add Product
+              </button>
             </div>
           </div>
-          </div>
-          </section>
+        </div>
+      </section>
       <div className="content container">
         {/* <div className="mb-4">
           <input
