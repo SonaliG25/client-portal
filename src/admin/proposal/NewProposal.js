@@ -7,15 +7,6 @@ const ProposalTemplate = () => {
       <h2>Add Proposal</h2>
       <form>
         <div className="form-group">
-          <label htmlFor="recipient">Recipient</label>
-          <input
-            type="text"
-            className="form-control"
-            id="recipient"
-            required
-          />
-        </div>
-        <div className="form-group">
           <label htmlFor="emailTo">Email To</label>
           <input
             type="email"

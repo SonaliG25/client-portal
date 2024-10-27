@@ -27,10 +27,9 @@ const AdminSidebar = () => {
       <div className="sidebar">
         {/* Sidebar user panel (optional) */}
         <div className="user-panel mt-3 pb-3 mb-3 d-flex">
-         
           <div className="info">
             <a href="#" className="d-block">
-             Admin
+              Admin
             </a>
           </div>
         </div>
@@ -73,6 +72,17 @@ const AdminSidebar = () => {
               >
                 <i className="nav-icon fas fa-tachometer-alt"></i>
                 <p>Proposal Templates</p>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="categories"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                <i className="nav-icon fas fa-tachometer-alt"></i>
+                <p>Categories</p>
               </NavLink>
             </li>
             <li className="nav-item">
