@@ -37,7 +37,9 @@ function Products() {
     setProductDetails(data);
     navigate("/admin-dashboard/viewproduct");
   };
-
+  const handleClick = () => {
+    navigate("/admin-dashboard/newproposaltemplete");
+  };
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -63,8 +65,47 @@ function Products() {
 
   return (
     <div className="content-wrapper">
-      <div className="container mt-4">
-        <div className="mb-4">
+       <section className="content-header">
+        <div className="container-fluid">
+          <div className="row align-items-center justify-content-between my-3">
+            {/* Title */}
+            <div className="col-md-4">
+              <h1 className="text-left">Product Catalog</h1>
+            </div>
+
+            {/* Add Button and Search Bar */}
+            <div className="col-md-8 d-flex justify-content-end">
+             
+
+             {/* Search Bar */}
+<div className="form-group mb-0 flex-grow-1 mr-3"> {/* Add mr-3 here */}
+  <div className="input-group input-group-md">
+    <input
+      type="search"
+      className="form-control form-control-md"
+      placeholder="Search by Product Name"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
+    <div className="input-group-append">
+      <button className="btn btn-outline-secondary btn-md" type="button">
+        <i className="fa fa-search" />
+      </button>
+    </div>
+  </div>
+</div>
+
+{/* Add Proposal Button */}
+<button onClick={handleClick} className="btn btn-success">
+  Add Product
+</button>
+
+            </div>
+          </div>
+          </div>
+          </section>
+      <div className="content container">
+        {/* <div className="mb-4">
           <input
             type="text"
             className="form-control"
@@ -72,12 +113,12 @@ function Products() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-        </div>
+        </div> */}
 
         <div className="row">
           {currentProducts.map((product) => (
             <div
-              className="col-md-4"
+              className="col-md-3"
               key={product.id}
               onClick={() => handleView(product)}
             >

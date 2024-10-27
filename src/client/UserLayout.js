@@ -1,6 +1,6 @@
 import React from "react";
-import UserSidebar from "./UserSidebar";
-import UserNavbar from "./UserNavbar";
+import UserSidebar from "./UserSidebar.js";
+import UserNavbar from "./UserNavbar.js";
 
 import { Outlet, useNavigate } from "react-router-dom";
 function UserLayout() {

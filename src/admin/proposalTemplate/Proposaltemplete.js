@@ -114,30 +114,37 @@ const Proposaltemplete = () => {
 
             {/* Add Button and Search Bar */}
             <div className="col-md-8 d-flex justify-content-end">
-              {/* Add Proposal Button */}
-              <button onClick={handleClick} className="btn btn-success mr-3">
-                Add Proposal Template
-              </button>
+             
 
-              {/* Search Bar */}
-              <div className="form-group mb-0 flex-grow-1">
-                <div className="input-group input-group-lg">
-                  <input
-                    type="search"
-                    className="form-control form-control-lg"
-                    placeholder="Search by Title, Description, Status, CreatedAt, UpdatedAt"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <div className="input-group-append">
-                    <button className="btn btn-outline-secondary btn-lg" type="button">
-                      <i className="fa fa-search" />
-                    </button>
-                  </div>
-                </div>
-              </div>
+            {/* Search Bar */}
+<div className="form-group mb-0 flex-grow-1 mr-3"> {/* Add mr-3 here */}
+  <div className="input-group input-group-md">
+    <input
+      type="search"
+      className="form-control form-control-md"
+      placeholder="Search by Title, Status"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
+    <div className="input-group-append">
+      <button className="btn btn-outline-secondary btn-md" type="button">
+        <i className="fa fa-search" />
+      </button>
+    </div>
+  </div>
+</div>
+
+{/* Add Proposal Button */}
+<button onClick={handleClick} className="btn btn-success">
+  Add Proposal Template
+</button>
+
             </div>
           </div>
+          </div>
+          </section>
+         {/* Main content */}
+<section className="content" >
 
           {/* Table Content */}
           <div className="row m-2">
@@ -226,9 +233,9 @@ const Proposaltemplete = () => {
               </div>
             </div>
           </div>
-        </div>
-      </section>
+       </section>
     </div>
+    
   );
 };
 

@@ -9,6 +9,7 @@ export const ADMIN_DASHBOARD = '/admin-dashboard';
 export const USER_DASHBOARD = '/user-dashboard';
 
 // Admin Sub-Routes
+export const HOME = `${ADMIN_DASHBOARD}/home`;
 export const PROPOSALS = `${ADMIN_DASHBOARD}/proposal`;
 export const NEW_PROPOSAL_TEMPLATE = `${ADMIN_DASHBOARD}/newproposaltemplete`;
 export const PROPOSAL_TEMPLATES = `${ADMIN_DASHBOARD}/proposaltempletes`;

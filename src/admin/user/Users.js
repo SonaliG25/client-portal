@@ -86,6 +86,7 @@ const Users = () => {
   return (
     <>
       <div className="content-wrapper">
+      
         <section className="content">
           <div className="container-fluid">
             
@@ -96,17 +97,17 @@ const Users = () => {
                 <div className="row justify-content-center">
                   <div className="col-md-6">
                     <div className="form-group mb-0">
-                      <div className="input-group input-group-lg">
+                      <div className="input-group input-group-md">
                         <input
                           type="search"
-                          className="form-control form-control-lg"
+                          className="form-control form-control-md"
                           placeholder="Search by First Name, Last Name or Phone"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                         />
                         <div className="input-group-append">
                           <button
-                            className="btn btn-lg btn-outline-secondary"
+                            className="btn btn-md btn-outline-secondary"
                             type="button"
                           >
                             <i className="fa fa-search" />

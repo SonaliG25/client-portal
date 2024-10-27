@@ -20,10 +20,11 @@ import ProtectedRoute from "./auth/ProtectedRoute";
 
 // Import route names
 import * as Routes from "./routeNames";
-import UserLayout from "./admin/user/UserLayout";
-import GetProposal from "./admin/user/GetProposal";
-import ProposalInfo from "./admin/user/ProposalInfo";
+import UserLayout from "./client/UserLayout";
+import GetProposal from "./client/GetProposal";
+import ProposalInfo from "./client/ProposalInfo";
 import UpdateProduct from "./admin/product/updateProduct";
+import Home from "./admin/home/home";
 
 function App() {
   const router = createBrowserRouter([
@@ -46,6 +47,7 @@ function App() {
       path: Routes.ADMIN_DASHBOARD,
       element: <AdminLayout />, // Use ProtectedRoute with role-based access
       children: [
+        { path: Routes.HOME, element: <Home /> },
         { path: Routes.PROPOSALS, element: <Proposals /> },
         {
           path: Routes.NEW_PROPOSAL_TEMPLATE,
