@@ -22,82 +22,96 @@ function ViewProduct() {
   return (
     <>
       <div className="content-wrapper">
-        <section className="content-header"></section>
-        {/* Main content */}
+        <section className="content-header">
+          <h1>Product Details</h1>
+        </section>
         <section className="content">
           {product?.map((data) => (
             <div className="row" key={data.id}>
+              {/* Product Info */}
               <div className="col-md-7 mt-1">
-                <h3>{data.name}</h3>
-                <div className="card">
-                  <div className="mb-2 ml-2"></div>
-                  <div className="m-2 d-flex justify-content-center">
-                    <img
-                      className="img img-fluid img-cover"
-                      src={BASE_URL + data.imageUrl} // Use data.imgUrl for the correct image source
-                      alt="product image"
-                    />
+                <div className="card card-primary shadow-sm">
+                  <div className="card-header">
+                    <h3 className="card-title">{data.name}</h3>
                   </div>
-
-                  <div className="m-2">
-                    <div className="d-flex text-start mb-1">
-                      <h6 className="w-25">Description</h6>
-                      <p className="ml-1">{data.description}</p>
+                  <div className="card-body">
+                    <div className="text-center mb-3">
+                      <img
+                        className="img-fluid img-cover rounded"
+                        src={BASE_URL + data.imageUrl}
+                        alt="product image"
+                      />
                     </div>
-                    <div className="d-flex text-start mb-1">
-                      <h6 className="w-25">Tags</h6>
-                      <p className="ml-1">{data.tags}</p>
+                    <div className="mb-3">
+                      <strong>Description:</strong>
+                      <p>{data.description}</p>
                     </div>
-                    <div className="d-flex text-start mb-1">
-                      <h6 className="w-25">Keywords</h6>
-                      <p className="ml-1">{data.keywords}</p>
+                    <div className="mb-3">
+                      <strong>Tags:</strong>
+                      <p>{data.tags}</p>
+                    </div>
+                    <div className="mb-3">
+                      <strong>Keywords:</strong>
+                      <p>{data.keywords}</p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="col-md-5 mt-5">
-                <div className="card p-2 text-start">
-                  <div className="d-flex text-start">
-                    <h6 className="w-25">Sku</h6>
-                    <p className="ml-1">{data.sku}</p>
+
+              {/* Product Pricing and Stock Info */}
+              <div className="col-md-5 mt-1">
+                <div className="card card-info shadow-sm mb-3">
+                  <div className="card-header">
+                    <h3 className="card-title">Pricing Information</h3>
                   </div>
-                  <div className="d-flex text-start">
-                    <h6 className="w-25">Purchase Price</h6>
-                    <p className="ml-1">
-                      {data.currency} {data.purchasePrice}
-                    </p>
-                  </div>
-                  <div className="d-flex text-start">
-                    <h6 className="w-25">MRP</h6>
-                    <p className="ml-1">
-                      {data.currency} {data.salePrice}
-                    </p>
+                  <div className="card-body">
+                    <div className="mb-3">
+                      <strong>SKU:</strong>
+                      <p>{data.sku}</p>
+                    </div>
+                    <div className="mb-3">
+                      <strong>Purchase Price:</strong>
+                      <p>
+                        {data.currency} {data.purchasePrice}
+                      </p>
+                    </div>
+                    <div className="mb-3">
+                      <strong>MRP:</strong>
+                      <p>
+                        {data.currency} {data.salePrice}
+                      </p>
+                    </div>
                   </div>
                 </div>
-                <div className="card p-3 text-start">
-                  <div className="d-flex text-start">
-                    <h6 className="w-25">Category</h6>
-                    <p className="ml-1">{data.category}</p>
+
+                {/* Additional Details */}
+                <div className="card card-secondary shadow-sm">
+                  <div className="card-header">
+                    <h3 className="card-title">Additional Information</h3>
                   </div>
-                  <div className="d-flex text-start">
-                    <h6 className="w-25">Purchase Type</h6>
-                    <p className="ml-1">{data.purchaseType}</p>
-                  </div>
-                  <div className="d-flex text-start">
-                    <h6 className="w-25">Stock</h6>
-                    <p className="ml-1">{data.stock}</p>
-                  </div>
-                  <div className="d-flex text-start">
-                    <h6 className="w-25">Created On</h6>
-                    <p className="ml-1">
-                      {moment(data.createdAt).format("MMMM DD, YYYY")}
-                    </p>
+                  <div className="card-body">
+                    <div className="mb-3">
+                      <strong>Category:</strong>
+                      <p>{data.category}</p>
+                    </div>
+                    <div className="mb-3">
+                      <strong>Purchase Type:</strong>
+                      <p>{data.purchaseType}</p>
+                    </div>
+                    <div className="mb-3">
+                      <strong>Stock:</strong>
+                      <p>{data.stock}</p>
+                    </div>
+                    <div className="mb-3">
+                      <strong>Created On:</strong>
+                      <p>{moment(data.createdAt).format("MMMM DD, YYYY")}</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           ))}
-          <div className="mt-3 mb-3">
+          <div className="text-center mt-4">
             <button className="btn btn-primary" onClick={handleEdit}>
               Edit Product
             </button>

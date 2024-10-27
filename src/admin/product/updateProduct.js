@@ -33,11 +33,16 @@ function UpdateProduct() {
     setProduct({ ...product, [name]: value });
   };
 
+  // Handle file upload change
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setProduct({ ...product, imgUrl: file });
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      const reader = new FileReader();
+      reader.onload = () => setPreview(reader.result);
+      reader.readAsDataURL(selectedFile);
+    }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -230,31 +235,23 @@ function UpdateProduct() {
 
               {/* Right Column */}
               <div className="col-md-6">
-                <div className="form-group">
-                  <img
-                    src={BASE_URL + product.imageUrl}
-                    alt="Selected Preview"
-                    className="img-thumbnail"
-                    width="100"
-                  />
-                </div>
-                <div>
+                {!preview && (
                   <div className="form-group">
-                    <label htmlFor="imageUpload">Upload Image</label>
-                    <input
-                      type="file"
-                      className="form-control-file"
-                      id="imageUpload"
-                      name="imageUpload"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      required
+                    <img
+                      src={BASE_URL + product.imageUrl}
+                      alt="Selected Preview"
+                      className="img-thumbnail"
+                      width="100"
                     />
                   </div>
+                )}
 
+                <div className="form-group">
+                  <label htmlFor="imageUpload" className="font-weight-bold">
+                    Selected Image
+                  </label>
                   {preview && (
                     <div className="form-group">
-                      <label>Image Preview:</label>
                       <img
                         src={preview}
                         alt="Selected Preview"
@@ -263,7 +260,30 @@ function UpdateProduct() {
                       />
                     </div>
                   )}
+                  <div className="input-group">
+                    <div className="custom-file">
+                      <input
+                        type="file"
+                        className="custom-file-input"
+                        id="imageUpload"
+                        name="imageUpload"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        required
+                      />
+                      <label
+                        className="custom-file-label"
+                        htmlFor="imageUpload"
+                      >
+                        Choose file
+                      </label>
+                    </div>
+                  </div>
+                  <small className="form-text text-muted">
+                    Supported formats: JPG, PNG, GIF. Max size: 2MB.
+                  </small>
                 </div>
+
                 <div className="form-group">
                   <label htmlFor="stock">Stock</label>
                   <input

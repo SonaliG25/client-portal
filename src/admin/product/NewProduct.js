@@ -290,29 +290,42 @@ const NewProduct = () => {
               {/* Right Column */}
               <div className="col-md-6">
                 <div className="form-group">
-                  <label htmlFor="imageUpload">Upload Image</label>
-                  <input
-                    type="file"
-                    className="form-control-file"
-                    id="imageUpload"
-                    name="imageUpload"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    required
-                  />
-                </div>
-
-                {preview && (
-                  <div className="form-group">
-                    <label>Image Preview:</label>
-                    <img
-                      src={preview}
-                      alt="Selected Preview"
-                      className="img-thumbnail"
-                      width="100"
-                    />
+                  <label htmlFor="imageUpload" className="font-weight-bold">
+                    Selected Image
+                  </label>
+                  {preview && (
+                    <div className="form-group">
+                      <img
+                        src={preview}
+                        alt="Selected Preview"
+                        className="img-thumbnail"
+                        width="100"
+                      />
+                    </div>
+                  )}
+                  <div className="input-group">
+                    <div className="custom-file">
+                      <input
+                        type="file"
+                        className="custom-file-input"
+                        id="imageUpload"
+                        name="imageUpload"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        required
+                      />
+                      <label
+                        className="custom-file-label"
+                        htmlFor="imageUpload"
+                      >
+                        Choose file
+                      </label>
+                    </div>
                   </div>
-                )}
+                  <small className="form-text text-muted">
+                    Supported formats: JPG, PNG, GIF. Max size: 2MB.
+                  </small>
+                </div>
 
                 <div className="form-group">
                   <label htmlFor="stock">Stock</label>
