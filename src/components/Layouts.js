@@ -32,12 +32,10 @@ function ClientLayout() {
 
 function Layout() {
   const { currentUser } = useContext(AuthContext);
+  console.log(currentUser);
 
-  if (!currentUser) return <Navigate to="/login" />;
-  else {
-    if (currentUser.role === UserRoles.ADMIN) return AdminLayout();
-    else return ClientLayout();
-  }
+  if (currentUser.role === UserRoles.ADMIN) return AdminLayout();
+  else return ClientLayout();
 }
 function AdminLayout() {
   <div className="wrapper">
@@ -60,4 +58,4 @@ function AdminLayout() {
   </div>;
 }
 // Export the components for use in other parts of the application
-export { Layout, ClientLayout, AdminLayout };
+export { ClientLayout, AdminLayout, Layout };

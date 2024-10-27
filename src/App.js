@@ -1,7 +1,11 @@
 import React from "react";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { UserRoles } from "./constants/roles";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 import UserCreationForm from "./admin/NewUser";
@@ -25,64 +29,58 @@ function App() {
       path: "/login", // Route for login
       element: <Login />, // Render the Login component
     },
+
+    { path: "/", element: currentUser ? <Layout /> : <Navigate to="/login" /> },
     // Protected routes for authenticated users
     {
-      path: "/", // Root path for protected routes
-
-      element: <Layout />, // `currentUser.role` is the role of the currently authenticated user
+      path: "/admin", // Admin base path
+      element: (
+        <ProtectedRoute
+          element={<AdminLayout />}
+          allowedRoles={[UserRoles.ADMIN]}
+          userRole={userRole}
+        />
+      ), // Only admins can access the admin layout
       children: [
-        // Admin routes (protected)
         {
-          path: "/", // Admin base path
+          path: "dashboard", // Admin dashboard
           element: (
             <ProtectedRoute
-              element={<AdminLayout />}
+              element={<Dashboard />}
               allowedRoles={[UserRoles.ADMIN]}
               userRole={userRole}
             />
-          ), // Only admins can access the admin layout
-          children: [
-            {
-              path: "/dashboard", // Admin dashboard
-              element: (
-                <ProtectedRoute
-                  element={<Dashboard />}
-                  allowedRoles={[UserRoles.ADMIN]}
-                  userRole={userRole}
-                />
-              ), // Admin dashboard
-            },
-            {
-              path: "/users", // Route for viewing all vendors
-              element: (
-                <ProtectedRoute
-                  element={<UserCreationForm />}
-                  allowedRoles={[UserRoles.ADMIN]}
-                  userRole={userRole}
-                />
-              ), // Only admins can view vendors
-            },
-            {
-              path: "/orders", // Route for viewing all vendors
-              element: (
-                <ProtectedRoute
-                  element={<Orders />}
-                  allowedRoles={[UserRoles.ADMIN]}
-                  userRole={userRole}
-                />
-              ), // Only admins can view vendors
-            },
-            {
-              path: "/proposals", // Route for viewing all vendors
-              element: (
-                <ProtectedRoute
-                  element={<Proposals />}
-                  allowedRoles={[UserRoles.ADMIN]}
-                  userRole={userRole}
-                />
-              ), // Only admins can view vendors
-            },
-          ],
+          ), // Admin dashboard
+        },
+        {
+          path: "users", // Route for viewing all vendors
+          element: (
+            <ProtectedRoute
+              element={<UserCreationForm />}
+              allowedRoles={[UserRoles.ADMIN]}
+              userRole={userRole}
+            />
+          ), // Only admins can view vendors
+        },
+        {
+          path: "orders", // Route for viewing all vendors
+          element: (
+            <ProtectedRoute
+              element={<Orders />}
+              allowedRoles={[UserRoles.ADMIN]}
+              userRole={userRole}
+            />
+          ), // Only admins can view vendors
+        },
+        {
+          path: "proposals", // Route for viewing all vendors
+          element: (
+            <ProtectedRoute
+              element={<Proposals />}
+              allowedRoles={[UserRoles.ADMIN]}
+              userRole={userRole}
+            />
+          ), // Only admins can view vendors
         },
       ],
     },

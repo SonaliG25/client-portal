@@ -25,8 +25,12 @@ export const Login = () => {
         } else {
           console.error("userInfo is not valid:", data.userInfo);
         }
-        console.log(localStorage.getItem("userInfo"));
-        navigate("/"); // Redirect to the dashboard or home page
+        console.log(`userInfo :${localStorage.getItem("userInfo")}`);
+        if (data.userInfo.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/"); // Redirect to the dashboard or home page
+        }
       } else {
         setError("Invalid email or password");
       }
@@ -92,10 +96,10 @@ export const Login = () => {
 
               <div className="row">
                 <div className="col-8">
-                  <div className="icheck-primary">
+                  {/* <div className="icheck-primary">
                     <input type="checkbox" id="remember" />
                     <label htmlFor="remember">Remember Me</label>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="col-4">
@@ -105,17 +109,6 @@ export const Login = () => {
                 </div>
               </div>
             </form>
-
-            <div className="social-auth-links text-center mb-3">
-              <p>- OR -</p>
-              <a href="#" className="btn btn-block btn-primary">
-                <i className="fab fa-facebook mr-2"></i> Sign in using Facebook
-              </a>
-              <a href="#" className="btn btn-block btn-danger">
-                <i className="fab fa-google-plus mr-2"></i> Sign in using
-                Google+
-              </a>
-            </div>
 
             <p className="mb-1">
               <a href="#">I forgot my password</a>

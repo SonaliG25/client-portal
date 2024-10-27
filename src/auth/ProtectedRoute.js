@@ -8,7 +8,7 @@ export const ProtectedRoute = ({ element, allowedRoles, userRole }) => {
   }
 
   // If the user is not authorized, redirect to login or another page
-  return <Navigate to="/" replace />;
+  return <Navigate to="/login" />;
 };
 
 //  default ProtectedRoute;
