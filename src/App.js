@@ -25,6 +25,7 @@ import GetProposal from "./client/GetProposal";
 import ProposalInfo from "./client/ProposalInfo";
 import UpdateProduct from "./admin/product/updateProduct";
 import Home from "./admin/home/home";
+import Category from "./admin/Category/Category";
 
 function App() {
   const router = createBrowserRouter([
@@ -43,12 +44,24 @@ function App() {
         },
       ],
     },
+    // {
+    //   path: "/admin-dashboard",
+    //   element: <AdminLayout />,
+    //   children: [
+    //     {
+    //       path: "category",
+    //       element: <Category />,
+    //     },
+    //   ],
+    // },
+
     {
       path: Routes.ADMIN_DASHBOARD,
       element: <AdminLayout />, // Use ProtectedRoute with role-based access
       children: [
         { path: Routes.HOME, element: <Home /> },
         { path: Routes.PROPOSALS, element: <Proposals /> },
+        { path: Routes.CATEGORYS, element: <Category /> },
         {
           path: Routes.NEW_PROPOSAL_TEMPLATE,
           element: <NewProposalTemplete />,
