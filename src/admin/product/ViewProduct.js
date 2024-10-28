@@ -22,8 +22,11 @@ function ViewProduct() {
   return (
     <>
       <div className="content-wrapper">
-        <section className="content-header">
+        <section className="content-header d-flex justify-content-between align-items-center">
           <h1>Product Details</h1>
+          <button className="btn btn-primary" onClick={handleEdit}>
+            Edit Product
+          </button>
         </section>
         <section className="content">
           {product?.map((data) => (
@@ -111,11 +114,6 @@ function ViewProduct() {
               </div>
             </div>
           ))}
-          <div className="text-center mt-4">
-            <button className="btn btn-primary" onClick={handleEdit}>
-              Edit Product
-            </button>
-          </div>
         </section>
       </div>
     </>

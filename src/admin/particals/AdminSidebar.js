@@ -186,7 +186,7 @@ const AdminSidebar = () => {
             </li>
             <li className="nav-item">
               <NavLink
-                to="product"
+                to="products"
                 className={({ isActive }) =>
                   isActive ? "nav-link active" : "nav-link"
                 }

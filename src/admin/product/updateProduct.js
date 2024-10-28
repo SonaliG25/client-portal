@@ -21,11 +21,32 @@ function UpdateProduct() {
   useEffect(() => {
     if (productDetails) {
       setProduct(productDetails);
+      console.log("ProductDetails", productDetails);
       setLoading(false);
     } else {
       setError("No product details available.");
       setLoading(false);
     }
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/category/allCategory",
+          {
+            headers: {
+              Authorization: `Bearer ${auth?.token}`,
+            },
+          }
+        );
+        setCategories(response.data.categories);
+
+        console.log("categories", categories);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
   }, [productDetails]);
 
   const handleChange = (e) => {
@@ -33,7 +54,6 @@ function UpdateProduct() {
     setProduct({ ...product, [name]: value });
   };
 
-  // Handle file upload change
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
@@ -43,28 +63,52 @@ function UpdateProduct() {
       reader.readAsDataURL(selectedFile);
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    Object.entries(product).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
 
     try {
-      const res = await axios.patch(
-        `http://localhost:3000/product/${product.id}`,
-        formData,
+      let imageUrl = product.imageUrl; // Default to existing image URL
+
+      // Step 1: Upload the image if a new file is selected
+      if (file) {
+        const uploadData = new FormData();
+        uploadData.append("image", file); // "image" should match the field name expected by the server
+
+        const uploadResponse = await axios.post(
+          "http://localhost:3000/upload/productImage",
+          uploadData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${auth?.token}`,
+            },
+          }
+        );
+
+        imageUrl = uploadResponse.data.imageUrl; // Update imageUrl to the uploaded image URL
+        console.log("Image uploaded successfully:", imageUrl);
+      }
+
+      // Step 2: Update product with the new or existing image URL and other form data
+      const updatedProductData = {
+        ...product,
+        imageUrl,
+      };
+      await axios.patch(
+        `http://localhost:3000/product/${product._id}`,
+        updatedProductData,
         {
           headers: {
             Authorization: `Bearer ${auth?.token}`,
           },
         }
       );
-      console.log("Product updated successfully:", res.data);
+
       navigate("/admin-dashboard/products");
     } catch (error) {
       console.error("Error updating product:", error);
-      setError("Error updating product. Please try again.");
+      setError("Failed to update product. Please try again.");
     }
   };
 
@@ -269,7 +313,7 @@ function UpdateProduct() {
                         name="imageUpload"
                         accept="image/*"
                         onChange={handleFileChange}
-                        required
+                        required={file ? true : false} // Only required if a new file is selected
                       />
                       <label
                         className="custom-file-label"
@@ -309,7 +353,10 @@ function UpdateProduct() {
                     onChange={(selected) => {
                       setProductDetails((prevData) => ({
                         ...prevData,
-                        category: selected[0]["name"] || "", // Set selected category or empty string
+                        category:
+                          selected.length > 0 && selected[0]
+                            ? selected[0].name
+                            : "", // Check for selected[0]
                       }));
                     }}
                     selected={product.category ? [product.category] : []}

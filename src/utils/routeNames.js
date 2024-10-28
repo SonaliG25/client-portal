@@ -24,7 +24,7 @@ export const VIEW_USER = `${ADMIN_DASHBOARD}/view`;
 export const UPDATE_USER = `${ADMIN_DASHBOARD}/update`;
 
 // Product Management
-export const ALL_PRODUCTS = `${ADMIN_DASHBOARD}/product`;
+export const ALL_PRODUCTS = `${ADMIN_DASHBOARD}/products`;
 export const NEW_PRODUCT = `${ADMIN_DASHBOARD}/newproduct`;
 export const ALL_ORDERS = `${ADMIN_DASHBOARD}/orders`;
 

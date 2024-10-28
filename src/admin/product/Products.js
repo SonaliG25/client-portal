@@ -73,15 +73,13 @@ function Products() {
           <div className="row align-items-center justify-content-between my-3">
             {/* Title */}
             <div className="col-md-4">
-              <h1 className="text-left">Product Catalog</h1>
+              <h1 className="text-left font-weight-bold">Product Catalog</h1>
             </div>
 
-            {/* Add Button and Search Bar */}
+            {/* Search Bar and Add Button */}
             <div className="col-md-8 d-flex justify-content-end">
               {/* Search Bar */}
               <div className="form-group mb-0 flex-grow-1 mr-3">
-                {" "}
-                {/* Add mr-3 here */}
                 <div className="input-group input-group-md">
                   <input
                     type="search"
@@ -101,25 +99,16 @@ function Products() {
                 </div>
               </div>
 
-              {/* Add Proposal Button */}
-              <button onClick={handleClick} className="btn btn-success">
-                Add Product
+              {/* Add Product Button */}
+              <button onClick={handleClick} className="btn btn-success ml-2">
+                <i className="fas fa-plus mr-1"></i> Add Product
               </button>
             </div>
           </div>
         </div>
       </section>
-      <div className="content container">
-        {/* <div className="mb-4">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search by Product Name"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div> */}
 
+      <div className="content container">
         <div className="row">
           {currentProducts.map((product) => (
             <div
@@ -127,42 +116,57 @@ function Products() {
               key={product.id}
               onClick={() => handleView(product)}
             >
-              <div className="card mb-4 shadow-sm">
+              <div
+                className="card mb-4 shadow-lg border-0"
+                style={{ cursor: "pointer" }}
+              >
                 <img
-                  src={BASE_URL + product.imageUrl}
-                  className="card-img-top"
+                  src={BASE_URL + product.imageUrl} //placeholder.png
+                  className="card-img-top rounded-top"
                   alt={product.name}
+                  style={{ height: "200px", objectFit: "cover" }}
                 />
                 <div className="card-body">
-                  <h5 className="card-title">{product.name}</h5>
-                  <p className="card-text">{product.category}</p>
+                  <h5 className="card-title font-weight-bold">
+                    {product.name}
+                  </h5>
+                  <p className="card-text text-muted mb-1">
+                    {product.category}
+                  </p>
+                  <span className="badge badge-primary">
+                    {product.category === "Electronics" ? "🔌" : "🪑"}{" "}
+                    {product.category}
+                  </span>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
+        {/* Pagination Controls */}
         <div className="d-flex justify-content-between align-items-center my-4">
           <button
-            className="btn btn-primary"
+            className="btn btn-outline-primary"
             onClick={handlePreviousPage}
             disabled={currentPage === 1}
           >
-            Previous
+            <i className="fas fa-arrow-left mr-1"></i> Previous
           </button>
           <span>
-            Page {currentPage} of{" "}
-            {Math.ceil(filteredProducts.length / productsPerPage)}
+            Page <strong>{currentPage}</strong> of{" "}
+            <strong>
+              {Math.ceil(filteredProducts.length / productsPerPage)}
+            </strong>
           </span>
           <button
-            className="btn btn-primary"
+            className="btn btn-outline-primary"
             onClick={handleNextPage}
             disabled={
               currentPage ===
               Math.ceil(filteredProducts.length / productsPerPage)
             }
           >
-            Next
+            Next <i className="fas fa-arrow-right ml-1"></i>
           </button>
         </div>
       </div>
