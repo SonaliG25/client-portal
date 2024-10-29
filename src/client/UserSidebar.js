@@ -1,9 +1,13 @@
+// src/components/UserSidebar.js
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 function UserSidebar() {
   return (
-    <aside className="main-sidebar sidebar-dark-primary elevation-4">
+    <aside
+      className="main-sidebar sidebar-dark-primary elevation-4"
+      style={{ height: "100vh" }}
+    >
       {/* Brand Logo */}
       <a href="index3.html" className="brand-link">
         <img
@@ -15,7 +19,7 @@ function UserSidebar() {
         <span className="brand-text font-weight-light">AdminLTE 3</span>
       </a>
 
-      <div className="sidebar">
+      <div className="sidebar" style={{ height: "100%" }}>
         {/* Sidebar user panel (optional) */}
         <div className="user-panel mt-3 pb-3 mb-3 d-flex">
           <div className="image">
@@ -59,50 +63,6 @@ function UserSidebar() {
               >
                 <i className="nav-icon fas fa-tachometer-alt"></i>
                 <p>Proposals</p>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="proposaltempletes"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                <i className="nav-icon fas fa-tachometer-alt"></i>
-                <p>Proposal Templates</p>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="allusers"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                <i className="nav-icon fas fa-users"></i>
-                <p>Clients</p>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="product"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                <i className="nav-icon fas fa-users"></i>
-                <p>Products</p>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="orders"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                <i className="nav-icon fas fa-cogs"></i>
-                <p>Orders</p>
               </NavLink>
             </li>
           </ul>

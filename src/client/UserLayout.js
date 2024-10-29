@@ -1,20 +1,19 @@
 import React from "react";
-import { useAuth } from "../context/AuthContext.jsx";
+import UserSidebar from "./UserSidebar.js";
+import UserNavbar from "./UserNavbar.js";
+
 import { Outlet, useNavigate } from "react-router-dom";
-import AdminNavbar from "./AdminNavBar.js";
-import AdminSidebar from "./AdminSidebar.js";
-const AdminLayout = () => {
- 
+function UserLayout() {
   return (
     <div className=" wrapper">
-      <AdminNavbar/>
-      <AdminSidebar/>
+      <UserNavbar />
+      <UserSidebar />
       {/* Content section where child routes/components will be displayed */}
       <div className="content">
         <Outlet />
       </div>
     </div>
   );
-};
+}
 
-export default AdminLayout;
+export default UserLayout;

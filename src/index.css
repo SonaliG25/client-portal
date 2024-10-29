@@ -22,11 +22,75 @@ code {
 }
 
 .pagination button:hover {
-  background-color: blue; /* Change background to blue on hover */
-  color: white; /* Change text color to white on hover */
+  background-color: white; /* Change background to blue on hover */
+  color: blue; /* Change text color to white on hover */
 }
 
 .pagination button:disabled {
   opacity: 0.5; /* Optional: reduce opacity for disabled buttons */
   cursor: not-allowed; /* Change cursor to indicate disabled state */
+}
+
+/* dashboard sidebar  */
+/* styles.css or your main CSS file */
+html,
+body {
+  height: 100%; /* Ensure the body takes full height */
+  margin: 0; /* Remove default margin */
+}
+
+.main-sidebar {
+  position: fixed; /* Fix the sidebar to the left */
+  top: 0; /* Align it to the top */
+  bottom: 0; /* Align it to the bottom */
+  left: 0; /* Align it to the left */
+  z-index: 100; /* Ensure it stays on top */
+}
+
+.sidebar {
+  overflow-y: auto; /* Allow vertical scrolling */
+}
+
+.nav-sidebar .nav-item .nav-link {
+  /* You can add padding/margins here for better spacing */
+}
+
+/* user sidebar */
+/* styles.css or your main CSS file */
+html,
+body {
+  height: 100%; /* Ensure the body takes full height */
+  margin: 0; /* Remove default margin */
+}
+
+.main-sidebar {
+  position: fixed; /* Fix the sidebar to the left */
+  top: 0; /* Align it to the top */
+  bottom: 0; /* Align it to the bottom */
+  left: 0; /* Align it to the left */
+  z-index: 100; /* Ensure it stays on top */
+}
+
+.sidebar {
+  overflow-y: auto; /* Allow vertical scrolling */
+  height: 100%; /* Make sure the sidebar takes full height */
+}
+
+.nav-sidebar .nav-item .nav-link {
+  /* You can add padding/margins here for better spacing */
+}
+
+.loading-shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+  background-size: 1000px 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
 }

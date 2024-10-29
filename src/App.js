@@ -1,9 +1,16 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Login } from "./auth/login";
+<<<<<<< HEAD
 import AdminLayout from "./admin/AdminLayout";
 import Orders from "./admin/Orders";
 import Proposals from "./admin/Proposal";
+=======
+import AdminLayout from "./admin/particals/AdminLayout";
+import Orders from "./admin/orders/Orders";
+import Proposals from "./admin/proposal/Proposals";
+import ClientDashboard from "./client/ClientDashboard";
+>>>>>>> 2307d9db475a3ef5d790a2b7f366f46cd938926e
 import Register from "./admin/user/NewUser";
 import ViewProduct from "./admin/product/ViewProduct";
 import Products from "./admin/product/Products";
@@ -16,10 +23,14 @@ import UpdateProposalTemplate from "./admin/proposalTemplate/UpdateProposalTempl
 import ViewProposalTemplete from "./admin/proposalTemplate/ViewProposalTemplete";
 import NewProduct from "./admin/product/NewProduct";
 // Import route names
-import * as Routes from "./routeNames";
-import UserLayout from "./admin/user/UserLayout";
-import GetProposal from "./admin/user/GetProposal";
+import * as Routes from "./utils/routeNames";
+import UserLayout from "./client/UserLayout";
+import GetProposal from "./client/GetProposal";
+import ProposalInfo from "./client/ProposalInfo";
 import UpdateProduct from "./admin/product/updateProduct";
+import Home from "./admin/home/home";
+import Category from "./admin/Category/Category";
+import NewProposal from "./admin/proposal/NewProposal";
 
 
 function App() {
@@ -33,13 +44,21 @@ function App() {
           path: "proposal",
           element: <GetProposal />,
         },
+        {
+          path: "proposal-view",
+          element: <ProposalInfo />,
+        },
       ],
     },
+   
+
     {
       path: Routes.ADMIN_DASHBOARD,
-      element: <AdminLayout />, // Use ProtectedRoute with role-based access
-      children: [
+      element: <AdminLayout />,   children: [
+        { path: Routes.HOME, element: <Home /> },
         { path: Routes.PROPOSALS, element: <Proposals /> },
+        { path: Routes.NEW_PROPOSAL, element: <NewProposal /> },
+        { path: Routes.CATEGORYS, element: <Category /> },
         {
           path: Routes.NEW_PROPOSAL_TEMPLATE,
           element: <NewProposalTemplete />,
@@ -60,8 +79,14 @@ function App() {
         { path: Routes.NEW_PRODUCT, element: <NewProduct /> },
         { path: Routes.ALL_PRODUCTS, element: <Products /> },
         { path: Routes.ALL_ORDERS, element: <Orders /> },
+<<<<<<< HEAD
         { path: "newuser", element: <Register /> }, 
         { path: "allusers", element: <Users /> },    
+=======
+
+        { path: "newuser", element: <Register /> },
+        { path: "allusers", element: <Users /> },
+>>>>>>> 2307d9db475a3ef5d790a2b7f366f46cd938926e
         { path: "view", element: <View /> },
         { path: "Update", element: <UpdateForm /> },
         { path: "updateproposaltemplete", element: <UpdateProposalTemplate /> },

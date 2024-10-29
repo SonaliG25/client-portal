@@ -1,10 +1,9 @@
-import React, { useState,useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import axios from "axios";
 
 export const Login = () => {
-  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -27,7 +26,7 @@ export const Login = () => {
         email,
         password,
       });
-      console.log("loginnnnn")
+      console.log("loginnnnn");
       if (response.status === 200) {
         localStorage.setItem("auth", JSON.stringify(response.data.userInfo));
         localStorage.setItem("token", response.data.token);
@@ -44,7 +43,7 @@ export const Login = () => {
       }
     } catch (err) {
       if (err.response && err.response.data) {
-        setError( "Login failed. Please try again.");
+        setError("Login failed. Please try again.");
       } else {
         setError("An error occurred. Please check your network and try again.");
       }
@@ -107,10 +106,10 @@ export const Login = () => {
 
               <div className="row">
                 <div className="col-8">
-                  <div className="icheck-primary">
+                  {/* <div className="icheck-primary">
                     <input type="checkbox" id="remember" />
                     <label htmlFor="remember">Remember Me</label>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="col-4">
                   <button type="submit" className="btn btn-primary btn-block">
