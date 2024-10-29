@@ -1,9 +1,13 @@
+// src/components/UserSidebar.js
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 function UserSidebar() {
   return (
-    <aside className="main-sidebar sidebar-dark-primary elevation-4">
+    <aside
+      className="main-sidebar sidebar-dark-primary elevation-4"
+      style={{ height: "100vh" }}
+    >
       {/* Brand Logo */}
       <a href="index3.html" className="brand-link">
         <img
@@ -15,7 +19,7 @@ function UserSidebar() {
         <span className="brand-text font-weight-light">AdminLTE 3</span>
       </a>
 
-      <div className="sidebar">
+      <div className="sidebar" style={{ height: "100%" }}>
         {/* Sidebar user panel (optional) */}
         <div className="user-panel mt-3 pb-3 mb-3 d-flex">
           <div className="image">

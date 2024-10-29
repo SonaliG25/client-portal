@@ -86,10 +86,8 @@ const Users = () => {
   return (
     <>
       <div className="content-wrapper">
-      
         <section className="content">
           <div className="container-fluid">
-            
             <div className="m-2 d-flex justify-content-center align-items-center">
               <h2 className=" py-2 text-center">Clients</h2>
 
@@ -121,7 +119,7 @@ const Users = () => {
 
               <button
                 onClick={handleAddUser}
-                className="font-weight-bold btn btn-secondary px-4 py-2 "
+                className="font-weight-bold btn btn-success px-4 py-2 "
               >
                 Add Client
               </button>
