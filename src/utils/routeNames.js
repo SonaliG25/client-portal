@@ -1,5 +1,5 @@
 // src/constants/routeNames.js
-
+export const BASE_URL = "http://localhost:3000";
 // Auth Routes
 export const LOGIN = "/login";
 export const REGISTER = "/register";
@@ -24,9 +24,14 @@ export const VIEW_USER = `${ADMIN_DASHBOARD}/view`;
 export const UPDATE_USER = `${ADMIN_DASHBOARD}/update`;
 
 // Product Management
+export const ALL_PRODUCTS = `${ADMIN_DASHBOARD}/products`;
 export const NEW_PRODUCT = `${ADMIN_DASHBOARD}/newproduct`;
-export const ALL_PRODUCTS = `${ADMIN_DASHBOARD}/product`;
 export const ALL_ORDERS = `${ADMIN_DASHBOARD}/orders`;
+
+// Proposal Routes
+export const ALL_PROPOSALS = `${ADMIN_DASHBOARD}/proposals`;
+export const NEW_PROPOSAL = `${ADMIN_DASHBOARD}/newProposal`;
+export const UPDATE_PROPOSAL = `${ADMIN_DASHBOARD}/updateProposal`;
 
 // Client Routes (if any other than dashboard can be added here)
 // e.g. export const CLIENT_PROFILE = '/user-dashboard/profile';

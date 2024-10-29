@@ -3,6 +3,9 @@ import { useAuth } from "../../context/AuthContext";
 import { useEditUserContext } from "../../context/EditUserContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import * as Routes from "../../utils/routeNames";
+
+import { BASE_URL } from "../../utils/routeNames.js";
 
 function Products() {
   const [productDetails, setProductDetails] = useEditUserContext();
@@ -37,8 +40,8 @@ function Products() {
     setProductDetails(data);
     navigate("/admin-dashboard/viewproduct");
   };
-  const handleClick = () => {
-    navigate("/admin-dashboard/newproposaltemplete");
+  const handleAddProduct = () => {
+    navigate(Routes.NEW_PRODUCT);
   };
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -65,56 +68,50 @@ function Products() {
 
   return (
     <div className="content-wrapper">
-       <section className="content-header">
+      <section className="content-header">
         <div className="container-fluid">
           <div className="row align-items-center justify-content-between my-3">
             {/* Title */}
             <div className="col-md-4">
-              <h1 className="text-left">Product Catalog</h1>
+              <h1 className="text-left font-weight-bold">Product Catalog</h1>
             </div>
 
-            {/* Add Button and Search Bar */}
+            {/* Search Bar and Add Button */}
             <div className="col-md-8 d-flex justify-content-end">
-             
+              {/* Search Bar */}
+              <div className="form-group mb-0 flex-grow-1 mr-3">
+                <div className="input-group input-group-md">
+                  <input
+                    type="search"
+                    className="form-control form-control-md"
+                    placeholder="Search by Product Name"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <div className="input-group-append">
+                    <button
+                      className="btn btn-outline-secondary btn-md"
+                      type="button"
+                    >
+                      <i className="fa fa-search" />
+                    </button>
+                  </div>
+                </div>
+              </div>
 
-             {/* Search Bar */}
-<div className="form-group mb-0 flex-grow-1 mr-3"> {/* Add mr-3 here */}
-  <div className="input-group input-group-md">
-    <input
-      type="search"
-      className="form-control form-control-md"
-      placeholder="Search by Product Name"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-    />
-    <div className="input-group-append">
-      <button className="btn btn-outline-secondary btn-md" type="button">
-        <i className="fa fa-search" />
-      </button>
-    </div>
-  </div>
-</div>
-
-{/* Add Proposal Button */}
-<button onClick={handleClick} className="btn btn-success">
-  Add Product
-</button>
-
+              {/* Add Product Button */}
+              <button
+                onClick={handleAddProduct}
+                className="btn btn-success ml-2"
+              >
+                <i className="fas fa-plus mr-1"></i> Add Product
+              </button>
             </div>
           </div>
-          </div>
-          </section>
-      <div className="content container">
-        {/* <div className="mb-4">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search by Product Name"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div> */}
+        </div>
+      </section>
 
+      <div className="content container">
         <div className="row">
           {currentProducts.map((product) => (
             <div
@@ -122,44 +119,58 @@ function Products() {
               key={product.id}
               onClick={() => handleView(product)}
             >
-              <div className="card mb-4 shadow-sm">
+              <div
+                className="card mb-4 shadow-lg border-0"
+                style={{ cursor: "pointer" }}
+              >
                 <img
-                  src={
-                    "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"
-                  }
-                  className="card-img-top"
+                 onError={(e) => (e.target.src = BASE_URL + "/uploads/placeholder.png")}
+                  src={BASE_URL + product.imageUrl} //placeholder.png
+                  className="card-img-top rounded-top"
                   alt={product.name}
+                  style={{ height: "200px", objectFit: "cover" }}
                 />
                 <div className="card-body">
-                  <h5 className="card-title">{product.name}</h5>
-                  <p className="card-text">{product.category}</p>
+                  <h5 className="card-title font-weight-bold">
+                    {product.name}
+                  </h5>
+                  <p className="card-text text-muted mb-1">
+                    {product.category}
+                  </p>
+                  <span className="badge badge-primary">
+                    {product.category === "Electronics" ? "🔌" : "🪑"}{" "}
+                    {product.category}
+                  </span>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
+        {/* Pagination Controls */}
         <div className="d-flex justify-content-between align-items-center my-4">
           <button
-            className="btn btn-primary"
+            className="btn btn-outline-primary"
             onClick={handlePreviousPage}
             disabled={currentPage === 1}
           >
-            Previous
+            <i className="fas fa-arrow-left mr-1"></i> Previous
           </button>
           <span>
-            Page {currentPage} of{" "}
-            {Math.ceil(filteredProducts.length / productsPerPage)}
+            Page <strong>{currentPage}</strong> of{" "}
+            <strong>
+              {Math.ceil(filteredProducts.length / productsPerPage)}
+            </strong>
           </span>
           <button
-            className="btn btn-primary"
+            className="btn btn-outline-primary"
             onClick={handleNextPage}
             disabled={
               currentPage ===
               Math.ceil(filteredProducts.length / productsPerPage)
             }
           >
-            Next
+            Next <i className="fas fa-arrow-right ml-1"></i>
           </button>
         </div>
       </div>

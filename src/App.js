@@ -1,8 +1,8 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Login } from "./auth/login";
-import AdminLayout from "./admin/AdminLayout";
-import Orders from "./admin/Orders";
+import AdminLayout from "./admin/particals/AdminLayout";
+import Orders from "./admin/orders/Orders";
 import Proposals from "./admin/proposal/Proposals";
 import ClientDashboard from "./client/ClientDashboard";
 import Register from "./admin/user/NewUser";
@@ -19,13 +19,14 @@ import NewProduct from "./admin/product/NewProduct";
 import ProtectedRoute from "./auth/ProtectedRoute";
 
 // Import route names
-import * as Routes from "./routeNames";
+import * as Routes from "./utils/routeNames";
 import UserLayout from "./client/UserLayout";
 import GetProposal from "./client/GetProposal";
 import ProposalInfo from "./client/ProposalInfo";
 import UpdateProduct from "./admin/product/updateProduct";
 import Home from "./admin/home/home";
 import Category from "./admin/Category/Category";
+import NewProposal from "./admin/proposal/NewProposal";
 
 function App() {
   const router = createBrowserRouter([
@@ -44,23 +45,14 @@ function App() {
         },
       ],
     },
-    // {
-    //   path: "/admin-dashboard",
-    //   element: <AdminLayout />,
-    //   children: [
-    //     {
-    //       path: "category",
-    //       element: <Category />,
-    //     },
-    //   ],
-    // },
+   
 
     {
       path: Routes.ADMIN_DASHBOARD,
-      element: <AdminLayout />, // Use ProtectedRoute with role-based access
-      children: [
+      element: <AdminLayout />,   children: [
         { path: Routes.HOME, element: <Home /> },
         { path: Routes.PROPOSALS, element: <Proposals /> },
+        { path: Routes.NEW_PROPOSAL, element: <NewProposal /> },
         { path: Routes.CATEGORYS, element: <Category /> },
         {
           path: Routes.NEW_PROPOSAL_TEMPLATE,
@@ -82,6 +74,7 @@ function App() {
         { path: Routes.NEW_PRODUCT, element: <NewProduct /> },
         { path: Routes.ALL_PRODUCTS, element: <Products /> },
         { path: Routes.ALL_ORDERS, element: <Orders /> },
+
         { path: "newuser", element: <Register /> },
         { path: "allusers", element: <Users /> },
         { path: "view", element: <View /> },
