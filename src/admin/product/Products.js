@@ -88,7 +88,6 @@ function Products() {
             <div className="col-md-4">
               <h1 className="text-left font-weight-bold">Product Catalog</h1>
             </div>
-
             {/* Search Bar and Add Button */}
             <div className="col-md-8 d-flex justify-content-end">
               {/* Search Bar */}
