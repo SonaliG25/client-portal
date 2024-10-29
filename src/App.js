@@ -79,14 +79,9 @@ function App() {
         { path: Routes.NEW_PRODUCT, element: <NewProduct /> },
         { path: Routes.ALL_PRODUCTS, element: <Products /> },
         { path: Routes.ALL_ORDERS, element: <Orders /> },
-<<<<<<< HEAD
-        { path: "newuser", element: <Register /> }, 
-        { path: "allusers", element: <Users /> },    
-=======
 
         { path: "newuser", element: <Register /> },
         { path: "allusers", element: <Users /> },
->>>>>>> 2307d9db475a3ef5d790a2b7f366f46cd938926e
         { path: "view", element: <View /> },
         { path: "Update", element: <UpdateForm /> },
         { path: "updateproposaltemplete", element: <UpdateProposalTemplate /> },
