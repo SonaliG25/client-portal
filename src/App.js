@@ -1,16 +1,10 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Login } from "./auth/login";
-<<<<<<< HEAD
-import AdminLayout from "./admin/AdminLayout";
-import Orders from "./admin/Orders";
-import Proposals from "./admin/Proposal";
-=======
 import AdminLayout from "./admin/particals/AdminLayout";
 import Orders from "./admin/orders/Orders";
 import Proposals from "./admin/proposal/Proposals";
 import ClientDashboard from "./client/ClientDashboard";
->>>>>>> 2307d9db475a3ef5d790a2b7f366f46cd938926e
 import Register from "./admin/user/NewUser";
 import ViewProduct from "./admin/product/ViewProduct";
 import Products from "./admin/product/Products";

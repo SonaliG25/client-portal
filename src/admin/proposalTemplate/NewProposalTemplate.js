@@ -97,7 +97,7 @@ function NewProposalTemplete  ()  {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="inputName">description</label>
+                    <label htmlFor="inputName">Description</label>
            
                                 <JoditEditor
                                 ref={editor}
