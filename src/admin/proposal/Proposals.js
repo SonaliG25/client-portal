@@ -61,6 +61,7 @@ function Proposals() {
           </div>
         </div>
       </section>
+
       {/* Main content */}
       <section className="content">
         {/* Table Content */}
@@ -68,53 +69,49 @@ function Proposals() {
           <div className="col-12">
             <div className="card">
               <div className="card-body">
-                <>
-                  <table
-                    id="example2"
-                    className="table table-bordered table-hover"
-                  >
-                    <thead>
-                      <tr>
-                        <th>Proposed To</th>
-                        <th>Title</th>
-                        <th>SentOn</th>
-                        <th className="text-center">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td colSpan="3" className="text-center">
-                          No matching Proposal found
-                        </td>
+                <table
+                  id="example2"
+                  className="table table-bordered table-hover"
+                >
+                  <thead>
+                    <tr>
+                      <th>Proposed To</th>
+                      <th>Title</th>
+                      <th>Sent On</th>
+                      <th className="text-center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* You can replace this with dynamic data */}
+                    <tr>
+                      <td colSpan="3" className="text-center">
+                        No matching Proposal found
+                      </td>
+                      <td>
+                        <div className="d-flex justify-content-center">
+                          <button className="m-1 btn btn-primary">View</button>
+                          <button
+                            className="m-1 btn btn-danger"
+                            data-toggle="modal"
+                            data-target="#exampleModalCenter"
+                          >
+                            Delete
+                          </button>
+                          <button className="m-1 btn btn-dark">Edit</button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
 
-                        <td>
-                          <div className="d-flex justify-content-center">
-                            <button className="m-1 btn btn-primary">
-                              View
-                            </button>
-                            <button
-                              className="m-1 btn btn-danger"
-                              data-toggle="modal"
-                              data-target="#exampleModalCenter"
-                            >
-                              Delete
-                            </button>
-                            <button className="m-1 btn btn-dark">Edit</button>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-
-                  {/* Pagination Controls */}
-                  <div className="pagination d-flex justify-content-between m-2">
-                    <button className="btn btn-outline-secondary">
-                      Previous
-                    </button>
-                    <span className="align-self-center">Page</span>
-                    <button className="btn btn-outline-secondary">Next</button>
-                  </div>
-                </>
+                {/* Pagination Controls */}
+                <div className="pagination d-flex justify-content-between m-2">
+                  <button className="btn btn-outline-secondary">
+                    Previous
+                  </button>
+                  <span className="align-self-center">Page</span>
+                  <button className="btn btn-outline-secondary">Next</button>
+                </div>
               </div>
             </div>
           </div>

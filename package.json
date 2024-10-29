@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@stripe/stripe-js": "^4.9.0",
     "axios": "^1.7.7",
     "cra-template": "1.2.0",
     "jodit-react": "^4.1.2",

@@ -1,12 +1,13 @@
-import React, { useEffect, useState }  from 'react'
+import React, { useEffect, useState,useRef }  from 'react'
 import axios from "axios";
 import { useEditUserContext } from '../../context/EditUserContext.jsx';
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
+import JoditEditor from "jodit-react"
 
 function UpdateProposalTemplate() {
     const [proposalTempleteDetails,setPropposalTemplete] = useEditUserContext()
-    
+    const editor =useRef(null)
     const [auth] = useAuth(); 
   const navigate = useNavigate();
     const [templete, setTemplete] = useState({
@@ -21,7 +22,7 @@ function UpdateProposalTemplate() {
         if (proposalTempleteDetails) {
           setTemplete({
             title: proposalTempleteDetails.title || "",
-            description: proposalTempleteDetails.description.replace(/<\/?[^>]+(>|$)/g, "") || "",
+            description: proposalTempleteDetails.description || "",
             status: proposalTempleteDetails.status || "",
             createdAt:proposalTempleteDetails.createdAt || "",
             updatedAt:proposalTempleteDetails.updatedAt || ""
@@ -65,6 +66,13 @@ function UpdateProposalTemplate() {
           [name]: value,
         }));
       };
+
+      const handleDescriptionChange = (newContent) => {
+        setTemplete((prevForm) => ({
+          ...prevForm,
+          description: newContent,  // Update description with the new content (HTML)
+        }));
+    };
 
   return (
     <div className="content-wrapper">
@@ -118,51 +126,14 @@ function UpdateProposalTemplate() {
                 </div>
                 <div className="form-group">
                   <label htmlFor="description">Description</label>
-                  <input
-                    type="text"
-                    id="description"
-                    name="description"
-                    value={templete.description}
-                    onChange={handleInputChange}
-                    className="form-control"
-                  />
+                  <JoditEditor
+                                ref={editor}
+                                value={templete.description}
+                                
+                                onChange={(newContent) => handleDescriptionChange(newContent)}
+                              />
                 </div>
-                <div className="form-group">
-                  <label htmlFor="status">status</label>
-                  <input
-                    type="text"
-                    id="status"
-                    name="status"
-                    value={templete.status}
-                    onChange={handleInputChange}
-                    className="form-control"
-                    readOnly
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="createdAt">CreatedAt</label>
-                  <input
-                    type="text"
-                    id="createdAt"
-                    name="createdAt"
-                    value={templete.createdAt}
-                    onChange={handleInputChange}
-                    className="form-control"
-                    readOnly
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="updatedAt">UpdatedAt</label>
-                  <input
-                    type="text"
-                    id="updatedAt"
-                    name="updatedAt"
-                    value={templete.updatedAt}
-                    onChange={handleInputChange}
-                    className="form-control"
-                    readOnly
-                  />
-                </div>
+               
               </div>
               {/* /.card-body */}
             </div>
