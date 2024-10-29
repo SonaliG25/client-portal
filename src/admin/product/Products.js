@@ -124,6 +124,7 @@ function Products() {
                 style={{ cursor: "pointer" }}
               >
                 <img
+                 onError={(e) => (e.target.src = BASE_URL + "/uploads/placeholder.png")}
                   src={BASE_URL + product.imageUrl} //placeholder.png
                   className="card-img-top rounded-top"
                   alt={product.name}

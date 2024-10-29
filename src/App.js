@@ -45,21 +45,11 @@ function App() {
         },
       ],
     },
-    // {
-    //   path: "/admin-dashboard",
-    //   element: <AdminLayout />,
-    //   children: [
-    //     {
-    //       path: "category",
-    //       element: <Category />,
-    //     },
-    //   ],
-    // },
+   
 
     {
       path: Routes.ADMIN_DASHBOARD,
-      element: <AdminLayout />, // Use ProtectedRoute with role-based access
-      children: [
+      element: <AdminLayout />,   children: [
         { path: Routes.HOME, element: <Home /> },
         { path: Routes.PROPOSALS, element: <Proposals /> },
         { path: Routes.NEW_PROPOSAL, element: <NewProposal /> },

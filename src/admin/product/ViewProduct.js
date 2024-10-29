@@ -40,6 +40,8 @@ function ViewProduct() {
                   <div className="card-body">
                     <div className="text-center mb-3">
                       <img
+                       onError={(e) => (e.target.src = BASE_URL + "/uploads/placeholder.png")}
+                
                         className="img-fluid img-cover rounded"
                         src={BASE_URL + data.imageUrl}
                         alt="product image"

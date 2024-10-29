@@ -282,6 +282,8 @@ function UpdateProduct() {
                 {!preview && (
                   <div className="form-group">
                     <img
+                     onError={(e) => (e.target.src = BASE_URL + "/uploads/placeholder.png")}
+                
                       src={BASE_URL + product.imageUrl}
                       alt="Selected Preview"
                       className="img-thumbnail"
