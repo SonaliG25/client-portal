@@ -40,7 +40,7 @@ function Products() {
     setProductDetails(data);
     navigate("/admin-dashboard/viewproduct");
   };
-  const handleClick = () => {
+  const handleAddProduct = () => {
     navigate(Routes.NEW_PRODUCT);
   };
   const filteredProducts = products.filter((product) =>
@@ -100,7 +100,10 @@ function Products() {
               </div>
 
               {/* Add Product Button */}
-              <button onClick={handleClick} className="btn btn-success ml-2">
+              <button
+                onClick={handleAddProduct}
+                className="btn btn-success ml-2"
+              >
                 <i className="fas fa-plus mr-1"></i> Add Product
               </button>
             </div>

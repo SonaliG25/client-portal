@@ -1,6 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+// import { useEditUserContext } from "../../context/EditUserContext";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import * as Routes from "../../utils/routeNames";
 
 function Proposals() {
+  const [proposals, setProposals] = useState([]);
+  //Search for Proposal
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredProposals = proposals.filter((proposal) =>
+    proposal.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const navigate = useNavigate();
+  const handleAddProposal = () => {
+    navigate(Routes.NEW_PROPOSAL);
+  };
+
   return (
     <div className="content-wrapper">
       <section className="content-header">
@@ -8,20 +24,20 @@ function Proposals() {
           <div className="row align-items-center justify-content-between my-3">
             {/* Title */}
             <div className="col-md-4">
-              <h1 className="text-left">Proposal </h1>
+              <h1 className="text-left font-weight-bold">Proposals</h1>
             </div>
 
-            {/* Add Button and Search Bar */}
+            {/* Search Bar and Add Button */}
             <div className="col-md-8 d-flex justify-content-end">
               {/* Search Bar */}
               <div className="form-group mb-0 flex-grow-1 mr-3">
-                {" "}
-                {/* Add mr-3 here */}
                 <div className="input-group input-group-md">
                   <input
                     type="search"
                     className="form-control form-control-md"
-                    placeholder="Search by Title, Status"
+                    placeholder="Search by Product Name"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                   />
                   <div className="input-group-append">
                     <button
@@ -34,8 +50,13 @@ function Proposals() {
                 </div>
               </div>
 
-              {/* Add Proposal Button */}
-              <button className="btn btn-success">Add Proposal </button>
+              {/* Add Product Button */}
+              <button
+                onClick={handleAddProposal}
+                className="btn btn-success ml-2"
+              >
+                <i className="fas fa-plus mr-1"></i> Add Proposal
+              </button>
             </div>
           </div>
         </div>

@@ -26,6 +26,7 @@ import ProposalInfo from "./client/ProposalInfo";
 import UpdateProduct from "./admin/product/updateProduct";
 import Home from "./admin/home/home";
 import Category from "./admin/Category/Category";
+import NewProposal from "./admin/proposal/NewProposal";
 
 function App() {
   const router = createBrowserRouter([
@@ -61,6 +62,7 @@ function App() {
       children: [
         { path: Routes.HOME, element: <Home /> },
         { path: Routes.PROPOSALS, element: <Proposals /> },
+        { path: Routes.NEW_PROPOSAL, element: <NewProposal /> },
         { path: Routes.CATEGORYS, element: <Category /> },
         {
           path: Routes.NEW_PROPOSAL_TEMPLATE,
@@ -82,6 +84,7 @@ function App() {
         { path: Routes.NEW_PRODUCT, element: <NewProduct /> },
         { path: Routes.ALL_PRODUCTS, element: <Products /> },
         { path: Routes.ALL_ORDERS, element: <Orders /> },
+
         { path: "newuser", element: <Register /> },
         { path: "allusers", element: <Users /> },
         { path: "view", element: <View /> },
