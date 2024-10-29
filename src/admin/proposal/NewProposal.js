@@ -25,7 +25,6 @@ const NewProposal = () => {
     minHeight: 400,
     readonly: false,
     toolbarSticky: false,
-    // Define specific toolbar buttons and exclude the microphone button
     buttons: [
       "bold",
       "italic",

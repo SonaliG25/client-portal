@@ -44,7 +44,7 @@ function Products() {
   const handleView = (data) => {
     setProductDetails(data);
     console.log("hhgb", productDetails);
-    
+
     navigate("/admin-dashboard/viewproduct");
   };
   const handleAddProduct = () => {
@@ -167,7 +167,9 @@ function Products() {
           <button
             className="btn btn-outline-primary"
             onClick={handleNextPage}
-            disabled={currentPage === Math.ceil(totalProducts / productsPerPage)}
+            disabled={
+              currentPage === Math.ceil(totalProducts / productsPerPage)
+            }
           >
             Next <i className="fas fa-arrow-right ml-1"></i>
           </button>
