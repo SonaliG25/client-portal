@@ -1,10 +1,11 @@
-import React, { useState, navigate, useEffect } from "react";
+import React, { useState, navigate, useRef, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
-
+import { Modal } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import { useNavigate } from "react-router-dom";
+import JoditEditor from "jodit-react";
 import {
   Button,
   Card,
@@ -19,6 +20,32 @@ import {
 const NewProposal = () => {
   const navigate = useNavigate();
   const [auth] = useAuth();
+  const editor = useRef(null);
+  const editorConfig = {
+    minHeight: 400,
+    readonly: false,
+    toolbarSticky: false,
+    // Define specific toolbar buttons and exclude the microphone button
+    buttons: [
+      "bold",
+      "italic",
+      "underline",
+      "strikethrough",
+      "ul",
+      "ol",
+      "font",
+      "fontsize",
+      "paragraph",
+      "image",
+      "link",
+      "align",
+      "undo",
+      "redo",
+    ],
+    showXPathInStatusbar: false,
+    spellcheck: false,
+  };
+
   const [proposalData, setProposalData] = useState({
     emailTo: "",
     title: "",
@@ -36,6 +63,11 @@ const NewProposal = () => {
   });
 
   const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [proposalTemplates, setProposalTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState(null);
 
   // Fetch Users
   useEffect(() => {
@@ -52,12 +84,45 @@ const NewProposal = () => {
         console.error("Error fetching Users:", error);
       }
     };
+    const fetchProposalTemplates = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:3000/proposalTemplate/templates`,
+          {
+            headers: {
+              Authorization: `Bearer ${auth?.token}`,
+            },
+          }
+        );
+        setProposalTemplates(res.data);
+        console.log("Template : ", res.data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
 
+    fetchProposalTemplates();
     fetchUsers();
-  }, []);
+  }, [auth]);
+
+  const handleTemplateSelect = (templateContent) => {
+    setProposalData((prevData) => ({
+      ...prevData,
+      content: templateContent,
+    }));
+    console.log("Selected TEmplate is : ", proposalData.content);
+    setShowModal(false);
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProposalData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditorChange = (content) => {
+    setProposalData((prevData) => ({
+      ...prevData,
+      content,
+    }));
   };
 
   const handleProductChange = (index, e) => {
@@ -106,25 +171,12 @@ const NewProposal = () => {
               <FormGroup>
                 <Label>Email To</Label>
                 <Typeahead
-                  id="user"
+                  id="user-selector"
                   options={users}
-                  labelKey="emailTo"
-                  // onChange={(selected) => {
-                  //   setFormData((prevData) => ({
-                  //     ...prevData,
-                  //     user: selected[0] || "", // Set selected category or empty string
-                  //   }
-                  // ));
-                  // }}
-                  // selected={formData.category ? [formData.category] : []}
-                  placeholder="Choose a category"
-                />
-                <Input
-                  type="email"
-                  name="emailTo"
-                  value={proposalData.emailTo}
-                  onChange={handleInputChange}
-                  required
+                  labelKey="email" // Adjust based on your user object, e.g., 'email' or 'name'
+                  onChange={(selected) => setSelectedUser(selected[0] || null)}
+                  selected={selectedUser ? [selectedUser] : []}
+                  placeholder="Choose a user"
                 />
               </FormGroup>
               <FormGroup>
@@ -137,13 +189,52 @@ const NewProposal = () => {
                   required
                 />
               </FormGroup>
+              {/* Proposal Template Selection */}
+              <Button onClick={() => setShowModal(true)}>
+                Select Proposal Template
+              </Button>
+
+              <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton className="bg-dark">
+                  <Modal.Title className="text-white">
+                    Select a Proposal Template
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <ul className="list-unstyled">
+                    {proposalTemplates.map((template) => (
+                      <li key={template._id} className="mb-2">
+                        <button
+                          className="btn btn-secondary btn-block text-left"
+                          onClick={() =>
+                            handleTemplateSelect(template.description)
+                          }
+                        >
+                          <i className="fas fa-file-alt mr-2"></i>
+                          {template.title}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </Modal.Body>
+                <Modal.Footer>
+                  <button
+                    className="btn btn-dark"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Close
+                  </button>
+                </Modal.Footer>
+              </Modal>
+
               <FormGroup>
                 <Label>Content</Label>
-                <Input
-                  type="textarea"
-                  name="content"
+
+                <JoditEditor
+                  ref={editor}
+                  config={editorConfig}
                   value={proposalData.content}
-                  onChange={handleInputChange}
+                  onChange={handleEditorChange}
                 />
               </FormGroup>
 
