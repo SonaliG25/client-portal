@@ -5,10 +5,38 @@ import { useNavigate } from 'react-router-dom';
 
 function ViewProduct() {
     const [productDetails] = useEditUserContext();
-    const product = [productDetails];
+    const product = [productDetails]
+    
+    // const [product,setProduct] = useState({
+    //     name:productDetails[0].name || "",
+    //     description:productDetails[0].description || "",
+    //     tags:productDetails[0].tags || "",
+    //     keywords:productDetails[0].keywords || "",
+    //     category:productDetails[0].category || "",
+    //     mrp:productDetails[0].mrp || "",
+    //     salePrice:productDetails[0].salePrice || "",
+    //     purchasePrice:productDetails[0].purchasePrice || "",
+    //     purchaseType:productDetails[0].purchaseType || "",
+    //     stock:productDetails[0].stock || "",
+    //     sku:productDetails[0].sku || "",
+    // });
     const navigate = useNavigate();
+    useEffect(() => {
+        console.log("view proposal",productDetails);
+        
+        const handleBeforeUnload = (e) => {
+            e.preventDefault();
+            e.returnValue = ''; // Some browsers require returnValue to be set for the dialog to show
+        };
 
-    console.log("Product Details:", Array.isArray(productDetails), productDetails);
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);
+
+    console.log("Product Details:", Array.isArray(productDetails), productDetails.name);
 
     const handleEdit = () => {
         navigate('/admin-dashboard/updateproduct'); 
@@ -16,16 +44,21 @@ function ViewProduct() {
 
     return (
         <>
-            <div className="content-wrapper">
-                <section className="content-header">
+            <div className="content-wrapper ">
+            {product?.map((data) => (             
+                <div className='m-3'> 
+                <div className="d-flex justify-content-between align-items-center m-2"> 
+                <h3 className="mb-0">{data.name}</h3> 
+                <button className="btn btn-primary mt-2" onClick={handleEdit}>
+                    Edit Product
+                </button>
+            </div>
+                <section className="content m-2">
                     
-                </section>
-                {/* Main content */}
-                <section className="content">
-                    {product?.map((data) => (
                         <div className="row" key={data.id}>
-                            <div className="col-md-7 mt-1">
-                                <h3>{data.name}</h3>
+                        <div className="col-md-7 mt-1">
+                            
+                               
                                 <div className='card'>
                                     <div className='mb-2 ml-2'></div>
                                     <div className='m-2'>
@@ -63,6 +96,10 @@ function ViewProduct() {
                                     </div>
                                     <div className='d-flex text-start'>
                                         <h6 className='w-25'>MRP</h6>
+                                        <p className='ml-1'>{data.currency} {data.mrp}</p>
+                                    </div>
+                                    <div className='d-flex text-start'>
+                                        <h6 className='w-25'>Sale Price</h6>
                                         <p className='ml-1'>{data.currency} {data.salePrice}</p>
                                     </div>
                                 </div>
@@ -86,13 +123,10 @@ function ViewProduct() {
                                 </div>
                             </div>
                         </div>
-                    ))}
-                    <div className="mt-3 mb-3">
-                        <button className="btn btn-primary" onClick={handleEdit}>
-                            Edit Product
-                        </button>
-                    </div>
-                </section>
+                   
+                   
+                </section></div>
+            ))}
             </div>
         </>
     );

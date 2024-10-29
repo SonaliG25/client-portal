@@ -5,8 +5,20 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 function UpdateProduct() {
-    const [productDetails, setProductDetails] = useEditUserContext();
-    const [product, setProduct] = useState({});
+    const [productDetails] = useEditUserContext(); 
+    const [product, setProduct] = useState({
+        name: productDetails?.name || '',
+        description: productDetails?.description || '',
+        keywords: productDetails?.keywords || '',
+        tags: productDetails?.tags || '',
+        purchasePrice: productDetails?.purchasePrice || '',
+        salePrice: productDetails?.salePrice || '', 
+        purchaseType: productDetails?.purchaseType || '', 
+        stock: productDetails?.stock || '',
+        category: productDetails?.category || '',
+        _id: productDetails?._id || '' // Ensure _id is present
+    });
+    
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [auth] = useAuth();
@@ -27,27 +39,37 @@ function UpdateProduct() {
         setProduct({ ...product, [name]: value });
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        setProduct({ ...product, imgUrl: file });
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        Object.entries(product).forEach(([key, value]) => {
-            formData.append(key, value);
-        });
+        
+        if (!product._id) {
+            setError('Product ID is missing');
+            return;
+        }
 
         try {
-            const res = await axios.patch(`http://localhost:3000/product/${product.id}`, formData, {
-                headers: {
-                    'Authorization': `Bearer ${auth?.token}`,
-                    'Content-Type': 'multipart/form-data',
+            const res = await axios.patch(
+                `http://localhost:3000/product/${product._id}`,
+                {
+                    name: product.name,
+                    description: product.description,
+                    keywords: product.keywords,
+                    tags: product.tags,
+                    purchasePrice: product.purchasePrice,
+                    salePrice: product.salePrice,
+                    purchaseType: product.purchaseType,
+                    stock: product.stock,
+                    category: product.category
                 },
-            });
+                {
+                    headers: {
+                        'Authorization': `Bearer ${auth?.token}`,
+                        // Removed 'Content-Type', axios will default to application/json
+                    },
+                }
+            );
             console.log('Product updated successfully:', res.data);
-            navigate('/admin-dashboard/products');
+            navigate('/admin-dashboard/product');
         } catch (error) {
             console.error('Error updating product:', error);
             setError('Error updating product. Please try again.');
@@ -63,7 +85,6 @@ function UpdateProduct() {
                 <div className="container">
                     <h3>Update Product</h3>
                     <form onSubmit={handleSubmit} className="row">
-                        
                         <div className="col-md-6">
                             <div className="form-group">
                                 <label>Name</label>
@@ -107,16 +128,6 @@ function UpdateProduct() {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>SKU</label>
-                                <input
-                                    type="text"
-                                    name="sku"
-                                    className="form-control"
-                                    value={product.sku}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="form-group">
                                 <label>Purchase Price</label>
                                 <input
                                     type="number"
@@ -139,7 +150,6 @@ function UpdateProduct() {
                                 />
                             </div>
                         </div>
-                        
                         <div className="col-md-6">
                             <div className="form-group">
                                 <label>Category</label>
@@ -173,16 +183,9 @@ function UpdateProduct() {
                                     required
                                 />
                             </div>
-                            <div className="form-group">
-                                <label>Image</label>
-                                <input
-                                    type="file"
-                                    name="imgUrl"
-                                    className="form-control"
-                                    onChange={handleFileChange}
-                                />
-                            </div>
-                            <button type="submit" className="btn btn-primary mt-3">Update Product</button>
+                            <button type="submit" className="btn btn-primary mt-3">
+                                Update Product
+                            </button>
                         </div>
                     </form>
                 </div>

@@ -4,7 +4,6 @@ import { Login } from "./auth/login";
 import AdminLayout from "./admin/AdminLayout";
 import Orders from "./admin/Orders";
 import Proposals from "./admin/Proposal";
-import ClientDashboard from "./client/ClientDashboard";
 import Register from "./admin/user/NewUser";
 import ViewProduct from "./admin/product/ViewProduct";
 import Products from "./admin/product/Products";
@@ -16,13 +15,12 @@ import NewProposalTemplete from "./admin/proposalTemplate/NewProposalTemplate";
 import UpdateProposalTemplate from "./admin/proposalTemplate/UpdateProposalTemplate";
 import ViewProposalTemplete from "./admin/proposalTemplate/ViewProposalTemplete";
 import NewProduct from "./admin/product/NewProduct";
-import ProtectedRoute from "./auth/ProtectedRoute";
-
 // Import route names
 import * as Routes from "./routeNames";
 import UserLayout from "./admin/user/UserLayout";
 import GetProposal from "./admin/user/GetProposal";
 import UpdateProduct from "./admin/product/updateProduct";
+
 
 function App() {
   const router = createBrowserRouter([
@@ -62,8 +60,8 @@ function App() {
         { path: Routes.NEW_PRODUCT, element: <NewProduct /> },
         { path: Routes.ALL_PRODUCTS, element: <Products /> },
         { path: Routes.ALL_ORDERS, element: <Orders /> },
-        { path: "newuser", element: <Register /> },
-        { path: "allusers", element: <Users /> },
+        { path: "newuser", element: <Register /> }, 
+        { path: "allusers", element: <Users /> },    
         { path: "view", element: <View /> },
         { path: "Update", element: <UpdateForm /> },
         { path: "updateproposaltemplete", element: <UpdateProposalTemplate /> },
