@@ -124,21 +124,12 @@
 // src/components/Sidebar.js
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-<<<<<<< HEAD:src/admin/AdminSidebar.js
-import { useAuth } from "../context/AuthContext";
-=======
 import { useAuth } from "../../context/AuthContext";
->>>>>>> 46be442be8fce190ae251c5bfbdf7bfbe37b1c08:src/admin/particals/AdminSidebar.js
 
 const AdminSidebar = () => {
   const [auth, setAuth] = useAuth();
   const navigate = useNavigate();
 
-<<<<<<< HEAD:src/admin/AdminSidebar.js
-  return (
-    <aside
-      className="main-sidebar sidebar-dark-primary elevation-4"
-=======
   const handleLogout = () => {
     localStorage.clear("auth");
     setAuth({ user: null, token: "" });
@@ -148,7 +139,6 @@ const AdminSidebar = () => {
   return (
     <aside
       className="main-sidebar sidebar-dark-primary elevation-4 d-flex flex-column"
->>>>>>> 46be442be8fce190ae251c5bfbdf7bfbe37b1c08:src/admin/particals/AdminSidebar.js
       style={{ height: "100vh" }}
     >
       {/* Brand Logo */}
@@ -162,13 +152,8 @@ const AdminSidebar = () => {
         <span className="brand-text font-weight-light">AdminLTE 3</span>
       </a>
 
-<<<<<<< HEAD:src/admin/AdminSidebar.js
       <div className="sidebar" style={{ height: "100%" }}>
         {/* Sidebar user panel (optional) */}
-=======
-      <div className="sidebar flex-grow-1">
-        {/* Sidebar user panel */}
->>>>>>> 46be442be8fce190ae251c5bfbdf7bfbe37b1c08:src/admin/particals/AdminSidebar.js
         <div className="user-panel mt-3 pb-3 mb-3 d-flex">
           <div className="info">
             <a href="#" className="d-block">
