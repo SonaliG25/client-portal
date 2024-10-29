@@ -152,8 +152,8 @@ const AdminSidebar = () => {
         <span className="brand-text font-weight-light">AdminLTE 3</span>
       </a>
 
-      <div className="sidebar" style={{ height: "100%" }}>
-        {/* Sidebar user panel (optional) */}
+      <div className="sidebar flex-grow-1">
+        {/* Sidebar user panel */}
         <div className="user-panel mt-3 pb-3 mb-3 d-flex">
           <div className="info">
             <a href="#" className="d-block">

@@ -16,8 +16,6 @@ import NewProposalTemplete from "./admin/proposalTemplate/NewProposalTemplate";
 import UpdateProposalTemplate from "./admin/proposalTemplate/UpdateProposalTemplate";
 import ViewProposalTemplete from "./admin/proposalTemplate/ViewProposalTemplete";
 import NewProduct from "./admin/product/NewProduct";
-import ProtectedRoute from "./auth/ProtectedRoute";
-
 // Import route names
 import * as Routes from "./utils/routeNames";
 import UserLayout from "./client/UserLayout";
@@ -29,6 +27,7 @@ import Category from "./admin/Category/Category";
 import NewProposal from "./admin/proposal/NewProposal";
 import UserCategory from "./admin/user/Catergory/UserCategory";
 import Userlist from "./admin/user/Clientlist/Userlist";
+
 
 function App() {
   const router = createBrowserRouter([

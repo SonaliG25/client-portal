@@ -1,10 +1,10 @@
-import React, { useState,useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import JoditEditor from "jodit-react"
+import JoditEditor from "jodit-react";
 
-function NewProposalTemplete  ()  {
+function NewProposalTemplete() {
   // User state
 
   const [title, setTitle] = useState("");
@@ -12,39 +12,38 @@ function NewProposalTemplete  ()  {
   const [status, setStatus] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [updatedAt, setUpdatedAt] = useState("");
-  const [content,setContent] =useState('')
-  const editor =useRef(null)
+  const [content, setContent] = useState("");
+  const editor = useRef(null);
   const [auth] = useAuth();
-  const navigate = useNavigate()
-  const config={
-        placeholder:"Start typing...",
-
-    }
+  const navigate = useNavigate();
+  const config = {
+    placeholder: "Start typing...",
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`http://localhost:3000/proposalTemplate/new`, {
-        title,
-        description,
-        status,
-        createdAt,
-        updatedAt
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${auth?.token}`,
+      const res = await axios.post(
+        `http://localhost:3000/proposalTemplate/new`,
+        {
+          title,
+          description,
+          status,
+          createdAt,
+          updatedAt,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
         }
-        
-    });
+      );
       console.log(res);
       navigate("/admin-dashboard/proposaltemplete");
     } catch (error) {
       console.log(error);
     }
   };
-
- 
 
   return (
     <>
@@ -97,16 +96,14 @@ function NewProposalTemplete  ()  {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="inputName">description</label>
-           
-                                <JoditEditor
-                                ref={editor}
-                                value={description}
-                                
-                                onChange={(newContent) => setDescription(newContent)}
-                              />
+                    <label htmlFor="inputName">Description</label>
 
-                        
+                    <JoditEditor
+                      ref={editor}
+                      value={description}
+                      onChange={(newContent) => setDescription(newContent)}
+                    />
+
                     {/* <input
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
@@ -114,7 +111,6 @@ function NewProposalTemplete  ()  {
                       id="description"
                       className="form-control"
                     /> */}
-                    
                   </div>
                   {/* <div className="form-group">
                     <label htmlFor="inputName">Status</label>
@@ -126,7 +122,7 @@ function NewProposalTemplete  ()  {
                       className="form-control"
                     />
                   </div> */}
-        
+
                   {/* <div className="form-group">
                     <label htmlFor="inputName">Created At</label>
                     <input
@@ -147,15 +143,13 @@ function NewProposalTemplete  ()  {
                       className="form-control"
                     />
                   </div> */}
-                 
-                 
                 </div>
                 {/* /.card-body */}
               </div>
               {/* /.card */}
             </div>
-            </div>
-           
+          </div>
+
           <div className="row">
             <div className="col-2">
               <button
@@ -171,4 +165,4 @@ function NewProposalTemplete  ()  {
     </>
   );
 }
-export default NewProposalTemplete
+export default NewProposalTemplete;

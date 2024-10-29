@@ -9,21 +9,26 @@ import { BASE_URL } from "../../utils/routeNames.js";
 
 function Products() {
   const [productDetails, setProductDetails] = useEditUserContext();
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]); // Initialize as an empty array
   const [auth] = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(6);
   const [searchQuery, setSearchQuery] = useState("");
+  const [totalProducts, setTotalProducts] = useState(0); // Track total products
   const navigate = useNavigate();
 
   const getProduct = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/product/getProducts`, {
-        headers: {
-          Authorization: `Bearer ${auth?.token}`,
-        },
-      });
-      setProducts(res.data);
+      const res = await axios.get(
+        `http://localhost:3000/product/getProducts?page=${currentPage}&limit=${productsPerPage}&search=${searchQuery}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
+      );
+      setProducts(res.data.products); // Set products from the response
+      setTotalProducts(res.data.total); // Set total product count from response
       console.log("Product Data:", res.data);
     } catch (error) {
       console.error(error);
@@ -34,10 +39,12 @@ function Products() {
     if (auth?.token) {
       getProduct();
     }
-  }, [auth]);
+  }, [auth, currentPage, searchQuery]); // Add currentPage and searchQuery to dependencies
 
   const handleView = (data) => {
     setProductDetails(data);
+    console.log("hhgb", productDetails);
+
     navigate("/admin-dashboard/viewproduct");
   };
   const handleAddProduct = () => {
@@ -49,13 +56,9 @@ function Products() {
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
 
   const handleNextPage = () => {
-    if (currentPage < Math.ceil(filteredProducts.length / productsPerPage)) {
+    if (currentPage < Math.ceil(totalProducts / productsPerPage)) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -66,6 +69,16 @@ function Products() {
     }
   };
 
+  // const makePayment= async()=>{
+  //   const stripe = await loadStripe("company stripe token")
+
+  //   const body ={
+  //     products:cart
+  //   }
+
+  //   const
+  // }
+
   return (
     <div className="content-wrapper">
       <section className="content-header">
@@ -75,7 +88,6 @@ function Products() {
             <div className="col-md-4">
               <h1 className="text-left font-weight-bold">Product Catalog</h1>
             </div>
-
             {/* Search Bar and Add Button */}
             <div className="col-md-8 d-flex justify-content-end">
               {/* Search Bar */}
@@ -113,42 +125,34 @@ function Products() {
 
       <div className="content container">
         <div className="row">
-          {currentProducts.map((product) => (
-            <div
-              className="col-md-3"
-              key={product.id}
-              onClick={() => handleView(product)}
-            >
+          {products.length > 0 ? (
+            products.map((prod) => (
               <div
-                className="card mb-4 shadow-lg border-0"
-                style={{ cursor: "pointer" }}
+                className="col-md-4"
+                key={prod._id}
+                onClick={() => handleView(prod)}
               >
-                <img
-                 onError={(e) => (e.target.src = BASE_URL + "/uploads/placeholder.png")}
-                  src={BASE_URL + product.imageUrl} //placeholder.png
-                  className="card-img-top rounded-top"
-                  alt={product.name}
-                  style={{ height: "200px", objectFit: "cover" }}
-                />
-                <div className="card-body">
-                  <h5 className="card-title font-weight-bold">
-                    {product.name}
-                  </h5>
-                  <p className="card-text text-muted mb-1">
-                    {product.category}
-                  </p>
-                  <span className="badge badge-primary">
-                    {product.category === "Electronics" ? "🔌" : "🪑"}{" "}
-                    {product.category}
-                  </span>
+                <div className="card mb-4 shadow-sm">
+                  <img
+                    src={
+                      "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"
+                    }
+                    className="card-img"
+                    alt={prod.name}
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">{prod.name}</h5>
+                    <p className="card-text">{prod.category}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p>No products found</p>
+          )}
         </div>
 
-        {/* Pagination Controls */}
-        <div className="d-flex justify-content-between align-items-center my-4">
+        <div className="d-flex align-items-center my-4">
           <button
             className="btn btn-outline-primary"
             onClick={handlePreviousPage}
@@ -156,18 +160,14 @@ function Products() {
           >
             <i className="fas fa-arrow-left mr-1"></i> Previous
           </button>
-          <span>
-            Page <strong>{currentPage}</strong> of{" "}
-            <strong>
-              {Math.ceil(filteredProducts.length / productsPerPage)}
-            </strong>
+          <span className="m-2">
+            {currentPage} / {Math.ceil(totalProducts / productsPerPage)}
           </span>
           <button
             className="btn btn-outline-primary"
             onClick={handleNextPage}
             disabled={
-              currentPage ===
-              Math.ceil(filteredProducts.length / productsPerPage)
+              currentPage === Math.ceil(totalProducts / productsPerPage)
             }
           >
             Next <i className="fas fa-arrow-right ml-1"></i>
