@@ -67,6 +67,30 @@ function UpdateProposalTemplate() {
         }));
       };
 
+      const editorConfig = {
+        height:500,
+        readonly: false,
+        toolbarSticky: false,
+        buttons: [
+          "bold",
+          "italic",
+          "underline",
+          "strikethrough",
+          "ul",
+          "ol",
+          "font",
+          "fontsize",
+          "paragraph",
+          "image",
+          "link",
+          "align",
+          "undo",
+          "redo",
+        ],
+        showXPathInStatusbar: false,
+        spellcheck: false,
+      };
+
       const handleDescriptionChange = (newContent) => {
         setTemplete((prevForm) => ({
           ...prevForm,
@@ -128,12 +152,13 @@ function UpdateProposalTemplate() {
                   <label htmlFor="description">Description</label>
                   <JoditEditor
                                 ref={editor}
+                                config={editorConfig}
                                 value={templete.description}
-                                
-                                onChange={(newContent) => handleDescriptionChange(newContent)}
+                                max
+                                onBlur={(newContent) => handleDescriptionChange(newContent)}
                               />
                 </div>
-               
+               check what app
               </div>
               {/* /.card-body */}
             </div>
@@ -141,7 +166,7 @@ function UpdateProposalTemplate() {
           </div>
         </div>
         <div className="row">
-          <div className="col-2 m-2">
+          <div className="card card-footer col-2 m-2">
             <button
               className="btn btn-success btn-block"
               onClick={handleUpdate}

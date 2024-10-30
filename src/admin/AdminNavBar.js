@@ -6,10 +6,49 @@ const AdminNavbar = () => {
   const [auth, setAuth] = useAuth();
   const navigate = useNavigate();
 
+  // Check if token has expired
+  const checkTokenExpiration = () => {
+    const token = localStorage.getItem("token");
+    
+    
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000; // Get current time in seconds
+      console.log("Token",decodedToken);
+      // If the token is expired, logout
+      if (decodedToken.exp < currentTime) {
+        console.log("Enter logout",decodedToken);
+        handleLogout();
+      }
+    }
+  };
+
+ 
+
+  // Automatically check for token expiration on component mount and at intervals
+  useEffect(() => {
+    // Check for token expiration on initial render
+    checkTokenExpiration();
+
+    // Check for token expiration at regular intervals (e.g., every minute)
+    const intervalId = setInterval(checkTokenExpiration, 8000); // 1 minute
+
+    return () => clearInterval(intervalId); // Clear interval on unmount
+  }, []);
+
   const handleLogout = () => {
+    // localStorage.clear("auth");
+    
+    
     localStorage.clear("auth");
-    setAuth({ user: null, token: "" });
+    localStorage.clear("token");
+    console.log("session removed");
+    
+    // Clear the auth context
+    setAuth({ user: null, token: "" });s
     navigate("/login");
+    // Redirect to login page
+    
   };
   return (
     <>
