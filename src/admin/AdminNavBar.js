@@ -31,7 +31,7 @@ const AdminNavbar = () => {
     checkTokenExpiration();
 
     // Check for token expiration at regular intervals (e.g., every minute)
-    const intervalId = setInterval(checkTokenExpiration, 8000); // 1 minute
+    const intervalId = setInterval(checkTokenExpiration, 60000); // 1 minute
 
     return () => clearInterval(intervalId); // Clear interval on unmount
   }, []);
