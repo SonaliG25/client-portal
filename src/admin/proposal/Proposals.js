@@ -23,37 +23,34 @@ function Proposals() {
         <div className="container-fluid">
           <div className="row align-items-center justify-content-between my-3">
             {/* Title */}
-            <div className="col-md-4">
-              <h1 className="text-left font-weight-bold">Proposals</h1>
+            <div className="col-12 col-md-4 mb-2 mb-md-0">
+              <h1 className="font-weight-bold">Proposals</h1>
             </div>
 
             {/* Search Bar and Add Button */}
-            <div className="col-md-8 d-flex justify-content-end">
+            <div className="col-12 col-md-8 d-flex flex-column flex-md-row justify-content-md-end">
               {/* Search Bar */}
-              <div className="form-group mb-0 flex-grow-1 mr-3">
-                <div className="input-group input-group-md">
+              <div className="form-group mb-2 mb-md-0 flex-grow-1 mr-md-3">
+                <div className="input-group">
                   <input
                     type="search"
-                    className="form-control form-control-md"
+                    className="form-control"
                     placeholder="Search by Product Name"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                   <div className="input-group-append">
-                    <button
-                      className="btn btn-outline-secondary btn-md"
-                      type="button"
-                    >
+                    <button className="btn btn-outline-secondary" type="button">
                       <i className="fa fa-search" />
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Add Product Button */}
+              {/* Add Proposal Button */}
               <button
                 onClick={handleAddProposal}
-                className="btn btn-success ml-2"
+                className="btn btn-success mt-2 mt-md-0"
               >
                 <i className="fas fa-plus mr-1"></i> Add Proposal
               </button>
@@ -68,7 +65,7 @@ function Proposals() {
         <div className="row m-2">
           <div className="col-12">
             <div className="card">
-              <div className="card-body">
+              <div className="card-body table-responsive p-0">
                 <table
                   id="example2"
                   className="table table-bordered table-hover"
@@ -82,25 +79,35 @@ function Proposals() {
                     </tr>
                   </thead>
                   <tbody>
-                    {/* You can replace this with dynamic data */}
+                    {/* Dynamic data or fallback message */}
+                    {/* {filteredProposals.length > 0 ? (
+                    filteredProposals.map((proposal) => (
+                      <tr key={proposal.id}>
+                        <td>{proposal.proposedTo}</td>
+                        <td>{proposal.title}</td>
+                        <td>{proposal.sentOn}</td>
+                        <td>
+                          <div className="d-flex justify-content-center">
+                            <button className="btn btn-primary btn-sm mx-1">View</button>
+                            <button
+                              className="btn btn-danger btn-sm mx-1"
+                              data-toggle="modal"
+                              data-target="#exampleModalCenter"
+                            >
+                              Delete
+                            </button>
+                            <button className="btn btn-dark btn-sm mx-1">Edit</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
                     <tr>
-                      <td colSpan="3" className="text-center">
+                      <td colSpan="4" className="text-center">
                         No matching Proposal found
                       </td>
-                      <td>
-                        <div className="d-flex justify-content-center">
-                          <button className="m-1 btn btn-primary">View</button>
-                          <button
-                            className="m-1 btn btn-danger"
-                            data-toggle="modal"
-                            data-target="#exampleModalCenter"
-                          >
-                            Delete
-                          </button>
-                          <button className="m-1 btn btn-dark">Edit</button>
-                        </div>
-                      </td>
                     </tr>
+                  )} */}
                   </tbody>
                 </table>
 

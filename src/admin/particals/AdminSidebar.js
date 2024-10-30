@@ -122,19 +122,59 @@
 
 // export default AdminSidebar;
 // src/components/Sidebar.js
-import React from "react";
+import React,{useEffect} from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { jwtDecode } from "jwt-decode";
+
 
 const AdminSidebar = () => {
   const [auth, setAuth] = useAuth();
   const navigate = useNavigate();
 
+  const checkTokenExpiration = () => {
+    const token = localStorage.getItem("token");
+    
+    
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000; // Get current time in seconds
+      console.log("Token",decodedToken);
+      // If the token is expired, logout
+      if (decodedToken.exp < currentTime) {
+        console.log("Enter logout",decodedToken);
+        handleLogout();
+      }
+    }
+  };
+
+ 
+
+  // Automatically check for token expiration on component mount and at intervals
+  useEffect(() => {
+    // Check for token expiration on initial render
+    checkTokenExpiration();
+
+    // Check for token expiration at regular intervals (e.g., every minute)
+    const intervalId = setInterval(checkTokenExpiration, 60000); // 1 minute
+
+    return () => clearInterval(intervalId); // Clear interval on unmount
+  }, []);
+
   const handleLogout = () => {
+    // localStorage.clear("auth");
+    
+    
     localStorage.clear("auth");
+    localStorage.clear("token");
+    console.log("session removed");
+    
+    // Clear the auth context
     setAuth({ user: null, token: "" });
     navigate("/login");
-  };
+    // Redirect to login page
+    
+  }
 
   return (
     <aside

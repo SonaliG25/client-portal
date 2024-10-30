@@ -143,6 +143,9 @@ function Products() {
                   <div className="card-body">
                     <h5 className="card-title">{prod.name}</h5>
                     <p className="card-text">{prod.category}</p>
+                    <p className="card-text">
+                      {prod.currency + "" + prod.salePrice}
+                    </p>
                   </div>
                 </div>
               </div>

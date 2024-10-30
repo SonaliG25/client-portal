@@ -20,6 +20,73 @@ import {
 const NewProposal = () => {
   const navigate = useNavigate();
   const [auth] = useAuth();
+  const [selectedProducts, setSelectedProducts] = useState([]); // State for selected products
+
+  const [showProductModal, setShowProductModal] = useState(false);
+
+  // Function to open the modal
+  const handleShowProductModal = () => setShowProductModal(true);
+
+  // Function to close the modal
+  const handleCloseProductModal = () => setShowProductModal(false);
+  const [products, setProducts] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(10); // Adjust the number of products per page as needed
+  const [searchQuery, setSearchQuery] = useState("");
+  // Handle checkbox change
+  const handleCheckboxChange = (productId) => {
+    setSelectedProducts((prevSelected) => {
+      if (prevSelected.includes(productId)) {
+        // If already selected, remove it
+        return prevSelected.filter((id) => id !== productId);
+      } else {
+        // If not selected, add it
+        return [...prevSelected, productId];
+      }
+    });
+  };
+  // Fetch products from API
+  const getProduct = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/product/getProducts?page=${currentPage}&limit=${productsPerPage}&search=${searchQuery}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
+      );
+      setProducts(Array.isArray(res.data.products) ? res.data.products : []);
+      setTotalProducts(res.data.total || 0); // Ensure total is a valid number
+      console.log("Product Data:", res.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  // Call getProduct on component mount and when search query changes
+  useEffect(() => {
+    getProduct();
+  }, [currentPage, searchQuery]);
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Pagination control
+  const handleNextPage = () => {
+    if (currentPage < Math.ceil(totalProducts / productsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
   const editor = useRef(null);
   const editorConfig = {
     minHeight: 400,
@@ -86,7 +153,7 @@ const NewProposal = () => {
     const fetchProposalTemplates = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/proposalTemplate/templates`,
+          `http://localhost:3000/proposalTemplate/proposaltemplates`,
           {
             headers: {
               Authorization: `Bearer ${auth?.token}`,
@@ -316,11 +383,115 @@ const NewProposal = () => {
                   ))}
                 </tbody>
               </Table>
-
-              <Button color="primary" onClick={addProduct} className="mr-2">
+              {/* Open Product Modal */}
+              <Button variant="primary" onClick={handleShowProductModal}>
                 Add Product
               </Button>
+              {/* Product ModalCOde */}
+              <Modal
+                show={showProductModal}
+                onHide={handleCloseProductModal}
+                size="lg"
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title>Products</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  {/* Search Bar */}
+                  <div className="input-group mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search products..."
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                    />
+                    <div className="input-group-append">
+                      <Button variant="outline-secondary" onClick={getProduct}>
+                        <i className="fa fa-search" />
+                      </Button>
+                    </div>
+                  </div>
 
+                  {/* Product List */}
+                  <table className="table table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th>Select</th>{" "}
+                        {/* Add a header for the select column */}
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {products.length > 0 ? (
+                        products.map((product) => (
+                          <tr key={product.id}>
+                            <td>
+                              <input
+                                type="checkbox"
+                                checked={selectedProducts.includes(product.id)}
+                                onChange={() =>
+                                  handleCheckboxChange(product.id)
+                                }
+                              />
+                            </td>
+                            <td>{product.name}</td>
+                            <td>{product.category}</td>
+                            <td>{product.price}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="4" className="text-center">
+                            No products found.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+
+                  {/* Pagination Controls */}
+                  <div className="d-flex justify-content-between mt-3">
+                    <Button
+                      variant="outline-secondary"
+                      onClick={handlePreviousPage}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </Button>
+                    <span className="align-self-center">
+                      Page {currentPage}
+                    </span>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={handleNextPage}
+                      disabled={
+                        currentPage >=
+                        Math.ceil(totalProducts / productsPerPage)
+                      }
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={handleCloseProductModal}>
+                    Close
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      console.log("Selected Products:", selectedProducts); // Replace with your action
+                    }}
+                    disabled={selectedProducts.length === 0}
+                  >
+                    Confirm Selection
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+              {/* ENd of Product Modal Code */}
               <div className="mt-4">
                 <p>
                   Product Total: $
@@ -350,3 +521,103 @@ const NewProposal = () => {
 };
 
 export default NewProposal;
+
+// <Modal
+//                 show={showProductModal}
+//                 onHide={handleCloseProductModal}
+//                 size="lg"
+//               >
+//                 <Modal.Header closeButton>
+//                   <Modal.Title>Products</Modal.Title>
+//                 </Modal.Header>
+//                 <Modal.Body>
+//                   {/* Search Bar */}
+//                   <div className="input-group mb-3">
+//                     <input
+//                       type="text"
+//                       className="form-control"
+//                       placeholder="Search products..."
+//                       value={searchQuery}
+//                       onChange={handleSearchChange}
+//                     />
+//                     <div className="input-group-append">
+//                       <Button variant="outline-secondary" onClick={getProduct}>
+//                         <i className="fa fa-search" />
+//                       </Button>
+//                     </div>
+//                   </div>
+
+//                   {/* Product List */}
+//                   <Select
+//                     isMulti
+//                     options={products.map((product) => ({
+//                       value: product._id, // Use the product ID as the value
+//                       label: product.name, // Display product name
+//                     }))}
+//                     onChange={(selectedOptions) => {
+//                       setSelectedProducts(selectedOptions); // Store selected products
+//                     }}
+//                     placeholder="Select products..."
+//                   />
+
+//                   {/* Pagination Controls */}
+//                   <div className="d-flex justify-content-between mt-3">
+//                     <Button
+//                       variant="outline-secondary"
+//                       onClick={handlePreviousPage}
+//                       disabled={currentPage === 1}
+//                     >
+//                       Previous
+//                     </Button>
+//                     <span className="align-self-center">
+//                       Page {currentPage}
+//                     </span>
+//                     <Button
+//                       variant="outline-secondary"
+//                       onClick={handleNextPage}
+//                       disabled={
+//                         currentPage >=
+//                         Math.ceil(totalProducts / productsPerPage)
+//                       }
+//                     >
+//                       Next
+//                     </Button>
+//                   </div>
+//                 </Modal.Body>
+//                 <Modal.Footer>
+//                   <Button variant="secondary" onClick={handleCloseProductModal}>
+//                     Close
+//                   </Button>
+//                   <Button
+//                     variant="primary"
+//                     onClick={() => {
+//                       // Handle the selected products here
+//                       const updatedProducts = selectedProducts.map(
+//                         (option) => ({
+//                           id: option.value,
+//                           quantity: 1, // Default quantity
+//                           discount: 0, // Default discount
+//                           total: products.find(
+//                             (product) => product._id === option.value
+//                           ).price,
+//                           discountType: "Fixed",
+//                           currency: "USD",
+//                         })
+//                       );
+
+//                       // Update the proposal data with the selected products
+//                       setProposalData((prev) => ({
+//                         ...prev,
+//                         products: [...prev.products, ...updatedProducts],
+//                       }));
+
+//                       // Clear selected products and close modal
+//                       setSelectedProducts([]);
+//                       handleCloseProductModal();
+//                     }}
+//                     disabled={selectedProducts.length === 0}
+//                   >
+//                     Save Products
+//                   </Button>
+//                 </Modal.Footer>
+//               </Modal>
