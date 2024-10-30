@@ -25,6 +25,8 @@ import UpdateProduct from "./admin/product/updateProduct";
 import Home from "./admin/home/home";
 import Category from "./admin/Category/Category";
 import NewProposal from "./admin/proposal/NewProposal";
+import UserCategory from "./admin/user/Catergory/UserCategory";
+import Userlist from "./admin/user/Clientlist/Userlist";
 
 
 function App() {
@@ -42,13 +44,21 @@ function App() {
           path: "proposal-view",
           element: <ProposalInfo />,
         },
+        {
+          path: "categories",
+          element: <UserCategory />,
+        },
+        {
+          path: "userlist",
+          element: <Userlist />,
+        },
       ],
     },
-   
 
     {
       path: Routes.ADMIN_DASHBOARD,
-      element: <AdminLayout />,   children: [
+      element: <AdminLayout />,
+      children: [
         { path: Routes.HOME, element: <Home /> },
         { path: Routes.PROPOSALS, element: <Proposals /> },
         { path: Routes.NEW_PROPOSAL, element: <NewProposal /> },
