@@ -28,7 +28,6 @@ import NewProposal from "./admin/proposal/NewProposal";
 import UserCategory from "./admin/user/Catergory/UserCategory";
 import Userlist from "./admin/user/Clientlist/Userlist";
 
-
 function App() {
   const router = createBrowserRouter([
     { path: Routes.LOGIN, element: <Login /> },

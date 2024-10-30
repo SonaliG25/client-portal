@@ -1,13 +1,26 @@
-
 import { Outlet, useNavigate } from "react-router-dom";
 // import AdminNavbar from "./AdminNavBar.js";
 import AdminSidebar from "./AdminSidebar.js";
-import React,{ useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import axios from "axios";
 const AdminLayout = () => {
   const [auth, setAuth] = useState({ user: null, token: "" });
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 992);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const interceptor = axios.interceptors.response.use(
@@ -30,11 +43,19 @@ const AdminLayout = () => {
     navigate("/login"); // Redirect to the login page
   };
   return (
-    <div className=" wrapper">
-      {/* <AdminNavbar /> */}
-      <AdminSidebar />
-      <div className="content">
-        <Outlet />
+    <div
+      className={`${
+        isMobile
+          ? "sidebar-mini sidebar-closed sidebar-collapse"
+          : "sidebar-mini"
+      }`}
+    >
+      <div className=" wrapper">
+        {/* <AdminNavbar /> */}
+        <AdminSidebar />
+        <div className="content">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

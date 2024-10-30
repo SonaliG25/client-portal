@@ -21,10 +21,10 @@ code {
   transition: background-color 0.3s, color 0.3s; /* Smooth transition */
 }
 
-.pagination button:hover {
+/* .pagination button:hover {
   background-color: white; /* Change background to blue on hover */
-  color: blue; /* Change text color to white on hover */
-}
+/* color: blue; Change text color to white on hover */
+/* } */
 
 .pagination button:disabled {
   opacity: 0.5; /* Optional: reduce opacity for disabled buttons */
