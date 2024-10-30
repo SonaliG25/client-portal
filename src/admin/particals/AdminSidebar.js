@@ -211,7 +211,8 @@ const AdminSidebar = () => {
           >
             <li className="nav-item">
               <NavLink to="home" className="nav-link">
-                <i className="nav-icon fas fa-tachometer-alt"></i>
+              <i className="nav-icon fas fa-tachometer-alt"></i>
+
                 <p>Dashboard</p>
               </NavLink>
             </li>
@@ -222,7 +223,8 @@ const AdminSidebar = () => {
                   isActive ? "nav-link active" : "nav-link"
                 }
               >
-                <i className="nav-icon fas fa-tachometer-alt"></i>
+                <i className="nav-icon fas fa-file-signature"></i>
+
                 <p>Proposals</p>
               </NavLink>
             </li>
@@ -233,7 +235,8 @@ const AdminSidebar = () => {
                   isActive ? "nav-link active" : "nav-link"
                 }
               >
-                <i className="nav-icon fas fa-tachometer-alt"></i>
+               <i className="nav-icon fas fa-file-alt"></i>
+
                 <p>Proposal Templates</p>
               </NavLink>
             </li>
@@ -255,7 +258,7 @@ const AdminSidebar = () => {
                   isActive ? "nav-link active" : "nav-link"
                 }
               >
-                <i className="nav-icon fas fa-users"></i>
+                <i className="nav-icon fas fa-th-list"></i>
                 <p>Categories</p>
               </NavLink>
             </li>
@@ -266,7 +269,7 @@ const AdminSidebar = () => {
                   isActive ? "nav-link active" : "nav-link"
                 }
               >
-                <i className="nav-icon fas fa-users"></i>
+                <i className="nav-icon fas fa-tags"></i>
                 <p>Products</p>
               </NavLink>
             </li>
@@ -277,7 +280,7 @@ const AdminSidebar = () => {
                   isActive ? "nav-link active" : "nav-link"
                 }
               >
-                <i className="nav-icon fas fa-cogs"></i>
+                <i className="nav-icon fas fa-shopping-cart"></i>
                 <p>Orders</p>
               </NavLink>
             </li>

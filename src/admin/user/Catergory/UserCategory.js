@@ -113,33 +113,35 @@ function UserCategory() {
                   </tbody>
                 </table>
                 {/* Pagination Controls */}
-                <div className="pagination m-2">
-                  <button
-                    className="btn btn-primary m-1"
-                    onClick={handlePrevPage}
-                    disabled={currentPage === 1}
-                  >
-                    Previous
-                  </button>
-                  {Array.from({ length: totalPages }, (_, index) => (
-                    <button
-                      key={`page-${index + 1}`}
-                      onClick={() => setCurrentPage(index + 1)}
-                      className={`btn m-1 ${
-                        currentPage === index + 1 ? "bg-primary" : "btn-light"
-                      }`}
-                    >
-                      {index + 1}
-                    </button>
-                  ))}
-                  <button
-                    className="btn btn-primary m-1"
-                    onClick={handleNextPage}
-                    disabled={currentPage === totalPages}
-                  >
-                    Next
-                  </button>
-                </div>
+                <div className="d-flex ">
+                          <button
+                            className="btn btn-outline-primary mr-2"
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                          >
+                            Previous
+                          </button>
+                          {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                              key={index + 1}
+                              onClick={() => setCurrentPage(index + 1)}
+                              className={`btn mr-2 ${
+                                currentPage === index + 1
+                                  ? "btn-primary"
+                                  : "btn-light"
+                              }`}
+                            >
+                              {index + 1}
+                            </button>
+                          ))}
+                          <button
+                            className="btn btn-outline-primary"
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                          >
+                            Next
+                          </button>
+                        </div>
               </div>
             </div>
           </div>

@@ -74,38 +74,44 @@ const Users = () => {
       <div className="content-wrapper">
         {/* Content Header */}
         <section className="content-header">
-          <div className="container-fluid">
-            <div className="row align-items-center justify-content-between">
-              <div className="col-12 col-md-4">
-                <h2 className="py-2">Clients</h2>
-              </div>
+        <div className="container-fluid">
+          <div className="row align-items-center justify-content-between my-3">
+            {/* Title */}
+            <div className="col-12 col-md-4 mb-2 mb-md-0">
+              <h1 className="font-weight-bold">Clients</h1>
+            </div>
 
-              <div className="col-12 col-md-8 d-flex flex-wrap align-items-center">
-                {/* Search Form */}
-                <form className="form-inline flex-grow-1 mr-2 my-1">
-                  <div className="input-group input-group-md">
-                    <div className="input-group-prepend"></div>
-                    <input
-                      type="search"
-                      className="form-control form-control-lg"
-                      placeholder="search..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
+            {/* Search Bar and Add Button */}
+            <div className="col-12 col-md-8 d-flex flex-column flex-md-row justify-content-md-end">
+              {/* Search Bar */}
+              <div className="form-group mb-2 mb-md-0 flex-grow-1 mr-md-3">
+                <div className="input-group">
+                  <input
+                    type="search"
+                    className="form-control"
+                    placeholder="Search by Product Name"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <div className="input-group-append">
+                    <button className="btn btn-outline-secondary" type="button">
+                      <i className="fa fa-search" />
+                    </button>
                   </div>
-                </form>
-
-                {/* Add Client Button */}
-                <button
-                  onClick={handleAddUser}
-                  className="btn btn-success ml-2"
-                >
-                  Add Client
-                </button>
+                </div>
               </div>
+
+              {/* Add Proposal Button */}
+              <button
+                onClick={handleAddUser}
+                className="btn btn-success mt-2 mt-md-0"
+              >
+                <i className="fas fa-plus mr-1"></i> Add Client
+              </button>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
         {/* Main Content */}
         <section className="content">

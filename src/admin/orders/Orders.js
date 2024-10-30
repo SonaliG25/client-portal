@@ -95,29 +95,45 @@ const Orders = () => {
 
   return (
     <Container className="content-wrapper my-4">
-      <Row className="content-header align-items-center justify-content-between mb-3">
-        <Col xs="12" md="6">
-          <h1 className="h3">Orders</h1>
-        </Col>
+      <section className="content-header">
+        <div className="container-fluid">
+          <div className="row align-items-center justify-content-between my-3">
+            {/* Title */}
+            <div className="col-12 col-md-4 mb-2 mb-md-0">
+              <h1 className="font-weight-bold">Orders</h1>
+            </div>
 
-        <Col xs="12" md="6" className="d-flex justify-content-end">
-          <InputGroup className="m-2">
-            <Input
-              type="search"
-              placeholder="Search by Customer, Status"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            {/* <Button color="secondary">
-              <i className="fa fa-search" />
-            </Button> */}
-          </InputGroup>
+            {/* Search Bar and Add Button */}
+            <div className="col-12 col-md-8 d-flex flex-column flex-md-row justify-content-md-end">
+              {/* Search Bar */}
+              <div className="form-group mb-2 mb-md-0 flex-grow-1 mr-md-3">
+                <div className="input-group">
+                  <input
+                    type="search"
+                    className="form-control"
+                    placeholder="Search by Product Name"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <div className="input-group-append">
+                    <button className="btn btn-outline-secondary" type="button">
+                      <i className="fa fa-search" />
+                    </button>
+                  </div>
+                </div>
+              </div>
 
-          <Button color="success" className="btn btn-success" onClick={handleClick}>
-            Add New Order
-          </Button>
-        </Col>
-      </Row>
+              {/* Add Proposal Button */}
+              {/* <button
+                onClick={handleAddProposal}
+                className="btn btn-success mt-2 mt-md-0"
+              >
+                <i className="fas fa-plus mr-1"></i> Add Proposal
+              </button> */}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Main content */}
       <Row>
@@ -192,17 +208,35 @@ const Orders = () => {
                   </Table>
 
                   {/* Pagination Controls */}
-                  <Pagination className="d-flex justify-content-center mt-3">
-                    <PaginationItem disabled={currentPage === 1}>
-                      <PaginationLink previous onClick={handlePreviousPage} />
-                    </PaginationItem>
-                    <span className="align-self-center m-2">
-                      {currentPage} / {totalPages}
-                    </span>
-                    <PaginationItem disabled={currentPage === totalPages}>
-                      <PaginationLink next onClick={handleNextPage} />
-                    </PaginationItem>
-                  </Pagination>
+                  <div className="d-flex ">
+                          <button
+                            className="btn btn-outline-primary mr-2"
+                            disabled={currentPage === 1}
+                            onClick={handlePreviousPage}
+                          >
+                            Previous
+                          </button>
+                          {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                              key={index + 1}
+                              onClick={() => setCurrentPage(index + 1)}
+                              className={`btn mr-2 ${
+                                currentPage === index + 1
+                                  ? "btn-primary"
+                                  : "btn-light"
+                              }`}
+                            >
+                              {index + 1}
+                            </button>
+                          ))}
+                          <button
+                            className="btn btn-outline-primary"
+                            disabled={currentPage === totalPages}
+                            onClick={handleNextPage}
+                          >
+                            Next
+                          </button>
+                        </div>
                 </>
               )}
             </div>
