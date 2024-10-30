@@ -44,7 +44,7 @@ function Products() {
   const handleView = (data) => {
     setProductDetails(data);
     console.log("hhgb", productDetails);
-    
+
     navigate("/admin-dashboard/viewproduct");
   };
   const handleAddProduct = () => {
@@ -88,7 +88,6 @@ function Products() {
             <div className="col-md-4">
               <h1 className="text-left font-weight-bold">Product Catalog</h1>
             </div>
-
             {/* Search Bar and Add Button */}
             <div className="col-md-8 d-flex justify-content-end">
               {/* Search Bar */}
@@ -144,6 +143,9 @@ function Products() {
                   <div className="card-body">
                     <h5 className="card-title">{prod.name}</h5>
                     <p className="card-text">{prod.category}</p>
+                    <p className="card-text">
+                      {prod.currency + "" + prod.salePrice}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -167,7 +169,9 @@ function Products() {
           <button
             className="btn btn-outline-primary"
             onClick={handleNextPage}
-            disabled={currentPage === Math.ceil(totalProducts / productsPerPage)}
+            disabled={
+              currentPage === Math.ceil(totalProducts / productsPerPage)
+            }
           >
             Next <i className="fas fa-arrow-right ml-1"></i>
           </button>
