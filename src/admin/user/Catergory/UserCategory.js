@@ -6,12 +6,6 @@ function UserCategory() {
   const [auth] = useAuth();
   const [categoryNameList, setCategoryNameList] = useState([]);
   const [isCategoryLoading, setLoading] = useState(true);
-  const [value, setValue] = useState(""); // For modal input
-  const [newCategory, setNewCategory] = useState(""); // For modal input
-  const [selectedCategory, setSelectedCategory] = useState(null); // For viewing category
-  const [updateCategory, setUpdateCategory] = useState({ name: "" }); // For updating category
-  const [deleteCategoryId, setDeleteCategoryId] = useState(null); // For deleting category
-  const [errorMessage, setErrorMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,9 +31,6 @@ function UserCategory() {
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
-  };
-  const handleSearchChange = (e) => {
-    setValue(e.target.value);
   };
 
   const handleNextPage = () => {
@@ -73,14 +64,8 @@ function UserCategory() {
                 <div className="input-group input-group-md">
                   <input
                     type="search"
-                    value={value}
-                    onKeyDown={(e) => {
-                      setCurrentPage(1);
-                      if (e.key === "Enter") {
-                        setSearchQuery(value);
-                      }
-                    }}
-                    onChange={handleSearchChange}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="form-control form-control-md"
                     placeholder="Search..."
                   />
@@ -160,6 +145,7 @@ function UserCategory() {
           </div>
         </div>
       </section>
+      
     </div>
   );
 }
