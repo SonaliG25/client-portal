@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import axios from "axios";
+import {jwtDecode} from "jwt-decode"; // Add this package to decode JWT tokens
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -9,16 +10,54 @@ export const Login = () => {
   const [error, setError] = useState("");
   const [auth, setAuth] = useAuth();
   const navigate = useNavigate();
-  useEffect(() => {
-    // Redirect to dashboard if already authenticated
-    if (auth?.user) {
-      auth.user.role === "admin"
-        ? navigate("/admin-dashboard")
-        : navigate("/user-dashboard");
+
+  // Check if token has expired
+  const checkTokenExpiration = () => {
+    const token = localStorage.getItem("token");
+    
+    
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000; // Get current time in seconds
+      console.log("Token",decodedToken);
+      // If the token is expired, logout
+      if (decodedToken.exp < currentTime) {
+        console.log("Enter logout",decodedToken);
+        logout();
+      }
     }
-  }, [auth, navigate]);
+  };
+
+  // Logout function
+  const logout = () => {
+    // Remove token and user data from local storage
+    localStorage.removeItem("auth");
+    localStorage.removeItem("token");
+    console.log("session removed");
+    
+    // Clear the auth context
+    setAuth(null);
+
+    // Redirect to login page
+    navigate("/login");
+  };
+
+  // Automatically check for token expiration on component mount and at intervals
+  useEffect(() => {
+    // Check for token expiration on initial render
+    checkTokenExpiration();
+
+    // Check for token expiration at regular intervals (e.g., every minute)
+    const intervalId = setInterval(checkTokenExpiration, 8000); // 1 minute
+
+    return () => clearInterval(intervalId); // Clear interval on unmount
+  }, []);
+
+  // Handle login form submission
   const handleLogin = async (e) => {
     e.preventDefault();
+    console.log("Loginnnnnm");
+    
     setError(""); // Clear previous errors
 
     try {
@@ -26,15 +65,18 @@ export const Login = () => {
         email,
         password,
       });
-      console.log("loginnnnn");
+
       if (response.status === 200) {
+        // Store token and user info
         localStorage.setItem("auth", JSON.stringify(response.data.userInfo));
         localStorage.setItem("token", response.data.token);
+
         setAuth({
           user: response.data.userInfo,
           token: response.data.token,
         });
 
+        // Redirect to appropriate dashboard
         response.data.userInfo.role === "admin"
           ? navigate("/admin-dashboard")
           : navigate("/user-dashboard");
@@ -105,12 +147,7 @@ export const Login = () => {
               </div>
 
               <div className="row">
-                <div className="col-8">
-                  {/* <div className="icheck-primary">
-                    <input type="checkbox" id="remember" />
-                    <label htmlFor="remember">Remember Me</label>
-                  </div> */}
-                </div>
+                <div className="col-8"></div>
                 <div className="col-4">
                   <button type="submit" className="btn btn-primary btn-block">
                     Sign In

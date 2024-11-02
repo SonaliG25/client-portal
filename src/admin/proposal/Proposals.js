@@ -7,6 +7,8 @@ import * as Routes from "../../utils/routeNames";
 
 function Proposals() {
   const [proposals, setProposals] = useState([]);
+  const [currentPage,setCurrentPage] = useState(1)
+  const [totalPages,setTotalPages] = useState(1)
   //Search for Proposal
   const [searchQuery, setSearchQuery] = useState("");
   const filteredProposals = proposals.filter((proposal) =>
@@ -112,13 +114,35 @@ function Proposals() {
                 </table>
 
                 {/* Pagination Controls */}
-                <div className="pagination d-flex justify-content-between m-2">
-                  <button className="btn btn-outline-secondary">
-                    Previous
-                  </button>
-                  <span className="align-self-center">Page</span>
-                  <button className="btn btn-outline-secondary">Next</button>
-                </div>
+                <div className="d-flex ">
+                          <button
+                            className="btn btn-outline-primary mr-2"
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                          >
+                            Previous
+                          </button>
+                          {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                              key={index + 1}
+                              onClick={() => setCurrentPage(index + 1)}
+                              className={`btn mr-2 ${
+                                currentPage === index + 1
+                                  ? "btn-primary"
+                                  : "btn-light"
+                              }`}
+                            >
+                              {index + 1}
+                            </button>
+                          ))}
+                          <button
+                            className="btn btn-outline-primary"
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                          >
+                            Next
+                          </button>
+                        </div>
               </div>
             </div>
           </div>

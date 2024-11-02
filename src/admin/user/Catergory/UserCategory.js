@@ -6,12 +6,6 @@ function UserCategory() {
   const [auth] = useAuth();
   const [categoryNameList, setCategoryNameList] = useState([]);
   const [isCategoryLoading, setLoading] = useState(true);
-  const [value, setValue] = useState(""); // For modal input
-  const [newCategory, setNewCategory] = useState(""); // For modal input
-  const [selectedCategory, setSelectedCategory] = useState(null); // For viewing category
-  const [updateCategory, setUpdateCategory] = useState({ name: "" }); // For updating category
-  const [deleteCategoryId, setDeleteCategoryId] = useState(null); // For deleting category
-  const [errorMessage, setErrorMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,9 +31,6 @@ function UserCategory() {
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
-  };
-  const handleSearchChange = (e) => {
-    setValue(e.target.value);
   };
 
   const handleNextPage = () => {
@@ -73,14 +64,8 @@ function UserCategory() {
                 <div className="input-group input-group-md">
                   <input
                     type="search"
-                    value={value}
-                    onKeyDown={(e) => {
-                      setCurrentPage(1);
-                      if (e.key === "Enter") {
-                        setSearchQuery(value);
-                      }
-                    }}
-                    onChange={handleSearchChange}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="form-control form-control-md"
                     placeholder="Search..."
                   />
@@ -128,38 +113,41 @@ function UserCategory() {
                   </tbody>
                 </table>
                 {/* Pagination Controls */}
-                <div className="pagination m-2">
-                  <button
-                    className="btn btn-primary m-1"
-                    onClick={handlePrevPage}
-                    disabled={currentPage === 1}
-                  >
-                    Previous
-                  </button>
-                  {Array.from({ length: totalPages }, (_, index) => (
-                    <button
-                      key={`page-${index + 1}`}
-                      onClick={() => setCurrentPage(index + 1)}
-                      className={`btn m-1 ${
-                        currentPage === index + 1 ? "bg-primary" : "btn-light"
-                      }`}
-                    >
-                      {index + 1}
-                    </button>
-                  ))}
-                  <button
-                    className="btn btn-primary m-1"
-                    onClick={handleNextPage}
-                    disabled={currentPage === totalPages}
-                  >
-                    Next
-                  </button>
-                </div>
+                <div className="d-flex ">
+                          <button
+                            className="btn btn-outline-primary mr-2"
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                          >
+                            Previous
+                          </button>
+                          {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                              key={index + 1}
+                              onClick={() => setCurrentPage(index + 1)}
+                              className={`btn mr-2 ${
+                                currentPage === index + 1
+                                  ? "btn-primary"
+                                  : "btn-light"
+                              }`}
+                            >
+                              {index + 1}
+                            </button>
+                          ))}
+                          <button
+                            className="btn btn-outline-primary"
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                          >
+                            Next
+                          </button>
+                        </div>
               </div>
             </div>
           </div>
         </div>
       </section>
+      
     </div>
   );
 }

@@ -107,10 +107,6 @@ function Category() {
     setErrorMessage("");
   };
 
-  const handleSearchChange = (e) => {
-    setValue(e.target.value);
-  };
-
   const handleNextPage = () => {
     if (currentPage <= totalPages) {
       const nextPage = currentPage + 1;
@@ -133,30 +129,27 @@ function Category() {
   return (
     <>
       <div className="content-wrapper">
+        {/* Content Header */}
         <section className="content-header">
           <div className="container-fluid">
             <div className="row align-items-center justify-content-between my-3">
-              <div className="col-md-4">
+              <div className="col-md-4 col-sm-12 mb-2">
                 <h1 className="text-left">Categories</h1>
               </div>
-              <div className="col-md-8 d-flex justify-content-end">
-                <div className="form-group mb-0 flex-grow-1 mr-3">
+              <div className="col-md-8 col-sm-12 d-flex flex-wrap align-items-center">
+                {/* Search Input */}
+                <div className="form-group mb-0 flex-grow-1 mr-2 my-2">
                   <div className="input-group input-group-md">
                     <input
                       type="search"
-                      value={value}
-                      onKeyDown={(e) => {
-                        setCurrentPage(1);
-                        if (e.key === "Enter") {
-                          setSearchQuery(value);
-                        }
-                      }}
-                      onChange={handleSearchChange}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
                       className="form-control form-control-md"
                       placeholder="Search..."
                     />
                   </div>
                 </div>
+                {/* Add Category Button */}
                 <button
                   className="btn btn-success"
                   data-toggle="modal"
@@ -169,108 +162,116 @@ function Category() {
             </div>
           </div>
         </section>
+
+        {/* Main Content */}
         <section className="content">
-          <div className="row m-2">
-            <div className="col-12">
-              <div className="card">
-                <div className="card-body">
-                  <table className="table table-bordered table-hover">
-                    <thead>
-                      <tr>
-                        <th>Category</th>
-                        <th className="text-center">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {!isCategoryLoading && categoryNameList?.length
-                        ? categoryNameList.map((category) => (
-                            <tr key={category._id}>
-                              <td>{category.name}</td>
-                              <td className="text-center">
-                                <div className="d-flex justify-content-center">
-                                  <button
-                                    className="m-1 btn btn-primary"
-                                    data-toggle="modal"
-                                    data-target="#viewCategoryModal"
-                                    onClick={() =>
-                                      setSelectedCategory(category)
-                                    }
-                                  >
-                                    View
-                                  </button>
-                                  <button
-                                    className="m-1 btn btn-danger"
-                                    data-toggle="modal"
-                                    data-target="#deleteCategoryModal"
-                                    onClick={() =>
-                                      setDeleteCategoryId(category._id)
-                                    }
-                                  >
-                                    Delete
-                                  </button>
-                                  <button
-                                    className="m-1 btn btn-dark"
-                                    data-toggle="modal"
-                                    data-target="#editCategoryModal"
-                                    onClick={() =>
-                                      setUpdateCategory({
-                                        Updateid: category._id,
-                                        name: category.name,
-                                      })
-                                    }
-                                  >
-                                    Edit
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))
-                        : !isCategoryLoading && (
-                            <tr>
-                              <td colSpan={2}>No Data Found</td>
-                            </tr>
-                          )}
-                      {isCategoryLoading &&
-                        Array.from({ length: 5 }).map((_, index) => (
-                          <tr key={index}>
-                            <td
-                              style={{ height: "70px" }}
-                              className="line loading-shimmer"
-                              colSpan="2"
-                            >
-                              &nbsp;
-                            </td>
+          <div className="container-fluid">
+            <div className="row m-2">
+              <div className="col-12">
+                <div className="card">
+                  <div className="card-body">
+                    <div className="table-responsive">
+                      <table className="table table-bordered table-hover">
+                        <thead>
+                          <tr>
+                            <th>Category</th>
+                            <th className="text-center">Action</th>
                           </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                  {/* Pagination Controls */}
-                  <div className="pagination m-2">
-                    <button
-                      className="btn btn-primary m-1"
-                      onClick={handlePrevPage}
-                      disabled={currentPage === 1}
-                    >
-                      Previous
-                    </button>
-                    {Array.from({ length: totalPages }, (_, index) => (
-                      <button
-                        key={`page-${index + 1}`}
-                        onClick={() => setCurrentPage(index + 1)}
-                        className={`btn m-1 ${
-                          currentPage === index + 1 ? "bg-primary" : "btn-light"
-                        }`}
-                      >
-                        {index + 1}
-                      </button>
-                    ))}
-                    <button
-                      className="btn btn-primary m-1"
-                      onClick={handleNextPage}
-                      disabled={currentPage === totalPages}
-                    >
-                      Next
-                    </button>
+                        </thead>
+                        <tbody>
+                          {!isCategoryLoading && categoryNameList?.length
+                            ? categoryNameList.map((category) => (
+                                <tr key={category._id}>
+                                  <td>{category.name}</td>
+                                  <td className="text-center">
+                                    <div className="d-flex justify-content-center">
+                                      <button
+                                        className="m-1 btn btn-primary"
+                                        data-toggle="modal"
+                                        data-target="#viewCategoryModal"
+                                        onClick={() =>
+                                          setSelectedCategory(category)
+                                        }
+                                      >
+                                        View
+                                      </button>
+                                      <button
+                                        className="m-1 btn btn-danger"
+                                        data-toggle="modal"
+                                        data-target="#deleteCategoryModal"
+                                        onClick={() =>
+                                          setDeleteCategoryId(category._id)
+                                        }
+                                      >
+                                        Delete
+                                      </button>
+                                      <button
+                                        className="m-1 btn btn-dark"
+                                        data-toggle="modal"
+                                        data-target="#editCategoryModal"
+                                        onClick={() =>
+                                          setUpdateCategory({
+                                            Updateid: category._id,
+                                            name: category.name,
+                                          })
+                                        }
+                                      >
+                                        Edit
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))
+                            : !isCategoryLoading && (
+                                <tr>
+                                  <td colSpan={2}>No Data Found</td>
+                                </tr>
+                              )}
+                          {isCategoryLoading &&
+                            Array.from({ length: 5 }).map((_, index) => (
+                              <tr key={index}>
+                                <td
+                                  style={{ height: "70px" }}
+                                  className="line loading-shimmer"
+                                  colSpan="2"
+                                >
+                                  &nbsp;
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {/* Pagination Controls */}
+                    <div className="d-flex ">
+                          <button
+                            className="btn btn-outline-primary mr-2"
+                            disabled={currentPage === 1}
+                            onClick={handlePrevPage}
+                          >
+                            Previous
+                          </button>
+                          {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                              key={index + 1}
+                              onClick={() => setCurrentPage(index + 1)}
+                              className={`btn mr-2 ${
+                                currentPage === index + 1
+                                  ? "btn-primary"
+                                  : "btn-light"
+                              }`}
+                            >
+                              {index + 1}
+                            </button>
+                          ))}
+                          <button
+                            className="btn btn-outline-primary"
+                            disabled={currentPage === totalPages}
+                            onClick={handleNextPage}
+                          >
+                            Next
+                          </button>
+                        </div>
                   </div>
                 </div>
               </div>

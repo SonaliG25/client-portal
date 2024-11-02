@@ -4,7 +4,6 @@ import { useEditUserContext } from "../../context/EditUserContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import * as Routes from "../../utils/routeNames";
-
 import { BASE_URL } from "../../utils/routeNames.js";
 
 function Products() {
@@ -12,50 +11,47 @@ function Products() {
   const [products, setProducts] = useState([]); // Initialize as an empty array
   const [auth] = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [productsPerPage] = useState(6);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [totalProducts, setTotalProducts] = useState(0); // Track total products
   const navigate = useNavigate();
 
+  // Fetch products from API
   const getProduct = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/product/getProducts?page=${currentPage}&limit=${productsPerPage}&search=${searchQuery}`,
+        `${BASE_URL}/product/getProducts?page=${currentPage}&limit=${productsPerPage}&search=${searchQuery}`,
         {
           headers: {
             Authorization: `Bearer ${auth?.token}`,
           },
         }
       );
-      setProducts(res.data.products); // Set products from the response
-      setTotalProducts(res.data.total); // Set total product count from response
-      console.log("Product Data:", res.data);
+      setProducts(res.data.products); 
+      setTotalPages(res.data.totalPages)
+      setTotalProducts(res.data.total); 
     } catch (error) {
       console.error(error);
     }
   };
 
+
   useEffect(() => {
     if (auth?.token) {
       getProduct();
     }
-  }, [auth, currentPage, searchQuery]); // Add currentPage and searchQuery to dependencies
+  }, [auth, currentPage, searchQuery]); // Re-fetch products when page or search query changes
 
   const handleView = (data) => {
     setProductDetails(data);
-    console.log("hhgb", productDetails);
-
     navigate("/admin-dashboard/viewproduct");
   };
+
   const handleAddProduct = () => {
     navigate(Routes.NEW_PRODUCT);
   };
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
 
   const handleNextPage = () => {
     if (currentPage < Math.ceil(totalProducts / productsPerPage)) {
@@ -68,16 +64,6 @@ function Products() {
       setCurrentPage(currentPage - 1);
     }
   };
-
-  // const makePayment= async()=>{
-  //   const stripe = await loadStripe("company stripe token")
-
-  //   const body ={
-  //     products:cart
-  //   }
-
-  //   const
-  // }
 
   return (
     <div className="content-wrapper">
@@ -155,27 +141,36 @@ function Products() {
           )}
         </div>
 
-        <div className="d-flex align-items-center my-4">
-          <button
-            className="btn btn-outline-primary"
-            onClick={handlePreviousPage}
-            disabled={currentPage === 1}
-          >
-            <i className="fas fa-arrow-left mr-1"></i> Previous
-          </button>
-          <span className="m-2">
-            {currentPage} / {Math.ceil(totalProducts / productsPerPage)}
-          </span>
-          <button
-            className="btn btn-outline-primary"
-            onClick={handleNextPage}
-            disabled={
-              currentPage === Math.ceil(totalProducts / productsPerPage)
-            }
-          >
-            Next <i className="fas fa-arrow-right ml-1"></i>
-          </button>
-        </div>
+        {/* Pagination */}
+        <div className="d-flex ">
+                          <button
+                            className="btn btn-outline-primary mr-2"
+                            disabled={currentPage === 1}
+                            onClick={handlePreviousPage}
+                          >
+                            Previous
+                          </button>
+                          {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                              key={index + 1}
+                              onClick={() => setCurrentPage(index + 1)}
+                              className={`btn mr-2 ${
+                                currentPage === index + 1
+                                  ? "btn-primary"
+                                  : "btn-light"
+                              }`}
+                            >
+                              {index + 1}
+                            </button>
+                          ))}
+                          <button
+                            className="btn btn-outline-primary"
+                            disabled={currentPage === totalPages}
+                            onClick={ handleNextPage}
+                          >
+                            Next
+                          </button>
+                        </div>
       </div>
     </div>
   );

@@ -8,150 +8,169 @@ function Userlist() {
   const [currentPage, setCurrentPage] = useState(1); // State for current page
   const itemsPerPage = 5; // Fixed number of items per page
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [totalPages, setTotalPages] = useState(0);
 
   const getUser = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/user/users`, {
-        headers: {
-          Authorization: `Bearer ${auth?.token}`,
-        },
-      });
-      setUserdata(res.data);
+      const res = await axios.get(
+        `http://localhost:3000/user/users?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
+      );
+      setUserdata(res.data.data);
+      setTotalPages(res.data.totalPages);
       console.log("userdata", res.data);
     } catch (error) {
       console.error(error);
     }
   };
-  // Filter the userdata based on search query
-  const filteredUsers = userdata?.filter((user) => {
-    const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-    const searchLower = searchQuery.toLowerCase();
-    return fullName.includes(searchLower) || user.phone.includes(searchQuery);
-  });
 
-  // Calculate the current data to display based on pagination
-  const indexOfLastUser = currentPage * itemsPerPage; // Last user index
-  const indexOfFirstUser = indexOfLastUser - itemsPerPage; // First user index
-  const currentUsers = filteredUsers?.slice(indexOfFirstUser, indexOfLastUser); // Users for the current page
-
-  // Calculate total pages
-  const totalPages = Math.ceil((filteredUsers?.length || 0) / itemsPerPage);
   useEffect(() => {
     if (auth?.token) {
       getUser();
     }
-  });
-  return (
-    <>
-      <div className="content-wrapper">
-        <section className="content">
-          <div className="container-fluid">
-            <div className="m-2 d-flex justify-content-center align-items-center">
-              <h2 className=" py-2 text-center">Clients</h2>
+  }, [auth, currentPage, searchQuery]);
 
-              <form className="flex-grow-1 mr-2 ">
-                <div className="row justify-content-center">
-                  <div className="col-md-6">
-                    <div className="form-group mb-0">
-                      <div className="input-group input-group-md">
-                        <input
-                          type="search"
-                          className="form-control form-control-md"
-                          placeholder="Search by First Name, Last Name or Phone"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        <div className="input-group-append">
-                          <button
-                            className="btn btn-md btn-outline-secondary"
-                            type="button"
-                          >
-                            <i className="fa fa-search" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+  return (
+    <div className="content-wrapper">
+      {/* Content Header */}
+      <section className="content-header">
+        <div className="container-fluid">
+          <div className="row mb-2">
+            <div className="col-sm-6">
+              <h1>Clients</h1>
+            </div>
+            <div className="col-sm-6">
+              <form className="w-100">
+                <div className="input-group">
+                  <input
+                    type="search"
+                    className="form-control"
+                    placeholder="Search by First Name, Last Name, or Phone"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <div className="input-group-append">
+                    <button className="btn btn-outline-secondary" type="button">
+                      <i className="fa fa-search" />
+                    </button>
                   </div>
                 </div>
               </form>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <div className="row m-2">
-              <div className="col-12">
-                <div className="card">
-                  <div className="card-body">
-                    {!userdata ? (
-                      <div className="spinner-border" role="status">
-                        <span className="sr-only">Loading...</span>
-                      </div>
-                    ) : (
-                      <>
-                        <table
-                          id="example2"
-                          className="table table-bordered table-hover"
-                        >
-                          <thead>
-                            <tr>
-                              <th>Last Name</th>
-                              <th>First Name</th>
-                              <th>Phone</th>
-                              <th>UserType</th>
-                              <th>Number of Subscriptions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {currentUsers?.map((data) => (
-                              <tr key={data._id}>
-                                <td>{data.lastName}</td>
-                                <td>{data.firstName}</td>
-                                <td>{data.phone}</td>
-                                <td>{data.userType}</td>
-                                <td>{data.subscription.length}</td>
+      {/* Main Content */}
+      <section className="content">
+        <div className="container-fluid">
+          <div className="row m-2">
+            <div className="col-12">
+              <div className="card">
+                <div className="card-body">
+                  {!userdata ? (
+                    <div className="table-responsive">
+                      <table
+                        id="example2"
+                        className="table table-bordered table-hover"
+                      >
+                        <thead>
+                          <tr>
+                            <th>Last Name</th>
+                            <th>First Name</th>
+                            <th>Phone</th>
+                            <th>User Type</th>
+                            <th>Number of Subscriptions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Array.from({ length: itemsPerPage }).map(
+                            (_, index) => (
+                              <tr key={index}>
+                                <td
+                                  className="line loading-shimmer"
+                                  style={{ height: "70px" }}
+                                  colSpan="5"
+                                >
+                                  &nbsp;
+                                </td>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
-
-                        {/* Pagination Controls */}
-                        <div className="pagination m-2">
-                          <button
-                            className="text-blue"
-                            disabled={currentPage === 1}
-                            onClick={() => setCurrentPage(currentPage - 1)}
-                          >
-                            Previous
-                          </button>
-                          {Array.from({ length: totalPages }, (_, index) => (
-                            <button
-                              key={index + 1}
-                              onClick={() => setCurrentPage(index + 1)}
-                              className={`text-blue ${
-                                currentPage === index + 1
-                                  ? "active bg-blue"
-                                  : ""
-                              }`}
-                            >
-                              {index + 1}
-                            </button>
+                            )
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="table-responsive">
+                      <table
+                        id="example2"
+                        className="table table-bordered table-hover"
+                      >
+                        <thead>
+                          <tr>
+                            <th>Last Name</th>
+                            <th>First Name</th>
+                            <th>Phone</th>
+                            <th>User Type</th>
+                            <th>Number of Subscriptions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {userdata?.map((data) => (
+                            <tr key={data._id}>
+                              <td>{data.lastName}</td>
+                              <td>{data.firstName}</td>
+                              <td>{data.phone}</td>
+                              <td>{data.userType}</td>
+                              <td>{data.subscription.length}</td>
+                            </tr>
                           ))}
+                        </tbody>
+                      </table>
+
+                      {/* Pagination Controls */}
+                      <div className="pagination m-2">
+                        <button
+                          className="btn btn-primary m-1"
+                          disabled={currentPage === 1}
+                          onClick={() => setCurrentPage(currentPage - 1)}
+                        >
+                          Previous
+                        </button>
+                        {Array.from({ length: totalPages }, (_, index) => (
                           <button
-                            className="text-blue"
-                            disabled={currentPage === totalPages}
-                            onClick={() => setCurrentPage(currentPage + 1)}
+                            key={index + 1}
+                            onClick={() => setCurrentPage(index + 1)}
+                            className={`btn m-1 ${
+                              currentPage === index + 1
+                                ? "bg-primary"
+                                : "btn-light"
+                            }`}
                           >
-                            Next
+                            {index + 1}
                           </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
+                        ))}
+                        <button
+                          className="btn btn-primary m-1"
+                          disabled={currentPage === totalPages}
+                          onClick={() => setCurrentPage(currentPage + 1)}
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-        </section>
-      </div>
-    </>
+        </div>
+      </section>
+    </div>
   );
 }
 
