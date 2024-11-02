@@ -119,14 +119,14 @@ export const Login = () => {
               </div>
             </form>
 
-            <p className="mb-1">
+            {/* <p className="mb-1">
               <a href="#">I forgot my password</a>
             </p>
             <p className="mb-0">
               <a href="/register" className="text-center">
                 Register a new membership
               </a>
-            </p>
+            </p> */}
           </div>
         </div>
       </div>
