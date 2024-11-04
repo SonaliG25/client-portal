@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import toast from "react-hot-toast";
 
 function Category() {
   const [auth] = useAuth();
@@ -60,6 +61,7 @@ function Category() {
           },
         }
       );
+      toast.success("Category Added");
       setNewCategory("");
       setErrorMessage("");
       fetchCategories(); // Refresh categories
@@ -80,6 +82,7 @@ function Category() {
           },
         }
       );
+      toast.success("Categories Updated");
       fetchCategories();
       document.getElementById("closeEditModalButton").click(); // Close modal
     } catch (error) {
@@ -244,34 +247,34 @@ function Category() {
                     </div>
                     {/* Pagination Controls */}
                     <div className="d-flex ">
-                          <button
-                            className="btn btn-outline-primary mr-2"
-                            disabled={currentPage === 1}
-                            onClick={handlePrevPage}
-                          >
-                            Previous
-                          </button>
-                          {Array.from({ length: totalPages }, (_, index) => (
-                            <button
-                              key={index + 1}
-                              onClick={() => setCurrentPage(index + 1)}
-                              className={`btn mr-2 ${
-                                currentPage === index + 1
-                                  ? "btn-primary"
-                                  : "btn-light"
-                              }`}
-                            >
-                              {index + 1}
-                            </button>
-                          ))}
-                          <button
-                            className="btn btn-outline-primary"
-                            disabled={currentPage === totalPages}
-                            onClick={handleNextPage}
-                          >
-                            Next
-                          </button>
-                        </div>
+                      <button
+                        className="btn btn-outline-primary mr-2"
+                        disabled={currentPage === 1}
+                        onClick={handlePrevPage}
+                      >
+                        Previous
+                      </button>
+                      {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                          key={index + 1}
+                          onClick={() => setCurrentPage(index + 1)}
+                          className={`btn mr-2 ${
+                            currentPage === index + 1
+                              ? "btn-primary"
+                              : "btn-light"
+                          }`}
+                        >
+                          {index + 1}
+                        </button>
+                      ))}
+                      <button
+                        className="btn btn-outline-primary"
+                        disabled={currentPage === totalPages}
+                        onClick={handleNextPage}
+                      >
+                        Next
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
