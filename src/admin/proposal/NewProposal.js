@@ -144,8 +144,8 @@ const NewProposal = () => {
             Authorization: `Bearer ${auth?.token}`,
           },
         });
-        setUsers(response.data);
-        console.log("Users", response.data);
+        setUsers(response.data.data);
+        console.log("Users", response.data.data);
       } catch (error) {
         console.error("Error fetching Users:", error);
       }
@@ -153,14 +153,14 @@ const NewProposal = () => {
     const fetchProposalTemplates = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/proposalTemplate/proposaltemplates`,
+          `http://localhost:3000/proposalTemplate/templates`,
           {
             headers: {
               Authorization: `Bearer ${auth?.token}`,
             },
           }
         );
-        setProposalTemplates(res.data);
+        setProposalTemplates(res.data.templates);
         console.log("Template : ", res.data);
       } catch (err) {
         setError(err.message);
@@ -300,7 +300,8 @@ const NewProposal = () => {
                   ref={editor}
                   config={editorConfig}
                   value={proposalData.content}
-                  onChange={handleEditorChange}
+                  onBlur={(text)=>handleEditorChange(text)}
+                  //onChange={handleEditorChange}
                 />
               </FormGroup>
 

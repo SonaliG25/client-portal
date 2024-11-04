@@ -146,7 +146,7 @@ function NewProposalTemplate() {
                           ref={editor}
                           config={editorConfig}
                           value={description}
-                          onChange={(newContent) => setDescription(newContent)}
+                          onBlur={(newContent) => setDescription(newContent)}
                         />
                         {descriptionValid === false && (
                           <FormFeedback className="d-block">
