@@ -1,6 +1,7 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function UserNavbar() {
   const [auth, setAuth] = useAuth();
@@ -9,6 +10,7 @@ function UserNavbar() {
   const handleLogout = () => {
     localStorage.clear("auth");
     setAuth({ user: null, token: "" });
+    toast.success("Logout Successfully");
     navigate("/login");
   };
 
@@ -48,7 +50,6 @@ function UserNavbar() {
       </nav>
       {/* logout model */}
       <div>
-       
         {/* Modal */}
         <div
           className="modal fade"

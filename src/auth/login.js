@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode"; // Add this package to decode JWT tokens
+import toast from "react-hot-toast";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -74,7 +75,7 @@ export const Login = () => {
           user: response.data.userInfo,
           token: response.data.token,
         });
-
+        toast.success("login Suceessfully");
         // Redirect to appropriate dashboard
         response.data.userInfo.role === "admin"
           ? navigate("/admin-dashboard")

@@ -66,11 +66,9 @@ const Register = () => {
           "http://localhost:3000/user/register",
           values
         );
-        console.log(res);
-        if (res.status === 200) {
-          toast.success("Registration successful!");
-          navigate(ALL_USERS);
-        }
+        // console.log(res);
+        toast.success(" created Successfully");
+        navigate("/admin-dashboard/allusers");
       } catch (error) {
         toast.error(error.response.data.message);
         console.error(error);
