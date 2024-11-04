@@ -27,7 +27,9 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    // Extract username by splitting at "@"
+    const extractedUsername = email.split("@")[0];
+    setUsername(extractedUsername);
     try {
       const res = await axios.post(`http://localhost:3000/user/register`, {
         username,
@@ -119,8 +121,8 @@ const Register = () => {
                       className="form-control"
                     />
                   </div>
-                 
-                  <div className="form-group">
+
+                  {/* <div className="form-group">
                     <label htmlFor="inputName">UserName</label>
                     <input
                       value={username}
@@ -129,7 +131,7 @@ const Register = () => {
                       id="inputName"
                       className="form-control"
                     />
-                  </div>
+                  </div> */}
                   <div className="form-group">
                     <label htmlFor="inputName">Password</label>
                     <input
@@ -271,30 +273,3 @@ const Register = () => {
 };
 
 export default Register;
-
-// {
-//   "firstName": "John",
-//   "lastName": "Doe",
-//   "phone": "+1234567890",
-//   "userType": "prospect",
-//   "username": "John",
-//   "email": "user@test.com",
-//   "password": "123456",
-//   "role": "client",
-//   "addresses": [
-//     {
-//       "street": "123 Main St",
-//       "city": "New York",
-//       "state": "NY",
-//       "zipCode": "10001",
-//       "country": "USA"
-//     }
-//   ],
-//   "purchaseHistory:[],
-//   "subscription": [],
-//   "createdAt": "2024-10-08T12:34:56.789Z",
-//   "updatedAt": "2024-10-08T12:34:56.789Z"
-// }
-
-// user table structure
-// name , phone, userType,username, email,no of subscriptions|| update | delete(warning:Are u sure?)

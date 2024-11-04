@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode"; // Add this package to decode JWT tokens
+import { jwtDecode } from "jwt-decode"; // Add this package to decode JWT tokens
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,15 +14,14 @@ export const Login = () => {
   // Check if token has expired
   const checkTokenExpiration = () => {
     const token = localStorage.getItem("token");
-    
-    
+
     if (token) {
       const decodedToken = jwtDecode(token);
       const currentTime = Date.now() / 1000; // Get current time in seconds
-      console.log("Token",decodedToken);
+      console.log("Token", decodedToken);
       // If the token is expired, logout
       if (decodedToken.exp < currentTime) {
-        console.log("Enter logout",decodedToken);
+        console.log("Enter logout", decodedToken);
         logout();
       }
     }
@@ -34,7 +33,7 @@ export const Login = () => {
     localStorage.removeItem("auth");
     localStorage.removeItem("token");
     console.log("session removed");
-    
+
     // Clear the auth context
     setAuth(null);
 
@@ -56,8 +55,8 @@ export const Login = () => {
   // Handle login form submission
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Loginnnnnm");
-    
+    // console.log("Loginnnnnm");
+
     setError(""); // Clear previous errors
 
     try {
@@ -156,14 +155,14 @@ export const Login = () => {
               </div>
             </form>
 
-            <p className="mb-1">
+            {/* <p className="mb-1">
               <a href="#">I forgot my password</a>
             </p>
             <p className="mb-0">
               <a href="/register" className="text-center">
                 Register a new membership
               </a>
-            </p>
+            </p> */}
           </div>
         </div>
       </div>

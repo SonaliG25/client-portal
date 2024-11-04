@@ -25,12 +25,11 @@ import UpdateProduct from "./admin/product/updateProduct";
 import Home from "./admin/home/home";
 import Category from "./admin/Category/Category";
 import NewProposal from "./admin/proposal/NewProposal";
-import UserCategory from "./admin/user/Catergory/UserCategory";
-import Userlist from "./admin/user/Clientlist/Userlist";
 
 function App() {
   const router = createBrowserRouter([
     { path: Routes.LOGIN, element: <Login /> },
+
     {
       path: "user-dashboard",
       element: <UserLayout />,
@@ -42,14 +41,6 @@ function App() {
         {
           path: "proposal-view",
           element: <ProposalInfo />,
-        },
-        {
-          path: "categories",
-          element: <UserCategory />,
-        },
-        {
-          path: "userlist",
-          element: <Userlist />,
         },
       ],
     },
