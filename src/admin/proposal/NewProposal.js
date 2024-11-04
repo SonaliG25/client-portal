@@ -162,6 +162,8 @@ const NewProposal = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [proposalTemplates, setProposalTemplates] = useState([]);
+
+  const [content, setContent] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(null);
@@ -172,8 +174,8 @@ const NewProposal = () => {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
-      setUsers(response.data);
-      console.log("Users", response.data);
+      setUsers(response.data.data);
+      console.log("Users", response.data.data);
     } catch (error) {
       console.error("Error fetching Users:", error);
     }
@@ -181,14 +183,14 @@ const NewProposal = () => {
   const fetchProposalTemplates = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/proposalTemplate/proposaltemplates`,
+        `http://localhost:3000/proposalTemplate/templates`,
         {
           headers: {
             Authorization: `Bearer ${auth?.token}`,
           },
         }
       );
-      setProposalTemplates(res.data);
+      setProposalTemplates(res.data.templates);
       console.log("Template : ", res.data);
     } catch (err) {
       setError(err.message);
@@ -208,11 +210,12 @@ const NewProposal = () => {
   }, [proposalData]);
 
   const handleTemplateSelect = (templateContent) => {
-    setProposalData((prevData) => ({
-      ...prevData,
-      content: templateContent,
-    }));
-    console.log("Selected TEmplate is : ", proposalData.content);
+    setContent(templateContent);
+    // setProposalData((prevData) => ({
+    //   ...prevData,
+    //   content: templateContent,
+    // }));
+    console.log("Selected TEmplate is : ", content);
     setShowModal(false);
   };
   const handleInputChange = (e) => {
@@ -220,10 +223,11 @@ const NewProposal = () => {
     setProposalData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleEditorChange = (content) => {
+  // Update function to handle editor content changes
+  const handleEditorChange = (newContent) => {
     setProposalData((prevData) => ({
       ...prevData,
-      content,
+      content: newContent,
     }));
   };
 
@@ -376,17 +380,17 @@ const NewProposal = () => {
 
               <FormGroup>
                 <Label>Content</Label>
-
                 <JoditEditor
                   ref={editor}
                   config={editorConfig}
                   value={proposalData.content}
-                  onChange={handleEditorChange}
+                  onBlur={(text) => handleEditorChange(text)}
+                  //onChange={handleEditorChange}
                 />
               </FormGroup>
               <div className="d-flex justify-content-start align-items-center mt-4 mb-4">
                 <h5>Choose Currency</h5>
-                <div className="col-1">
+                <div className="col-3">
                   <Input
                     type="select"
                     name="currency"
