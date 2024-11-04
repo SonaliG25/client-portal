@@ -1,300 +1,303 @@
+import React from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup"; // Import Yup for validation
 import axios from "axios";
-import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { ALL_USERS } from "../../utils/routeNames";
+
 const Register = () => {
-  // User state
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState();
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("client");
-  const [subscription, setSubscription] = useState([]);
-  const [purchaseHistory, setPurchaseHistory] = useState([]);
   const navigate = useNavigate();
-  const [errors, setErrors] = useState();
-  const [addresses, setAddresses] = useState([
-    {
-      street: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      country: "",
-      isDefault: false,
+
+  // Define Yup validation schema
+  const validationSchema = Yup.object({
+    firstName: Yup.string()
+      .required("First name is required")
+      .min(2, "First name should be at least 2 characters"),
+    lastName: Yup.string()
+      .required("Last name is required")
+      .min(2, "Last name should be at least 2 characters"),
+    phone: Yup.string()
+      .required("Phone number is required")
+      .matches(/^[0-9]{10}$/, "Phone number should be 10 digits"),
+    username: Yup.string()
+      .required("Username is required")
+      .min(4, "Username should be at least 4 characters"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    password: Yup.string()
+      .required("Password is required")
+      .min(4, "Password should be at least 4 characters"),
+    role: Yup.string().required("Role is required"),
+    addresses: Yup.object({
+      street: Yup.string().required("Street is required"),
+      city: Yup.string().required("City is required"),
+      state: Yup.string().required("State is required"),
+      zipCode: Yup.string()
+        .required("Zip code is required")
+        .matches(/^[0-9]{6}$/, "Zip code should be 6 digits"),
+      country: Yup.string().required("Country is required"),
+    }),
+  });
+
+  // Set up Formik hook with validation schema
+  const formik = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      phone: "",
+      username: "",
+      email: "",
+      password: "",
+      role: "client",
+      addresses: {
+        street: "",
+        city: "",
+        state: "",
+        zipCode: "",
+        country: "",
+      },
     },
-  ]);
+    validationSchema, // Pass validation schema to Formik
+    onSubmit: async (values) => {
+      try {
+        const res = await axios.post(
+          "http://localhost:3000/user/register",
+          values
+        );
+        console.log(res);
+        if (res.status === 200) {
+          toast.success("Registration successful!");
+          navigate(ALL_USERS);
+        }
+      } catch (error) {
+        toast.error(error.response.data.message);
+        console.error(error);
+      }
+    },
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const res = await axios.post(`http://localhost:3000/user/register`, {
-        username,
-        email,
-        password,
-        role,
-        subscription,
-        purchaseHistory,
-        firstName,
-        lastName,
-        phone,
-        addresses,
-      });
-      console.log(res);
-      navigate("/admin-dashboard/allusers");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { values, handleChange, handleSubmit, touched, errors } = formik;
 
   return (
-    <>
-      <div className="content-wrapper">
-        <section className="content-header">
-          <div className="container-fluid">
-            <div className="row mb-2">
-              <div className="col-sm-6">
-                <h1 className="text-dark">Add User</h1>
-              </div>
-              <div className="col-sm-6">
-                <ol className="breadcrumb float-sm-right">
-                  <li className="breadcrumb-item">
-                    <a href="#">Home</a>
-                  </li>
-                  <li className="breadcrumb-item active">Add User</li>
-                </ol>
-              </div>
+    <div className="content-wrapper">
+      <section className="content-header">
+        <div className="container-fluid">
+          <div className="row mb-2">
+            <div className="col-sm-6">
+              <h1 className="text-dark">Add User</h1>
+            </div>
+            <div className="col-sm-6">
+              <ol className="breadcrumb float-sm-right">
+                <li className="breadcrumb-item">
+                  <a href="#">Home</a>
+                </li>
+                <li className="breadcrumb-item active">Add User</li>
+              </ol>
             </div>
           </div>
-          {/* /.container-fluid */}
-        </section>
-        {/* Main content */}
-        <section className="content">
+        </div>
+      </section>
+
+      <section className="content">
+        <form onSubmit={handleSubmit}>
           <div className="row">
             <div className="col-md-6">
               <div className="card card-primary">
                 <div className="card-header">
                   <h3 className="card-title">Personal Information</h3>
-                  <div className="card-tools">
-                    <button
-                      type="button"
-                      className="btn btn-tool"
-                      data-card-widget="collapse"
-                      title="Collapse"
-                    >
-                      <i className="fas fa-minus" />
-                    </button>
-                  </div>
                 </div>
                 <div className="card-body">
                   <div className="form-group">
-                    <label htmlFor="inputName">First Name</label>
+                    <label htmlFor="firstName">First Name</label>
                     <input
                       type="text"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      id="inputName"
+                      name="firstName"
+                      value={values.firstName}
+                      onChange={handleChange}
                       className="form-control"
                     />
+                    {touched.firstName && errors.firstName ? (
+                      <div className="text-danger">{errors.firstName}</div>
+                    ) : null}
                   </div>
                   <div className="form-group">
-                    <label htmlFor="inputName">Last Name</label>
+                    <label htmlFor="lastName">Last Name</label>
                     <input
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
                       type="text"
-                      id="inputName"
+                      name="lastName"
+                      value={values.lastName}
+                      onChange={handleChange}
                       className="form-control"
                     />
+                    {touched.lastName && errors.lastName ? (
+                      <div className="text-danger">{errors.lastName}</div>
+                    ) : null}
                   </div>
                   <div className="form-group">
-                    <label htmlFor="inputName">Mobile number</label>
+                    <label htmlFor="phone">Mobile Number</label>
                     <input
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
                       type="tel"
-                      maxLength={13}
-                      id="inputName"
+                      name="phone"
+                      value={values.phone}
+                      onChange={handleChange}
                       className="form-control"
                     />
+                    {touched.phone && errors.phone ? (
+                      <div className="text-danger">{errors.phone}</div>
+                    ) : null}
                   </div>
-                 
                   <div className="form-group">
-                    <label htmlFor="inputName">UserName</label>
+                    <label htmlFor="username">Username</label>
                     <input
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
                       type="text"
-                      id="inputName"
+                      name="username"
+                      value={values.username}
+                      onChange={handleChange}
                       className="form-control"
                     />
+                    {touched.username && errors.username ? (
+                      <div className="text-danger">{errors.username}</div>
+                    ) : null}
                   </div>
                   <div className="form-group">
-                    <label htmlFor="inputName">Password</label>
+                    <label htmlFor="password">Password</label>
                     <input
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      type="text"
-                      id="inputName"
+                      type="password"
+                      name="password"
+                      value={values.password}
+                      onChange={handleChange}
                       className="form-control"
                     />
+                    {touched.password && errors.password ? (
+                      <div className="text-danger">{errors.password}</div>
+                    ) : null}
                   </div>
                   <div className="form-group">
-                    <label htmlFor="inputName">Email</label>
+                    <label htmlFor="email">Email</label>
                     <input
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      type="text"
-                      id="inputName"
+                      type="email"
+                      name="email"
+                      value={values.email}
+                      onChange={handleChange}
                       className="form-control"
                     />
+                    {touched.email && errors.email ? (
+                      <div className="text-danger">{errors.email}</div>
+                    ) : null}
                   </div>
                   <div className="form-group">
-                    <label htmlFor="inputStatus">Role</label>
+                    <label htmlFor="role">Role</label>
                     <select
-                      value={role}
-                      onChange={(e) => setRole(e.target.value)}
-                      id="inputStatus"
+                      name="role"
+                      value={values.role}
+                      onChange={handleChange}
                       className="form-control custom-select"
                     >
-                      <option selected disabled>
-                        Select one
-                      </option>
                       <option value="client">Client</option>
                       <option value="admin">Admin</option>
                       <option value="manager">Manager</option>
                       <option value="developer">Developer</option>
                     </select>
+                    {touched.role && errors.role ? (
+                      <div className="text-danger">{errors.role}</div>
+                    ) : null}
                   </div>
                 </div>
-                {/* /.card-body */}
               </div>
-              {/* /.card */}
             </div>
+
             <div className="col-md-6">
               <div className="card card-secondary">
                 <div className="card-header">
                   <h3 className="card-title">Address</h3>
-                  <div className="card-tools">
-                    <button
-                      type="button"
-                      className="btn btn-tool"
-                      data-card-widget="collapse"
-                      title="Collapse"
-                    >
-                      <i className="fas fa-minus" />
-                    </button>
-                  </div>
                 </div>
                 <div className="card-body">
                   <div className="form-group">
-                    <label htmlFor="inputEstimatedBudget">Street</label>
+                    <label htmlFor="addresses.street">Street</label>
                     <input
-                      value={addresses.street}
-                      onChange={(e) =>
-                        setAddresses({ ...addresses, street: e.target.value })
-                      }
                       type="text"
-                      id="inputEstimatedBudget"
+                      name="addresses.street"
+                      value={values.addresses.street}
+                      onChange={handleChange}
                       className="form-control"
                     />
+                    {touched.addresses?.street && errors.addresses?.street ? (
+                      <div className="text-danger">
+                        {errors.addresses.street}
+                      </div>
+                    ) : null}
                   </div>
                   <div className="form-group">
-                    <label htmlFor="inputSpentBudget">City</label>
+                    <label htmlFor="addresses.city">City</label>
                     <input
-                      value={addresses.city}
-                      onChange={(e) =>
-                        setAddresses({ ...addresses, city: e.target.value })
-                      }
                       type="text"
-                      id="inputSpentBudget"
+                      name="addresses.city"
+                      value={values.addresses.city}
+                      onChange={handleChange}
                       className="form-control"
                     />
+                    {touched.addresses?.city && errors.addresses?.city ? (
+                      <div className="text-danger">{errors.addresses.city}</div>
+                    ) : null}
                   </div>
                   <div className="form-group">
-                    <label htmlFor="inputEstimatedDuration">State</label>
+                    <label htmlFor="addresses.state">State</label>
                     <input
-                      value={addresses.state}
-                      onChange={(e) =>
-                        setAddresses({ ...addresses, state: e.target.value })
-                      }
                       type="text"
-                      id="inputEstimatedDuration"
+                      name="addresses.state"
+                      value={values.addresses.state}
+                      onChange={handleChange}
                       className="form-control"
                     />
+                    {touched.addresses?.state && errors.addresses?.state ? (
+                      <div className="text-danger">
+                        {errors.addresses.state}
+                      </div>
+                    ) : null}
                   </div>
                   <div className="form-group">
-                    <label htmlFor="inputEstimatedDuration">ZipCode</label>
+                    <label htmlFor="addresses.zipCode">Zip Code</label>
                     <input
-                      value={addresses.zipCode}
-                      onChange={(e) =>
-                        setAddresses({ ...addresses, zipCode: e.target.value })
-                      }
                       type="text"
-                      id="inputEstimatedDuration"
+                      name="addresses.zipCode"
+                      value={values.addresses.zipCode}
+                      onChange={handleChange}
                       className="form-control"
                     />
+                    {touched.addresses?.zipCode && errors.addresses?.zipCode ? (
+                      <div className="text-danger">
+                        {errors.addresses.zipCode}
+                      </div>
+                    ) : null}
                   </div>
                   <div className="form-group">
-                    <label htmlFor="inputEstimatedDuration">Country</label>
+                    <label htmlFor="addresses.country">Country</label>
                     <input
-                      value={addresses.country}
-                      onChange={(e) =>
-                        setAddresses({ ...addresses, country: e.target.value })
-                      }
                       type="text"
-                      id="inputEstimatedDuration"
+                      name="addresses.country"
+                      value={values.addresses.country}
+                      onChange={handleChange}
                       className="form-control"
                     />
+                    {touched.addresses?.country && errors.addresses?.country ? (
+                      <div className="text-danger">
+                        {errors.addresses.country}
+                      </div>
+                    ) : null}
                   </div>
                 </div>
-                {/* /.card-body */}
               </div>
-              {/* /.card */}
             </div>
           </div>
-          <div className="row">
-            <div className="col-12">
-              <button
-                onClick={handleSubmit}
-                className="btn btn-success btn-block"
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        </section>
-      </div>
-    </>
+          <button type="submit" className="btn-block btn-primary">
+            Submit
+          </button>
+        </form>
+      </section>
+    </div>
   );
 };
 
 export default Register;
-
-// {
-//   "firstName": "John",
-//   "lastName": "Doe",
-//   "phone": "+1234567890",
-//   "userType": "prospect",
-//   "username": "John",
-//   "email": "user@test.com",
-//   "password": "123456",
-//   "role": "client",
-//   "addresses": [
-//     {
-//       "street": "123 Main St",
-//       "city": "New York",
-//       "state": "NY",
-//       "zipCode": "10001",
-//       "country": "USA"
-//     }
-//   ],
-//   "purchaseHistory:[],
-//   "subscription": [],
-//   "createdAt": "2024-10-08T12:34:56.789Z",
-//   "updatedAt": "2024-10-08T12:34:56.789Z"
-// }
-
-// user table structure
-// name , phone, userType,username, email,no of subscriptions|| update | delete(warning:Are u sure?)
