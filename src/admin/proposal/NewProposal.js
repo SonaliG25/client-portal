@@ -33,6 +33,7 @@ const NewProposal = () => {
   // Function to close the modal
   const handleCloseProductModal = () => setShowProductModal(false);
   const [products, setProducts] = useState([]);
+  const [description, setDescription] =useState('')
   const [totalProducts, setTotalProducts] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(5); // Adjust the number of products per page as needed
@@ -209,6 +210,8 @@ const NewProposal = () => {
   // Separate useEffect for recalculating totals based only on proposalData changes
   useEffect(() => {
     calculateGrandTotals();
+    console.log("proposalData");
+    
   }, [proposalData]);
 
   const handleTemplateSelect = (templateContent) => {
@@ -224,12 +227,12 @@ const NewProposal = () => {
     setProposalData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleEditorChange = (content) => {
-    setProposalData((prevData) => ({
-      ...prevData,
-      content,
-    }));
-  };
+  // const handleEditorChange = (content) => {
+  //   setProposalData((prevData) => ({
+  //     ...prevData,
+  //     content,
+  //   }));
+  // };
 
   // Calculate the total for each product based on quantity, price, discount, and discountType
   const calculateTotal = (quantity, salePrice, discount, discountType) => {
@@ -385,7 +388,7 @@ const NewProposal = () => {
                   ref={editor}
                   config={editorConfig}
                   value={proposalData.content}
-                  onBlur={(text)=>handleEditorChange(text)}
+                  onBlur={text => setDescription(text)}
                   //onChange={handleEditorChange}
                 />
               </FormGroup>

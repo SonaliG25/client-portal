@@ -52,6 +52,7 @@ const Proposaltemplete = () => {
 
   const HandleView = (data) => {
     setProposalTempleteDetails(data);
+    console.log(data);
     navigate("/admin-dashboard/viewproposaltemplete");
   };
 

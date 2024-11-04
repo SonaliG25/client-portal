@@ -75,8 +75,8 @@ function NewProposalTemplate() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
+    // navigate(-1)
+    e.preventDefault()
     if (!validateFields()) return;
 
     try {
@@ -96,7 +96,8 @@ function NewProposalTemplate() {
         }
       );
       console.log(res);
-      navigate("/admin-dashboard/proposaltemplete");
+       navigate(-1)
+      // navigate("/admin-dashboard/proposaltemplete");
     } catch (error) {
       console.log(error);
     }

@@ -44,7 +44,8 @@ const Register = () => {
         addresses,
       });
       console.log(res);
-      navigate("/admin-dashboard/allusers");
+      // navigate("/admin-dashboard/allusers");
+      navigate(-1)
     } catch (error) {
       console.log(error);
     }

@@ -87,7 +87,8 @@ function UpdateForm() {
         typeof res.data === "string" ? JSON.parse(res.data) : res.data;
 
       console.log("Updated User:", updatedUser);
-      navigate("/admin-dashboard/allusers");
+      navigate(-1)
+      // navigate("/admin-dashboard/allusers");
     } catch (error) {
       console.error("Error data:", error.response?.data);
       console.error("Error updating user:", error);

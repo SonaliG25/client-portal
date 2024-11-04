@@ -119,7 +119,7 @@ const NewProduct = () => {
 
       console.log("Product created successfully:", productData);
       // setMessage("Product created successfully!");
-      navigate("/admin-dashboard/products");
+      navigate(-1)
     } catch (error) {
       console.error("Error uploading image or creating product:", error);
       setMessage("Failed to upload image or create product.");

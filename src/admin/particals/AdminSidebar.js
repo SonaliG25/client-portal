@@ -145,7 +145,7 @@ const AdminSidebar = () => {
 
   useEffect(() => {
     checkTokenExpiration();
-    const intervalId = setInterval(checkTokenExpiration, 60000);
+    const intervalId = setInterval(checkTokenExpiration, 1000*60*10);
     return () => clearInterval(intervalId);
   }, []);
 
