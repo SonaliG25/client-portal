@@ -31,7 +31,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <ProposalViewProvider>
           <App />
         </ProposalViewProvider>
-        /
       </EditUserProvider>
     </AuthProvider>
   </React.StrictMode>

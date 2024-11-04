@@ -72,11 +72,6 @@ const NewProposal = () => {
     }
   };
 
-  // Call getProduct on component mount and when search query changes
-  useEffect(() => {
-    getProduct();
-  }, [currentPage, searchQuery]);
-
   // Handle search input change
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -161,9 +156,6 @@ const NewProposal = () => {
   };
   // Effect to recalculate totals whenever proposalData changes
 
-  useEffect(() => {
-    calculateGrandTotals();
-  }, [proposalData]);
   const handleDownloadPDF = () => {
     generatePDF(proposalData);
   };
@@ -173,42 +165,47 @@ const NewProposal = () => {
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(null);
-
-  // Fetch Users
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/user/users", {
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/user/users", {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
+      setUsers(response.data);
+      console.log("Users", response.data);
+    } catch (error) {
+      console.error("Error fetching Users:", error);
+    }
+  };
+  const fetchProposalTemplates = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/proposalTemplate/proposaltemplates`,
+        {
           headers: {
             Authorization: `Bearer ${auth?.token}`,
           },
-        });
-        setUsers(response.data);
-        console.log("Users", response.data);
-      } catch (error) {
-        console.error("Error fetching Users:", error);
-      }
-    };
-    const fetchProposalTemplates = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:3000/proposalTemplate/proposaltemplates`,
-          {
-            headers: {
-              Authorization: `Bearer ${auth?.token}`,
-            },
-          }
-        );
-        setProposalTemplates(res.data);
-        console.log("Template : ", res.data);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
+        }
+      );
+      setProposalTemplates(res.data);
+      console.log("Template : ", res.data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
-    fetchProposalTemplates();
+  // Fetch users, proposal templates, and products on mount or when `auth` changes
+  useEffect(() => {
     fetchUsers();
-  }, [auth]);
+    fetchProposalTemplates();
+    getProduct();
+  }, [auth, currentPage, searchQuery]);
+
+  // Separate useEffect for recalculating totals based only on proposalData changes
+  useEffect(() => {
+    calculateGrandTotals();
+  }, [proposalData]);
 
   const handleTemplateSelect = (templateContent) => {
     setProposalData((prevData) => ({
