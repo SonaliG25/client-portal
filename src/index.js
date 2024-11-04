@@ -33,7 +33,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Toaster></Toaster>
           <App />
         </ProposalViewProvider>
-        /
       </EditUserProvider>
     </AuthProvider>
   </React.StrictMode>

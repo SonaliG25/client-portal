@@ -34,7 +34,7 @@ const NewProduct = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/category/allCategory",
+          "http://localhost:3000/category/categories",
           {
             headers: {
               Authorization: `Bearer ${auth?.token}`,
