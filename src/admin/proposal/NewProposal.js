@@ -18,7 +18,7 @@ import {
   Label,
   Table,
 } from "reactstrap";
-import { generatePDF } from "./generateProposalPdf.js";
+import { savePdfToServer } from "./saveProposalPdfToServer.js";
 
 const NewProposal = () => {
   const navigate = useNavigate();
@@ -119,7 +119,7 @@ const NewProposal = () => {
     title: "",
     content: "",
     products: [],
-    grandTotalCurrency: "",
+    grandTotalCurrency: "$",
     productTotal: 0,
     grandTotal: 0,
     discountOnGrandTotal: 0,
@@ -155,10 +155,27 @@ const NewProposal = () => {
     }));
   };
   // Effect to recalculate totals whenever proposalData changes
+  const [attachments, setAttachments] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleDownloadPDF = () => {
-    generatePDF(proposalData);
+  const handleSavePdf = async () => {
+    setLoading(true);
+    try {
+      // Call the function and receive the Map with {filename, attachmentUrl}
+      const pdfAttachment = await savePdfToServer(proposalData, auth?.token);
+
+      // Set the response map to state if you need to use it further
+      setAttachments(pdfAttachment);
+
+      // Log or use the result in proposalData.attachments
+      console.log("PDF saved on server:", pdfAttachment);
+    } catch (error) {
+      console.error("Error saving PDF:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [proposalTemplates, setProposalTemplates] = useState([]);
@@ -210,12 +227,11 @@ const NewProposal = () => {
   }, [proposalData]);
 
   const handleTemplateSelect = (templateContent) => {
-    setContent(templateContent);
-    // setProposalData((prevData) => ({
-    //   ...prevData,
-    //   content: templateContent,
-    // }));
-    console.log("Selected TEmplate is : ", content);
+    setProposalData((prevData) => ({
+      ...prevData,
+      content: templateContent,
+    }));
+    console.log("Selected TEmplate is : ", proposalData.content);
     setShowModal(false);
   };
   const handleInputChange = (e) => {
@@ -274,11 +290,12 @@ const NewProposal = () => {
   const handleProductChange = (index, event) => {
     const { name, value } = event.target;
     const updatedProducts = [...proposalData.products];
-
+    console.log("updatedProducts.total", updatedProducts.total);
     // Update the changed field
     updatedProducts[index][name] = value;
 
     // Parse values for calculation
+    const total = parseFloat(updatedProducts[index].total) || 0;
     const quantity = parseFloat(updatedProducts[index].quantity) || 1;
     const salePrice = parseFloat(updatedProducts[index].price) || 0;
     const discount = parseFloat(updatedProducts[index].discount) || 0;
@@ -318,7 +335,7 @@ const NewProposal = () => {
         <Card className="card card-primary card-outline">
           <CardBody>
             <h5 className="card-header bg-primary text-white">New Proposal</h5>
-            <Form onSubmit={handleSubmit}>
+            <Form>
               <FormGroup>
                 <Label>Email To</Label>
                 <Typeahead
@@ -341,10 +358,12 @@ const NewProposal = () => {
                 />
               </FormGroup>
               {/* Proposal Template Selection */}
-              <Button onClick={() => setShowModal(true)}>
-                Select Proposal Template
-              </Button>
-
+              <div className="d-flex justify-content-between align-items-center mt-4 mb-4">
+                <Label>Content</Label>
+                <Button onClick={() => setShowModal(true)}>
+                  Select Proposal Template
+                </Button>
+              </div>
               <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton className="bg-dark">
                   <Modal.Title className="text-white">
@@ -379,13 +398,11 @@ const NewProposal = () => {
               </Modal>
 
               <FormGroup>
-                <Label>Content</Label>
                 <JoditEditor
                   ref={editor}
                   config={editorConfig}
                   value={proposalData.content}
-                  onBlur={(text) => handleEditorChange(text)}
-                  //onChange={handleEditorChange}
+                  onBlur={(newContent) => handleEditorChange(newContent)}
                 />
               </FormGroup>
               <div className="d-flex justify-content-start align-items-center mt-4 mb-4">
@@ -409,7 +426,7 @@ const NewProposal = () => {
               <div className="d-flex justify-content-between align-items-center mt-4 mb-4">
                 <h5>Selected Products</h5>
                 <Button variant="primary" onClick={handleShowProductModal}>
-                  Add Product
+                  Add Product(s)
                 </Button>
               </div>
 
@@ -586,8 +603,9 @@ const NewProposal = () => {
                         <th>Product</th>
                         <th>Quantity</th>
                         <th>Discount</th>
+                        <th>SalesPrice</th>
                         <th>Total</th>
-                        <th>Actions</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -632,14 +650,36 @@ const NewProposal = () => {
                               </select>
                             </div>
                           </td>
-                          <td>{product.total}</td>
+                          <td>
+                            {" "}
+                            <div className="d-flex align-items-center gap-2 ">
+                              {proposalData.grandTotalCurrency}
+                              <Input
+                                type="number"
+                                name="price"
+                                value={product.price}
+                                onChange={(e) => handleProductChange(index, e)}
+                                min="1"
+                                className="form-control ml-1"
+                              />
+                            </div>
+                          </td>
 
+                          <td>
+                            <div className="d-flex align-items-center gap-2 ">
+                              <p className="mr-1">
+                                {proposalData.grandTotalCurrency}
+                              </p>
+                              <p> {product.total}</p>
+                            </div>
+                          </td>
                           <td>
                             <Button
                               color="danger"
                               onClick={() => removeProduct(index)}
+                              className="btn btn-danger btn-sm"
                             >
-                              X
+                              <i className="fas fa-trash-alt"></i>
                             </Button>
                           </td>
                         </tr>
@@ -652,7 +692,17 @@ const NewProposal = () => {
                     {proposalData.products.map((product, index) => (
                       <div key={index} className="card mb-3">
                         <div className="card-body">
-                          <h5 className="card-title">{product.name}</h5>
+                          <div className="d-flex justify-content-between align-items-center">
+                            <h5 className="card-title mb-0">{product.name}</h5>
+                            <Button
+                              color="danger"
+                              onClick={() => removeProduct(index)}
+                              className="btn btn-danger btn-sm"
+                            >
+                              <i className="fas fa-trash-alt"></i>
+                            </Button>
+                          </div>
+
                           <p className="card-text">
                             <strong>Category:</strong> {product.category}
                           </p>
@@ -693,30 +743,21 @@ const NewProposal = () => {
                               </select>
                             </div>
                           </div>
+                          <td className="inline-flex">
+                            {proposalData.grandTotalCurrency}
+                            <Input
+                              type="number"
+                              name="price"
+                              value={product.price}
+                              onChange={(e) => handleProductChange(index, e)}
+                              min="1"
+                              className="form-control input-width"
+                            />
+                          </td>
+
                           <p>
                             <strong>Total:</strong> {product.total}
                           </p>
-                          <div className="mb-2">
-                            <strong>Currency:</strong>
-                            <Input
-                              type="select"
-                              name="currency"
-                              value={product.currency}
-                              onChange={(e) => handleProductChange(index, e)}
-                              className="form-control"
-                            >
-                              <option value="$">$</option>
-                              <option value="€">€</option>
-                              <option value="₹">₹</option>
-                              <option value="£">£</option>
-                            </Input>
-                          </div>
-                          <Button
-                            color="danger"
-                            onClick={() => removeProduct(index)}
-                          >
-                            Remove
-                          </Button>
                         </div>
                       </div>
                     ))}
@@ -768,7 +809,7 @@ const NewProposal = () => {
             </Form>
           </CardBody>
           <CardFooter className="d-flex justify-content-end">
-            <Button color="primary" onClick={handleDownloadPDF} type="submit">
+            <Button color="primary" onClick={handleSavePdf} type="submit">
               Send Proposal
             </Button>
           </CardFooter>
