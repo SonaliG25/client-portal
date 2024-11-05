@@ -29,7 +29,19 @@ function ViewProduct() {
           </button>
         </section>
         <section className="content">
-          {product?.map((data) => (
+          { product === null || productDetails === null? 
+        <div className="col-md-12 mt-1">
+        <div className="card card-primary shadow-sm">
+          <div className="card-header">
+            <h3 className="card-title">
+              Loading.....
+            </h3>
+          </div>
+          </div>
+          </div>  :
+          <>
+          
+          {product.map((data) => (
             <div className="row" key={data.id}>
               {/* Product Info */}
               <div className="col-md-7 mt-1">
@@ -116,6 +128,8 @@ function ViewProduct() {
               </div>
             </div>
           ))}
+          </>
+        }
         </section>
       </div>
     </>

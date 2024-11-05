@@ -1,30 +1,78 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useEditUserContext } from "../../context/EditUserContext.jsx";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import toast from "react-hot-toast";
 
 function UpdateForm() {
   const [UserDetails] = useEditUserContext(); // Get user details from context
   const [auth] = useAuth(); // Get auth context (token)
   const navigate = useNavigate();
 
-  const [userForm, setUserForm] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    userType: "",
-    addresses: [{ city: "", street: "", state: "", zipCode: "", country: "" }],
-    subscription: 0,
+  // Formik setup
+  const formik = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      phone: "",
+      userType: "",
+      addresses: [
+        { city: "", street: "", state: "", zipCode: "", country: "" },
+      ],
+      subscription: 0,
+    },
+    validationSchema: Yup.object({
+      firstName: Yup.string().required("First name is required."),
+      lastName: Yup.string().required("Last name is required."),
+      phone: Yup.string().required("Phone number is required."),
+      addresses: Yup.array().of(
+        Yup.object().shape({
+          street: Yup.string().required("Street is required."),
+          city: Yup.string().required("City is required."),
+          state: Yup.string().required("State is required."),
+          zipCode: Yup.string().required("Zip code is required."),
+          country: Yup.string().required("Country is required."),
+        })
+      ),
+    }),
+    onSubmit: async (values) => {
+      try {
+        const res = await axios.patch(
+          `http://localhost:3000/user/${UserDetails?._id}`,
+          {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            phone: values.phone,
+            userType: values.userType,
+            addresses: [values.addresses[0]],
+            subscription: [], // Update subscription as needed
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${auth?.token}`,
+            },
+          }
+        );
+
+        const updatedUser =
+          typeof res.data === "string" ? JSON.parse(res.data) : res.data;
+        console.log("Updated User:", updatedUser);
+        toast.success("updated successfully");
+        navigate("/admin-dashboard/allusers");
+      } catch (error) {
+        toast.error("All Field Are Required");
+        console.error("Error data:", error.response?.data);
+        console.error("Error updating user:", error);
+      }
+    },
   });
 
-  const [errors, setErrors] = useState({}); // State for error messages
-
   useEffect(() => {
-    // console.log("userdetail", UserDetails);
-
     if (UserDetails) {
-      setUserForm({
+      formik.setValues({
         firstName: UserDetails.firstName || "",
         lastName: UserDetails.lastName || "",
         phone: UserDetails.phone || "",
@@ -41,88 +89,7 @@ function UpdateForm() {
         subscription: UserDetails.subscription?.length || 0,
       });
     }
-  }, [UserDetails, auth?.token]);
-
-  // Validation function
-  const validate = () => {
-    const newErrors = {};
-    if (!userForm.firstName) newErrors.firstName = "First name is required.";
-    if (!userForm.lastName) newErrors.lastName = "Last name is required.";
-    if (!userForm.phone) newErrors.phone = "Phone number is required.";
-    if (!userForm.addresses[0].street) newErrors.street = "Street is required.";
-    if (!userForm.addresses[0].city) newErrors.city = "City is required.";
-    if (!userForm.addresses[0].state) newErrors.state = "State is required.";
-    if (!userForm.addresses[0].zipCode)
-      newErrors.zipCode = "Zip code is required.";
-    if (!userForm.addresses[0].country)
-      newErrors.country = "Country is required.";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Returns true if no errors
-  };
-
-  // Handle update request
-  const handleUpdate = async () => {
-    if (!validate()) return; // Validate before sending the request
-
-    try {
-      const res = await axios.patch(
-        `http://localhost:3000/user/${UserDetails?._id}`,
-        {
-          firstName: userForm.firstName,
-          lastName: userForm.lastName,
-          phone: userForm.phone,
-          userType: userForm.userType, // Send the updated userType
-          addresses: [userForm.addresses[0]], // Send the updated address
-          subscription: [], // Update subscription as needed
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${auth?.token}`,
-          },
-        }
-      );
-
-      const updatedUser =
-        typeof res.data === "string" ? JSON.parse(res.data) : res.data;
-
-      console.log("Updated User:", updatedUser);
-      navigate("/admin-dashboard/allusers");
-    } catch (error) {
-      console.error("Error data:", error.response?.data);
-      console.error("Error updating user:", error);
-    }
-  };
-
-  // Handle input changes for form
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserForm((prevForm) => ({
-      ...prevForm,
-      [name]: value,
-    }));
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); // Clear error on change
-  };
-
-  // Handle userType change
-  const handleUserTypeChange = (e) => {
-    const value = e.target.value;
-    setUserForm((prevForm) => ({
-      ...prevForm,
-      userType: value,
-    }));
-    setErrors((prevErrors) => ({ ...prevErrors, userType: "" })); // Clear error on change
-  };
-
-  // Handle address input changes
-  const handleAddressChange = (e) => {
-    const { name, value } = e.target;
-    setUserForm((prevForm) => ({
-      ...prevForm,
-      addresses: [{ ...prevForm.addresses[0], [name]: value }],
-    }));
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); // Clear error on change
-  };
+  }, [UserDetails]);
 
   return (
     <div className="content-wrapper">
@@ -142,9 +109,7 @@ function UpdateForm() {
             </div>
           </div>
         </div>
-        {/* /.container-fluid */}
       </section>
-      {/* Main content */}
       <section className="content">
         <div className="row">
           <div className="col-md-6">
@@ -163,78 +128,93 @@ function UpdateForm() {
                 </div>
               </div>
               <div className="card-body">
-                <div className="form-group">
-                  <label htmlFor="firstName">First Name</label>
-                  <input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    value={userForm.firstName}
-                    onChange={handleInputChange}
-                    className={`form-control ${
-                      errors.firstName ? "is-invalid" : ""
-                    }`}
-                  />
-                  {errors.firstName && (
-                    <div className="invalid-feedback">{errors.firstName}</div>
-                  )}
-                </div>
-                <div className="form-group">
-                  <label htmlFor="lastName">Last Name</label>
-                  <input
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    value={userForm.lastName}
-                    onChange={handleInputChange}
-                    className={`form-control ${
-                      errors.lastName ? "is-invalid" : ""
-                    }`}
-                  />
-                  {errors.lastName && (
-                    <div className="invalid-feedback">{errors.lastName}</div>
-                  )}
-                </div>
-                <div className="form-group">
-                  <label htmlFor="phone">Phone</label>
-                  <input
-                    type="text"
-                    id="phone"
-                    name="phone"
-                    value={userForm.phone}
-                    onChange={handleInputChange}
-                    className={`form-control ${
-                      errors.phone ? "is-invalid" : ""
-                    }`}
-                  />
-                  {errors.phone && (
-                    <div className="invalid-feedback">{errors.phone}</div>
-                  )}
-                </div>
-                <div className="form-group">
-                  <label htmlFor="inputStatus">User Type</label>
-                  <select
-                    id="inputStatus"
-                    className="form-control custom-select"
-                    value={userForm.userType}
-                    onChange={handleUserTypeChange} // Added onChange handler
-                  >
-                    <option value="" disabled>
-                      Select one
-                    </option>
-                    <option value="lead">Lead</option>
-                    <option value="prospect">Prospect</option>
-                    <option value="opportunity">Opportunity</option>
-                    <option value="customer">Customer</option>
-                  </select>
-                  {errors.userType && (
-                    <div className="invalid-feedback">{errors.userType}</div>
-                  )}
-                </div>
+                <form onSubmit={formik.handleSubmit}>
+                  <div className="form-group">
+                    <label htmlFor="firstName">First Name</label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      value={formik.values.firstName}
+                      onChange={formik.handleChange}
+                      className={`form-control ${
+                        formik.touched.firstName && formik.errors.firstName
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                    />
+                    {formik.touched.firstName && formik.errors.firstName && (
+                      <div className="invalid-feedback">
+                        {formik.errors.firstName}
+                      </div>
+                    )}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="lastName">Last Name</label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      value={formik.values.lastName}
+                      onChange={formik.handleChange}
+                      className={`form-control ${
+                        formik.touched.lastName && formik.errors.lastName
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                    />
+                    {formik.touched.lastName && formik.errors.lastName && (
+                      <div className="invalid-feedback">
+                        {formik.errors.lastName}
+                      </div>
+                    )}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="phone">Phone</label>
+                    <input
+                      type="text"
+                      id="phone"
+                      name="phone"
+                      value={formik.values.phone}
+                      onChange={formik.handleChange}
+                      className={`form-control ${
+                        formik.touched.phone && formik.errors.phone
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                    />
+                    {formik.touched.phone && formik.errors.phone && (
+                      <div className="invalid-feedback">
+                        {formik.errors.phone}
+                      </div>
+                    )}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="inputStatus">User Type</label>
+                    <select
+                      id="inputStatus"
+                      name="userType"
+                      className="form-control custom-select"
+                      value={formik.values.userType}
+                      onChange={formik.handleChange}
+                    >
+                      <option value="" disabled>
+                        Select one
+                      </option>
+                      <option value="lead">Lead</option>
+                      <option value="prospect">Prospect</option>
+                      <option value="opportunity">Opportunity</option>
+                      <option value="customer">Customer</option>
+                    </select>
+                    {formik.touched.userType && formik.errors.userType && (
+                      <div className="invalid-feedback">
+                        {formik.errors.userType}
+                      </div>
+                    )}
+                  </div>
+                </form>
               </div>
-              {/* /.card-body */}
             </div>
-            {/* /.card */}
           </div>
           <div className="col-md-6">
             <div className="card card-secondary">
@@ -252,104 +232,132 @@ function UpdateForm() {
                 </div>
               </div>
               <div className="card-body">
-                <div className="form-group">
-                  <label htmlFor="street">Street</label>
-                  <input
-                    type="text"
-                    id="street"
-                    name="street"
-                    value={userForm.addresses[0].street}
-                    onChange={handleAddressChange}
-                    className={`form-control ${
-                      errors.street ? "is-invalid" : ""
-                    }`}
-                  />
-                  {errors.street && (
-                    <div className="invalid-feedback">{errors.street}</div>
-                  )}
-                </div>
-                <div className="form-group">
-                  <label htmlFor="city">City</label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    value={userForm.addresses[0].city}
-                    onChange={handleAddressChange}
-                    className={`form-control ${
-                      errors.city ? "is-invalid" : ""
-                    }`}
-                  />
-                  {errors.city && (
-                    <div className="invalid-feedback">{errors.city}</div>
-                  )}
-                </div>
-                <div className="form-group">
-                  <label htmlFor="state">State</label>
-                  <input
-                    type="text"
-                    id="state"
-                    name="state"
-                    value={userForm.addresses[0].state}
-                    onChange={handleAddressChange}
-                    className={`form-control ${
-                      errors.state ? "is-invalid" : ""
-                    }`}
-                  />
-                  {errors.state && (
-                    <div className="invalid-feedback">{errors.state}</div>
-                  )}
-                </div>
-                <div className="form-group">
-                  <label htmlFor="zipCode">Zip Code</label>
-                  <input
-                    type="text"
-                    id="zipCode"
-                    name="zipCode"
-                    value={userForm.addresses[0].zipCode}
-                    onChange={handleAddressChange}
-                    className={`form-control ${
-                      errors.zipCode ? "is-invalid" : ""
-                    }`}
-                  />
-                  {errors.zipCode && (
-                    <div className="invalid-feedback">{errors.zipCode}</div>
-                  )}
-                </div>
-                <div className="form-group">
-                  <label htmlFor="country">Country</label>
-                  <input
-                    type="text"
-                    id="country"
-                    name="country"
-                    value={userForm.addresses[0].country}
-                    onChange={handleAddressChange}
-                    className={`form-control ${
-                      errors.country ? "is-invalid" : ""
-                    }`}
-                  />
-                  {errors.country && (
-                    <div className="invalid-feedback">{errors.country}</div>
-                  )}
-                </div>
+                <form onSubmit={formik.handleSubmit}>
+                  <div className="form-group">
+                    <label htmlFor="street">Street</label>
+                    <input
+                      type="text"
+                      id="street"
+                      name="addresses[0].street"
+                      value={formik.values.addresses[0].street}
+                      onChange={formik.handleChange}
+                      className={`form-control ${
+                        formik.touched.addresses?.[0]?.street &&
+                        formik.errors.addresses?.[0]?.street
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                    />
+                    {formik.touched.addresses?.[0]?.street &&
+                      formik.errors.addresses?.[0]?.street && (
+                        <div className="invalid-feedback">
+                          {formik.errors.addresses[0].street}
+                        </div>
+                      )}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="city">City</label>
+                    <input
+                      type="text"
+                      id="city"
+                      name="addresses[0].city"
+                      value={formik.values.addresses[0].city}
+                      onChange={formik.handleChange}
+                      className={`form-control ${
+                        formik.touched.addresses?.[0]?.city &&
+                        formik.errors.addresses?.[0]?.city
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                    />
+                    {formik.touched.addresses?.[0]?.city &&
+                      formik.errors.addresses?.[0]?.city && (
+                        <div className="invalid-feedback">
+                          {formik.errors.addresses[0].city}
+                        </div>
+                      )}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="state">State</label>
+                    <input
+                      type="text"
+                      id="state"
+                      name="addresses[0].state"
+                      value={formik.values.addresses[0].state}
+                      onChange={formik.handleChange}
+                      className={`form-control ${
+                        formik.touched.addresses?.[0]?.state &&
+                        formik.errors.addresses?.[0]?.state
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                    />
+                    {formik.touched.addresses?.[0]?.state &&
+                      formik.errors.addresses?.[0]?.state && (
+                        <div className="invalid-feedback">
+                          {formik.errors.addresses[0].state}
+                        </div>
+                      )}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="zipCode">Zip Code</label>
+                    <input
+                      type="text"
+                      id="zipCode"
+                      name="addresses[0].zipCode"
+                      value={formik.values.addresses[0].zipCode}
+                      onChange={formik.handleChange}
+                      className={`form-control ${
+                        formik.touched.addresses?.[0]?.zipCode &&
+                        formik.errors.addresses?.[0]?.zipCode
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                    />
+                    {formik.touched.addresses?.[0]?.zipCode &&
+                      formik.errors.addresses?.[0]?.zipCode && (
+                        <div className="invalid-feedback">
+                          {formik.errors.addresses[0].zipCode}
+                        </div>
+                      )}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="country">Country</label>
+                    <input
+                      type="text"
+                      id="country"
+                      name="addresses[0].country"
+                      value={formik.values.addresses[0].country}
+                      onChange={formik.handleChange}
+                      className={`form-control ${
+                        formik.touched.addresses?.[0]?.country &&
+                        formik.errors.addresses?.[0]?.country
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                    />
+                    {formik.touched.addresses?.[0]?.country &&
+                      formik.errors.addresses?.[0]?.country && (
+                        <div className="invalid-feedback">
+                          {formik.errors.addresses[0].country}
+                        </div>
+                      )}
+                  </div>
+                  <div className="card-footer">
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      onClick={formik.handleSubmit}
+                    >
+                      Update User
+                    </button>
+                  </div>
+                </form>
               </div>
-              {/* /.card-body */}
-            </div>
-            {/* /.card */}
-          </div>
-          <div className="col-md-12">
-            <div className="form-group">
-              <button
-                className="btn btn-success float-right"
-                onClick={handleUpdate}
-              >
-                Update User
-              </button>
             </div>
           </div>
         </div>
       </section>
-      {/* /.content */}
     </div>
   );
 }

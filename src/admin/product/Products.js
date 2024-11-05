@@ -32,6 +32,9 @@ function Products() {
       setProducts(res.data.products); 
       setTotalPages(res.data.totalPages)
       setTotalProducts(res.data.total); 
+      setProductDetails(res.data.products)
+      console.log(res.data);
+      
     } catch (error) {
       console.error(error);
     }

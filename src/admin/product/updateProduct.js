@@ -104,8 +104,8 @@ function UpdateProduct() {
           },
         }
       );
-
-      navigate("/admin-dashboard/products");
+      navigate(-1)
+      // navigate("/admin-dashboard/products");
     } catch (error) {
       console.error("Error updating product:", error);
       setError("Failed to update product. Please try again.");

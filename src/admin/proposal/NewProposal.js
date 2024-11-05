@@ -33,6 +33,7 @@ const NewProposal = () => {
   // Function to close the modal
   const handleCloseProductModal = () => setShowProductModal(false);
   const [products, setProducts] = useState([]);
+  const [description, setDescription] = useState("");
   const [totalProducts, setTotalProducts] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(5); // Adjust the number of products per page as needed
@@ -230,6 +231,7 @@ const NewProposal = () => {
   // Separate useEffect for recalculating totals based only on proposalData changes
   useEffect(() => {
     calculateGrandTotals();
+    console.log("proposalData");
   }, [proposalData]);
 
   const handleTemplateSelect = (templateContent) => {

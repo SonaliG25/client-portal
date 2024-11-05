@@ -13,9 +13,11 @@ const Users = () => {
   const itemsPerPage = 5;
   const [searchQuery, setSearchQuery] = useState("");
   const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(true); // Loading state
   const navigate = useNavigate();
 
   const getUser = async () => {
+    setLoading(true); // Start loading
     try {
       const res = await axios.get(
         `http://localhost:3000/user/users?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`,
@@ -27,8 +29,10 @@ const Users = () => {
       );
       setUserdata(res.data.data); // Assuming 'data' contains the user list
       setTotalPages(res.data.totalPages); // Assuming 'totalPages' is in the response
+      setLoading(false); // Stop loading after successful response
     } catch (error) {
       console.error(error);
+      setLoading(false); // Stop loading after an error
     }
   };
 
@@ -72,59 +76,58 @@ const Users = () => {
   return (
     <>
       <div className="content-wrapper">
-        {/* Content Header */}
         <section className="content-header">
-        <div className="container-fluid">
-          <div className="row align-items-center justify-content-between my-3">
-            {/* Title */}
-            <div className="col-12 col-md-4 mb-2 mb-md-0">
-              <h1 className="font-weight-bold">Clients</h1>
-            </div>
-
-            {/* Search Bar and Add Button */}
-            <div className="col-12 col-md-8 d-flex flex-column flex-md-row justify-content-md-end">
-              {/* Search Bar */}
-              <div className="form-group mb-2 mb-md-0 flex-grow-1 mr-md-3">
-                <div className="input-group">
-                  <input
-                    type="search"
-                    className="form-control"
-                    placeholder="Search by Product Name"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <div className="input-group-append">
-                    <button className="btn btn-outline-secondary" type="button">
-                      <i className="fa fa-search" />
-                    </button>
+          <div className="container-fluid">
+            <div className="row align-items-center justify-content-between my-3">
+              <div className="col-12 col-md-4 mb-2 mb-md-0">
+                <h1 className="font-weight-bold">Clients</h1>
+              </div>
+              <div className="col-12 col-md-8 d-flex flex-column flex-md-row justify-content-md-end">
+                <div className="form-group mb-2 mb-md-0 flex-grow-1 mr-md-3">
+                  <div className="input-group">
+                    <input
+                      type="search"
+                      className="form-control"
+                      placeholder="Search by Product Name"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <div className="input-group-append">
+                      <button
+                        className="btn btn-outline-secondary"
+                        type="button"
+                      >
+                        <i className="fa fa-search" />
+                      </button>
+                    </div>
                   </div>
                 </div>
+                <button
+                  onClick={handleAddUser}
+                  className="btn btn-success mt-2 mt-md-0"
+                >
+                  <i className="fas fa-plus mr-1"></i> Add Client
+                </button>
               </div>
-
-              {/* Add Proposal Button */}
-              <button
-                onClick={handleAddUser}
-                className="btn btn-success mt-2 mt-md-0"
-              >
-                <i className="fas fa-plus mr-1"></i> Add Client
-              </button>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-        {/* Main Content */}
         <section className="content">
           <div className="container-fluid">
             <div className="row m-2">
               <div className="col-12">
                 <div className="card">
                   <div className="card-body">
-                    {!userdata.length ? (
+                    {loading ? (
                       <div className="text-center">
                         <div className="spinner-border" role="status">
                           <span className="sr-only">Loading...</span>
                         </div>
+                      </div>
+                    ) : userdata.length === 0 ? (
+                      <div className="text-center">
+                        <p>No data found</p>
                       </div>
                     ) : (
                       <div className="table-responsive">
@@ -217,54 +220,6 @@ const Users = () => {
             </div>
           </div>
         </section>
-      </div>
-
-      {/* Delete Modal */}
-      <div>
-        <div
-          className="modal fade"
-          id="exampleModalCenter"
-          tabIndex={-1}
-          role="dialog"
-          aria-labelledby="exampleModalCenterTitle"
-          aria-hidden="true"
-        >
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLongTitle">
-                  Delete
-                </h5>
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              <div className="modal-body">Are you sure?</div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  data-dismiss="modal"
-                  onClick={handleDelete}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </>
   );
