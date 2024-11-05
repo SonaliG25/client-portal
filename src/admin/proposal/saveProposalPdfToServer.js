@@ -49,12 +49,19 @@ export const savePdfToServer = async (proposalData, authToken) => {
       }
     );
 
-    // Return a Map with the filename and URL
-    if (response.data && response.data.url) {
-      console.log("file uploaded", filename, response.data.url);
-      return new Map([[filename, response.data.url]]);
+    if (response.data) {
+      console.log(
+        "File uploaded successfully:",
+        filename,
+        response.data.fileUrl
+      );
+      return { filename: filename, attachmentUrl: response.data.fileUrl };
+    } else {
+      console.error("Unexpected response structure:", response.data.fileUrl);
+      throw new Error("Upload failed: Invalid response structure.");
     }
   } catch (error) {
-    console.error("Error uploading PDF:", error);
+    console.error("Error uploading PDF:", error.message || error);
+    throw new Error("Failed to upload PDF to server.");
   }
 };

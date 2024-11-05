@@ -162,13 +162,19 @@ const NewProposal = () => {
     setLoading(true);
     try {
       // Call the function and receive the Map with {filename, attachmentUrl}
-      const pdfAttachment = await savePdfToServer(proposalData, auth?.token);
+      const response = await savePdfToServer(proposalData, auth?.token);
 
       // Set the response map to state if you need to use it further
-      setAttachments(pdfAttachment);
-
-      // Log or use the result in proposalData.attachments
-      console.log("PDF saved on server:", pdfAttachment);
+      // Ensure you receive the data
+      if (response) {
+        console.log("PDF saved on server:", response); // Verify response here
+        const filename = response.filename;
+        const attachmentUrl = response.attachmentUrl;
+        setAttachments({ filename: filename, attachmentUrl: attachmentUrl });
+        console.log("attachments", attachments);
+      } else {
+        console.error("Failed to get response from savePdfToServer");
+      }
     } catch (error) {
       console.error("Error saving PDF:", error);
     } finally {
