@@ -14,7 +14,7 @@ const Proposaltemplete = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 5;
   const navigate = useNavigate();
   const [auth] = useAuth();
 
@@ -171,7 +171,7 @@ const Proposaltemplete = () => {
                                 <td>
                                   <div
                                     dangerouslySetInnerHTML={{
-                                      __html: `${data.description.slice(0, 200)}...`,
+                                      __html: `${data.description.slice(0, 200)}`,
                                     }}
                                   />
                                 </td>
