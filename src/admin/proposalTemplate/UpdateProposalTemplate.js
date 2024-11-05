@@ -1,62 +1,81 @@
 import React, { useEffect, useState, useRef } from 'react';
-import axios from "axios";
-import { useEditUserContext } from '../../context/EditUserContext.jsx';
+import axios from 'axios';
 import { useAuth } from "../../context/AuthContext.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import JoditEditor from "jodit-react";
+import toast from 'react-hot-toast';
 
 function UpdateProposalTemplate() {
-    const [proposalTempleteDetails, setPropposalTemplete] = useEditUserContext();
-    const editor = useRef(null);
-    const [auth] = useAuth();
-    const navigate = useNavigate();
+    const [proposalTemplete, setProposalTemplete] = useState(null);
     const [templete, setTemplete] = useState({
         title: "",
         description: "",
         status: "",
         createdAt: "",
-        updatedAt: "",
+        updatedAt: ""
     });
 
-    useEffect(() => {
-        if (proposalTempleteDetails) {
-            setTemplete({
-                title: proposalTempleteDetails.title || "",
-                description: proposalTempleteDetails.description || "",
-                status: proposalTempleteDetails.status || "",
-                createdAt: proposalTempleteDetails.createdAt || "",
-                updatedAt: proposalTempleteDetails.updatedAt || ""
-            });
-        }
-    }, [proposalTempleteDetails, auth?.token]);
+    const editor = useRef(null);
+    const navigate = useNavigate();
+    const [auth] = useAuth();
+    const { id } = useParams();
 
-    const handleUpdate = async () => {
+    // Fetch the proposal template from the API
+    const getProposalTemplete = async () => {
         try {
-            const res = await axios.patch(
-                `http://localhost:3000/proposalTemplate/templates/${proposalTempleteDetails?._id}`,
-                {
-                    title: templete.title,
-                    description: templete.description,
-                    status: templete.status,
-                    createdAt: templete.createdAt,
-                    updatedAt: templete.updatedAt,
-                },
+            const res = await axios.get(
+                `http://localhost:3000/proposalTemplate/templates/${id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${auth?.token}`,
                     },
                 }
             );
-
-            const updatedUser =
-                typeof res.data === "string" ? JSON.parse(res.data) : res.data;
-
-            console.log("Updated User:", updatedUser);
-            navigate(-1)
-            // navigate("/admin-dashboard/proposaltemplete");
+            setProposalTemplete(res.data);
         } catch (error) {
-            console.error("Error data:", error.response?.data);
-            console.error("Error updating user:", error);
+            console.error("Error fetching proposal template:", error);
+        }
+    };
+
+    // Fetch the proposal template data once on component mount
+    useEffect(() => {
+        getProposalTemplete();
+    }, [id, auth?.token]);
+
+    // Update `templete` state when `proposalTemplete` changes
+    useEffect(() => {
+        if (proposalTemplete) {
+            setTemplete({
+                title: proposalTemplete.title || "",
+                description: proposalTemplete.description || "",
+                status: proposalTemplete.status || "",
+                createdAt: proposalTemplete.createdAt || "",
+                updatedAt: proposalTemplete.updatedAt || ""
+            });
+        }
+    }, [proposalTemplete]);
+
+    const handleUpdate = async () => {
+        try {
+            await axios.patch(
+                `http://localhost:3000/proposalTemplate/templates/${proposalTemplete?._id}`,
+                {
+                    title: templete.title,
+                    description: templete.description,
+                    status: templete.status,
+                    createdAt: templete.createdAt,
+                    updatedAt: templete.updatedAt
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${auth?.token}`
+                    }
+                }
+            );
+            navigate(-1);
+            toast.success("Templete Updated Successfully")
+        } catch (error) {
+            console.error("Error updating template:", error);
         }
     };
 
@@ -64,7 +83,14 @@ function UpdateProposalTemplate() {
         const { name, value } = e.target;
         setTemplete((prevForm) => ({
             ...prevForm,
-            [name]: value,
+            [name]: value
+        }));
+    };
+
+    const handleDescriptionChange = (newContent) => {
+        setTemplete((prevForm) => ({
+            ...prevForm,
+            description: newContent
         }));
     };
 
@@ -73,30 +99,11 @@ function UpdateProposalTemplate() {
         readonly: false,
         toolbarSticky: false,
         buttons: [
-            "bold",
-            "italic",
-            "underline",
-            "strikethrough",
-            "ul",
-            "ol",
-            "font",
-            "fontsize",
-            "paragraph",
-            "image",
-            "link",
-            "align",
-            "undo",
-            "redo",
+            "bold", "italic", "underline", "strikethrough", "ul", "ol", "font",
+            "fontsize", "paragraph", "image", "link", "align", "undo", "redo"
         ],
         showXPathInStatusbar: false,
-        spellcheck: false,
-    };
-
-    const handleDescriptionChange = (newContent) => {
-        setTemplete((prevForm) => ({
-            ...prevForm,
-            description: newContent,
-        }));
+        spellcheck: false
     };
 
     return (
@@ -116,16 +123,6 @@ function UpdateProposalTemplate() {
                         <div className="card card-primary">
                             <div className="card-header">
                                 <h3 className="card-title">Template Information</h3>
-                                <div className="card-tools">
-                                    <button
-                                        type="button"
-                                        className="btn btn-tool"
-                                        data-card-widget="collapse"
-                                        title="Collapse"
-                                    >
-                                        <i className="fas fa-minus" />
-                                    </button>
-                                </div>
                             </div>
                             <div className="card-body">
                                 <div className="form-group">

@@ -4,6 +4,7 @@ import { useEditUserContext } from "../../context/EditUserContext.jsx";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
+import toast from "react-hot-toast";
 
 const Proposaltemplete = () => {
   const [proposalTemplateDetails, setProposalTempleteDetails] =
@@ -46,14 +47,14 @@ const Proposaltemplete = () => {
   }, [auth, searchQuery, currentPage]);
 
   const handleUpdateForm = (data) => {
-    setProposalTempleteDetails(data);
-    navigate("/admin-dashboard/updateproposaltemplete");
+    //setProposalTempleteDetails(data);
+    navigate(`/admin-dashboard/updateproposaltemplete/${data._id}`);
   };
 
   const HandleView = (data) => {
-    setProposalTempleteDetails(data);
+    //setProposalTempleteDetails(data);
     console.log(data);
-    navigate("/admin-dashboard/viewproposaltemplete");
+    navigate(`/admin-dashboard/viewproposaltemplete/${data._id}`);
   };
 
   const handleDelete = async (id) => {
@@ -67,6 +68,7 @@ const Proposaltemplete = () => {
         }
       );
       getProposalTemplete(); // Re-fetch templates after delete
+      toast.success("Templete Deleted Successfully")
     } catch (error) {
       console.log(error);
     }
@@ -149,9 +151,9 @@ const Proposaltemplete = () => {
                           <tr>
                             <th>Title</th>
                             <th>Description</th>
-                            <th>Status</th>
+                            {/* <th>Status</th>
                             <th>CreatedAt</th>
-                            <th>UpdatedAt</th>
+                            <th>UpdatedAt</th> */}
                             <th>Action</th>
                           </tr>
                         </thead>
@@ -169,13 +171,13 @@ const Proposaltemplete = () => {
                                 <td>
                                   <div
                                     dangerouslySetInnerHTML={{
-                                      __html: data.description,
+                                      __html: `${data.description.slice(0, 200)}...`,
                                     }}
                                   />
                                 </td>
-                                <td>{data.status}</td>
+                                {/* <td>{data.status}</td>
                                 <td>{moment(data.createdAt).format("MMMM DD, YYYY")}</td>
-                                <td>{moment(data.updatedAt).format("MMMM DD, YYYY")}</td>
+                                <td>{moment(data.updatedAt).format("MMMM DD, YYYY")}</td> */}
                                 <td>
                                   <div className="d-flex justify-content-center">
                                     <button

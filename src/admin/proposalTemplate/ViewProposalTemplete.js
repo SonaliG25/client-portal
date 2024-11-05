@@ -1,9 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { useEditUserContext } from "../../context/EditUserContext";
+import { useAuth } from "../../context/AuthContext";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 function ViewProposalTemplate() {
   const [proposalTempleteDetails, setPropposalTemplete] = useEditUserContext();
-  const [viewTemplate, setViewTemplate] = useState();
+  const [viewTemplate, setViewTemplate] = useState(null);
+  const [auth] = useAuth();
+  const { id } = useParams()
+
+  // Fetch templates from the API
+  const getProposalTemplete = async () => {
+    // setLoader(true); // Show loader while fetching
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/proposalTemplate/templates/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
+      );
+      setViewTemplate(res.data)
+    } catch (error) {
+      console.error(error);
+      // setLoader(false);
+    }
+  };
+
+  // Fetch data on component mount and when search or page changes
+  useEffect(() => {
+    if (auth?.token) {
+      getProposalTemplete();
+    }
+  }, [auth]);
 
   useEffect(() => {
     if (proposalTempleteDetails) {

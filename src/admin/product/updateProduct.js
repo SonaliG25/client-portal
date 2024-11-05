@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useEditUserContext } from "../../context/EditUserContext";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { BASE_URL } from "../../utils/routeNames.js";
 import "react-bootstrap-typeahead/css/Typeahead.css";
+import toast from "react-hot-toast";
 
 function UpdateProduct() {
   const [productDetails, setProductDetails] = useEditUserContext();
-  const [product, setProduct] = useState({});
+  const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [auth] = useAuth();
@@ -17,16 +18,36 @@ function UpdateProduct() {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [categories, setCategories] = useState([]);
+  const { id } = useParams()
+
+  const getProduct = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/product/${id}`, {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
+      console.log("Update Single Product", res.data);
+      setProduct(res.data); 
+      setLoading(!loading)
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
-    if (productDetails) {
-      setProduct(productDetails);
-      console.log("ProductDetails", productDetails);
-      setLoading(false);
-    } else {
-      setError("No product details available.");
-      setLoading(false);
+    if (auth?.token) {
+      getProduct();
     }
+    
+    // if (productDetails) {
+    //   setProduct(productDetails);
+    //   console.log("ProductDetails", productDetails);
+    //   setLoading(false);
+    // } else {
+    //   setError("No product details available.");
+    //   setLoading(false);
+    // }
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
@@ -47,7 +68,7 @@ function UpdateProduct() {
     };
 
     fetchCategories();
-  }, [productDetails]);
+  }, [auth]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -88,6 +109,7 @@ function UpdateProduct() {
 
         imageUrl = uploadResponse.data.imageUrl; // Update imageUrl to the uploaded image URL
         console.log("Image uploaded successfully:", imageUrl);
+        toast.success("Product Updated Successfully")
       }
 
       // Step 2: Update product with the new or existing image URL and other form data

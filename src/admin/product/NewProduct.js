@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
+import toast from "react-hot-toast";
 const NewProduct = () => {
   const navigate = useNavigate();
   const [auth] = useAuth();
@@ -76,6 +77,7 @@ const NewProduct = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    toast.success("Product Added Suceessfully")
     if (!file) {
       setMessage("Please select an image file.");
       return;

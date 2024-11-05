@@ -232,7 +232,7 @@ const NewProposal = () => {
   useEffect(() => {
     calculateGrandTotals();
     console.log("proposalData");
-  }, [proposalData]);
+  }, []);
 
   const handleTemplateSelect = (templateContent) => {
     setProposalData((prevData) => ({
