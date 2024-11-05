@@ -127,6 +127,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
+import { LOGIN } from "../../utils/routeNames";
 
 const AdminSidebar = () => {
   const [auth, setAuth] = useAuth();
@@ -155,7 +156,7 @@ const AdminSidebar = () => {
     localStorage.clear("token");
     setAuth({ user: null, token: "" });
     toast.success("Logout successfully");
-    navigate("/login");
+    navigate(LOGIN);
   };
 
   const toggleSidebar = () => {

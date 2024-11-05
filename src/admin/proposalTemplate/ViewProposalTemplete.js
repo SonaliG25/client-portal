@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useEditUserContext } from "../../context/EditUserContext";
 import { useAuth } from "../../context/AuthContext";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import JoditEditor from "jodit-react";
 
 function ViewProposalTemplate() {
   const [proposalTempleteDetails, setPropposalTemplete] = useEditUserContext();
   const [viewTemplate, setViewTemplate] = useState(null);
   const [auth] = useAuth();
   const { id } = useParams()
-
+  const editor = useRef(null);
   // Fetch templates from the API
   const getProposalTemplete = async () => {
     // setLoader(true); // Show loader while fetching
@@ -87,16 +88,15 @@ function ViewProposalTemplate() {
                     </div>
                   </div>
                   <div className="form-group">
-                    <label htmlFor="description">Description</label>
-                    <div
-                      id="description"
-                      className="form-control"
-                      style={{ minHeight: "40px" }}
-                      dangerouslySetInnerHTML={{
-                        __html: viewTemplate.description || "No description available",
-                      }}
-                    />
-                  </div>
+      <label htmlFor="description">Description</label>
+      <JoditEditor
+      
+        ref={editor}
+        value={viewTemplate.description || "No description available"}
+       // config={}
+       // onBlur={(newContent) => handleDescriptionChange(newContent)} // Update description on blur (or use onChange if preferred)
+      />
+    </div>
                   <div className="form-group">
                     <label htmlFor="status">Status</label>
                     <div className="form-control" style={{ minHeight: '40px' }}>
