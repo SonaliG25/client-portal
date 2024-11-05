@@ -76,8 +76,8 @@ function App() {
 
         { path: "newuser", element: <Register /> },
         { path: "allusers", element: <Users /> },
-        { path: "view", element: <View /> },
-        { path: "Update", element: <UpdateForm /> },
+        { path: "view/:id", element: <View /> },
+        { path: "Update/:id", element: <UpdateForm /> },
         { path: "updateproposaltemplete", element: <UpdateProposalTemplate /> },
         { path: "viewproposaltemplete", element: <ViewProposalTemplete /> },
         { path: "product", element: <Products /> },
