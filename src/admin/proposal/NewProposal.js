@@ -1,4 +1,343 @@
-import React, { useState, navigate, useRef, useEffect } from "react";
+// import React, { useState, navigate, useRef, useEffect } from "react";
+// import axios from "axios";
+// import { useAuth } from "../../context/AuthContext";
+// import { CardFooter, Modal } from "react-bootstrap";
+// import { Typeahead } from "react-bootstrap-typeahead";
+// import "react-bootstrap-typeahead/css/Typeahead.css";
+// import { useNavigate } from "react-router-dom";
+// import JoditEditor from "jodit-react";
+
+// import { BASE_URL } from "../../utils/routeNames.js";
+// import {
+//   Button,
+//   Card,
+//   CardBody,
+//   Form,
+//   FormGroup,
+//   Input,
+//   Label,
+//   Table,
+// } from "reactstrap";
+// import { savePdfToServer } from "./saveProposalPdfToServer.js";
+
+// const NewProposal = () => {
+//   const navigate = useNavigate();
+//   const [auth] = useAuth();
+//   const [selectedProducts, setSelectedProducts] = useState(() => new Set());
+
+//   const [showProductModal, setShowProductModal] = useState(false);
+
+//   // Function to open the modal
+//   const handleShowProductModal = () => setShowProductModal(true);
+
+//   // Function to close the modal
+//   const handleCloseProductModal = () => setShowProductModal(false);
+//   const [products, setProducts] = useState([]);
+//   const [description, setDescription] = useState("");
+//   const [totalProducts, setTotalProducts] = useState(0);
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [productsPerPage] = useState(5); // Adjust the number of products per page as needed
+//   const [searchQuery, setSearchQuery] = useState("");
+//   // Handle checkbox change
+//   // Handle checkbox change for each product
+//   const handleCheckboxChange = (productId) => {
+//     setSelectedProducts((prevSelected) => {
+//       const newSelected = new Set(prevSelected); // Create a copy of the Set
+
+//       if (newSelected.has(productId)) {
+//         newSelected.delete(productId); // Unselect if already selected
+//       } else {
+//         newSelected.add(productId); // Select if not already selected
+//       }
+
+//       return newSelected; // Return the new Set
+//     });
+//   };
+
+//   // Fetch products from API
+//   const getProduct = async () => {
+//     try {
+//       const res = await axios.get(
+//         `http://localhost:3000/product/getProducts?page=${currentPage}&limit=${productsPerPage}&search=${searchQuery}`,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${auth?.token}`,
+//           },
+//         }
+//       );
+//       setProducts(Array.isArray(res.data.products) ? res.data.products : []);
+//       setTotalProducts(res.data.total || 0); // Ensure total is a valid number
+//       console.log("Product Data:", res.data);
+//     } catch (error) {
+//       console.error("Error fetching products:", error);
+//     }
+//   };
+
+//   // Handle search input change
+//   const handleSearchChange = (e) => {
+//     setSearchQuery(e.target.value);
+//   };
+
+//   // Pagination control
+//   const handleNextPage = () => {
+//     if (currentPage < Math.ceil(totalProducts / productsPerPage)) {
+//       setCurrentPage(currentPage + 1);
+//     }
+//   };
+
+//   const handlePreviousPage = () => {
+//     if (currentPage > 1) {
+//       setCurrentPage(currentPage - 1);
+//     }
+//   };
+//   const editor = useRef(null);
+//   const editorConfig = {
+//     minHeight: 400,
+//     readonly: false,
+//     toolbarSticky: false,
+//     buttons: [
+//       "bold",
+//       "italic",
+//       "underline",
+//       "strikethrough",
+//       "ul",
+//       "ol",
+//       "font",
+//       "fontsize",
+//       "paragraph",
+//       "image",
+//       "link",
+//       "align",
+//       "undo",
+//       "redo",
+//     ],
+//     showXPathInStatusbar: false,
+//     spellcheck: false,
+//   };
+
+//   const [proposalData, setProposalData] = useState({
+//     emailTo: "",
+//     title: "",
+//     content: "",
+//     products: [],
+//     grandTotalCurrency: "$",
+//     productTotal: 0,
+//     grandTotal: 0,
+//     discountOnGrandTotal: 0,
+//     finalAmount: 0,
+//   });
+//   // Variables to hold the calculated values
+//   const [productTotal, setProductTotal] = useState(0);
+//   const [grandTotal, setGrandTotal] = useState(0);
+//   const [discountOnGrandTotal, setDiscountOnGrandTotal] = useState(0);
+//   const [finalAmount, setFinalAmount] = useState(0);
+
+//   // Function to calculate totals whenever products change
+//   const calculateGrandTotals = () => {
+//     let total = 0;
+//     let discount = 0;
+
+//     proposalData.products.forEach((product) => {
+//       total += product.total; // Assuming product.total is already calculated based on quantity and unit price
+//       discount += product.discount; // Add discount to total discount
+//     });
+
+//     setProductTotal(total);
+//     setGrandTotal(total); // You may want to adjust this if you have other calculations for the grand total
+//     setDiscountOnGrandTotal(discount);
+//     setFinalAmount(total - discount); // Adjust if you need to factor in other fees
+//     // Update proposalData with new values
+//     setProposalData((prevData) => ({
+//       ...prevData,
+//       productTotal: total,
+//       grandTotal: total,
+//       discountOnGrandTotal: discount,
+//       finalAmount: finalAmount,
+//     }));
+//   };
+//   // Effect to recalculate totals whenever proposalData changes
+//   const [attachments, setAttachments] = useState(null);
+//   const [loading, setLoading] = useState(false);
+
+//   const handleSavePdf = async () => {
+//     setLoading(true);
+//     try {
+//       // Call the function and receive the Map with {filename, attachmentUrl}
+//       const response = await savePdfToServer(proposalData, auth?.token);
+
+//       // Set the response map to state if you need to use it further
+//       // Ensure you receive the data
+//       if (response) {
+//         console.log("PDF saved on server:", response); // Verify response here
+//         const filename = response.filename;
+//         const attachmentUrl = response.attachmentUrl;
+//         setAttachments({ filename: filename, attachmentUrl: attachmentUrl });
+//         console.log("attachments", attachments);
+//       } else {
+//         console.error("Failed to get response from savePdfToServer");
+//       }
+//     } catch (error) {
+//       console.error("Error saving PDF:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const [users, setUsers] = useState([]);
+//   const [selectedUser, setSelectedUser] = useState(null);
+//   const [proposalTemplates, setProposalTemplates] = useState([]);
+
+//   const [content, setContent] = useState("");
+//   const [selectedTemplate, setSelectedTemplate] = useState("");
+//   const [showModal, setShowModal] = useState(false);
+//   const [error, setError] = useState(null);
+//   const fetchUsers = async () => {
+//     try {
+//       const response = await axios.get("http://localhost:3000/user/users", {
+//         headers: {
+//           Authorization: `Bearer ${auth?.token}`,
+//         },
+//       });
+//       setUsers(response.data.data);
+//       console.log("Users", response.data.data);
+//     } catch (error) {
+//       console.error("Error fetching Users:", error);
+//     }
+//   };
+//   const fetchProposalTemplates = async () => {
+//     try {
+//       const res = await axios.get(
+//         `http://localhost:3000/proposalTemplate/templates`,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${auth?.token}`,
+//           },
+//         }
+//       );
+//       setProposalTemplates(res.data.templates);
+//       console.log("Template : ", res.data);
+//     } catch (err) {
+//       setError(err.message);
+//     }
+//   };
+
+//   // Fetch users, proposal templates, and products on mount or when `auth` changes
+//   useEffect(() => {
+//     fetchUsers();
+//     fetchProposalTemplates();
+//     getProduct();
+//   }, [auth, currentPage, searchQuery]);
+
+//   // Separate useEffect for recalculating totals based only on proposalData changes
+//   useEffect(() => {
+//     calculateGrandTotals();
+//     console.log("proposalData");
+//   }, [proposalData]);
+
+//   const handleTemplateSelect = (templateContent) => {
+//     setProposalData((prevData) => ({
+//       ...prevData,
+//       content: templateContent,
+//     }));
+//     console.log("Selected TEmplate is : ", proposalData.content);
+//     setShowModal(false);
+//   };
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setProposalData((prev) => ({ ...prev, [name]: value }));
+//   };
+
+//   // Update function to handle editor content changes
+//   const handleEditorChange = (newContent) => {
+//     setProposalData((prevData) => ({
+//       ...prevData,
+//       content: newContent,
+//     }));
+//   };
+
+//   // Calculate the total for each product based on quantity, price, discount, and discountType
+//   const calculateTotal = (quantity, salePrice, discount, discountType) => {
+//     console.log(
+//       "calculateTotal Data : ",
+//       quantity,
+//       salePrice,
+//       discount,
+//       discountType
+//     );
+//     // Parse values to ensure they are numbers
+//     quantity = parseFloat(quantity) || 0;
+//     salePrice = parseFloat(salePrice) || 0;
+//     discount = parseFloat(discount) || 0;
+
+//     // Base calculation without discount
+//     let total = quantity * salePrice;
+//     console.log("total before discount", total);
+//     // Apply discount if it’s positive
+//     if (total > 0) {
+//       if (discountType === "Fixed" && discount > 0) {
+//         total -= discount * quantity; // Apply fixed discount per item
+//         console.log("total on fixted disxount", total);
+//       } else if (discountType === "Percentage" && discount > 0) {
+//         total -= total * (discount / 100); // Apply percentage discount
+//         console.log("total on percentage discount", total);
+//       }
+//     }
+
+//     // Return total or ensure it doesn’t go below zero
+//     return total > 0 ? total : 0;
+//   };
+//   // Function to handle currency change
+//   const handleCurrencyChange = (e) => {
+//     const newCurrency = e.target.value;
+//     setProposalData((prevData) => ({
+//       ...prevData,
+//       grandTotalCurrency: newCurrency,
+//     }));
+//   };
+//   // / Handle change events to recalculate and update the total for each product
+//   const handleProductChange = (index, event) => {
+//     const { name, value } = event.target;
+//     const updatedProducts = [...proposalData.products];
+//     console.log("updatedProducts.total", updatedProducts.total);
+//     // Update the changed field
+//     updatedProducts[index][name] = value;
+
+//     // Parse values for calculation
+//     const total = parseFloat(updatedProducts[index].total) || 0;
+//     const quantity = parseFloat(updatedProducts[index].quantity) || 1;
+//     const salePrice = parseFloat(updatedProducts[index].price) || 0;
+//     const discount = parseFloat(updatedProducts[index].discount) || 0;
+//     const discountType = updatedProducts[index].discountType;
+
+//     // Recalculate total for this product
+//     updatedProducts[index].total = calculateTotal(
+//       quantity,
+//       salePrice,
+//       discount,
+//       discountType
+//     );
+//     console.log(
+//       "  updatedProducts[index].total :",
+//       updatedProducts[index].total
+//     );
+//     // Update proposal data
+//     setProposalData({ ...proposalData, products: updatedProducts });
+//     console.log("updatedProducts :", updatedProducts);
+//   };
+
+//   const removeProduct = (index) => {
+//     setProposalData((prev) => ({
+//       ...prev,
+//       products: prev.products.filter((_, i) => i !== index),
+//     }));
+//   };
+
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     console.log("Submitted proposal:", proposalData);
+//   };
+
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { CardFooter, Modal } from "react-bootstrap";
@@ -23,73 +362,54 @@ import { savePdfToServer } from "./saveProposalPdfToServer.js";
 const NewProposal = () => {
   const navigate = useNavigate();
   const [auth] = useAuth();
-  const [selectedProducts, setSelectedProducts] = useState(() => new Set());
-
+  const [selectedProducts, setSelectedProducts] = useState(new Set());
   const [showProductModal, setShowProductModal] = useState(false);
 
-  // Function to open the modal
-  const handleShowProductModal = () => setShowProductModal(true);
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
 
-  // Function to close the modal
-  const handleCloseProductModal = () => setShowProductModal(false);
+  const handleSelectecUserChange = (selectedUser) => {
+    setSelectedUser(selectedUser);
+
+    const recipient = selectedUser._id;
+    const emailTo = selectedUser.email;
+
+    setProposalData((prevData) => ({
+      ...prevData,
+      recipient: recipient,
+      emailTo: emailTo,
+    }));
+    console.log("handleSelectecUserChange", selectedUser);
+  };
+  const [proposalTemplates, setProposalTemplates] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [attachments, setAttachments] = useState(null);
+  // Product data and pagination
   const [products, setProducts] = useState([]);
-  const [description, setDescription] = useState("");
   const [totalProducts, setTotalProducts] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(5); // Adjust the number of products per page as needed
+  const [productsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
-  // Handle checkbox change
-  // Handle checkbox change for each product
-  const handleCheckboxChange = (productId) => {
-    setSelectedProducts((prevSelected) => {
-      const newSelected = new Set(prevSelected); // Create a copy of the Set
 
-      if (newSelected.has(productId)) {
-        newSelected.delete(productId); // Unselect if already selected
-      } else {
-        newSelected.add(productId); // Select if not already selected
-      }
+  const [proposalData, setProposalData] = useState({
+    recipient: "",
+    emailTo: "",
+    title: "",
+    content: "",
+    products: [],
+    grandTotalCurrency: "$",
+    productTotal: 0,
+    grandTotal: 0,
+    discountOnGrandTotal: 0,
+    finalAmount: 0,
+    attachments: [],
+  });
 
-      return newSelected; // Return the new Set
-    });
-  };
+  const [productTotal, setProductTotal] = useState(0);
+  const [grandTotal, setGrandTotal] = useState(0);
+  const [discountOnGrandTotal, setDiscountOnGrandTotal] = useState(0);
+  const [finalAmount, setFinalAmount] = useState(0);
 
-  // Fetch products from API
-  const getProduct = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:3000/product/getProducts?page=${currentPage}&limit=${productsPerPage}&search=${searchQuery}`,
-        {
-          headers: {
-            Authorization: `Bearer ${auth?.token}`,
-          },
-        }
-      );
-      setProducts(Array.isArray(res.data.products) ? res.data.products : []);
-      setTotalProducts(res.data.total || 0); // Ensure total is a valid number
-      console.log("Product Data:", res.data);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
-
-  // Handle search input change
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  // Pagination control
-  const handleNextPage = () => {
-    if (currentPage < Math.ceil(totalProducts / productsPerPage)) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
   const editor = useRef(null);
   const editorConfig = {
     minHeight: 400,
@@ -114,178 +434,6 @@ const NewProposal = () => {
     showXPathInStatusbar: false,
     spellcheck: false,
   };
-
-  const [proposalData, setProposalData] = useState({
-    emailTo: "",
-    title: "",
-    content: "",
-    products: [],
-    grandTotalCurrency: "$",
-    productTotal: 0,
-    grandTotal: 0,
-    discountOnGrandTotal: 0,
-    finalAmount: 0,
-  });
-  // Variables to hold the calculated values
-  const [productTotal, setProductTotal] = useState(0);
-  const [grandTotal, setGrandTotal] = useState(0);
-  const [discountOnGrandTotal, setDiscountOnGrandTotal] = useState(0);
-  const [finalAmount, setFinalAmount] = useState(0);
-
-  // Function to calculate totals whenever products change
-  const calculateGrandTotals = () => {
-    let total = 0;
-    let discount = 0;
-
-    proposalData.products.forEach((product) => {
-      total += product.total; // Assuming product.total is already calculated based on quantity and unit price
-      discount += product.discount; // Add discount to total discount
-    });
-
-    setProductTotal(total);
-    setGrandTotal(total); // You may want to adjust this if you have other calculations for the grand total
-    setDiscountOnGrandTotal(discount);
-    setFinalAmount(total - discount); // Adjust if you need to factor in other fees
-    // Update proposalData with new values
-    setProposalData((prevData) => ({
-      ...prevData,
-      productTotal: total,
-      grandTotal: total,
-      discountOnGrandTotal: discount,
-      finalAmount: finalAmount,
-    }));
-  };
-  // Effect to recalculate totals whenever proposalData changes
-  const [attachments, setAttachments] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleSavePdf = async () => {
-    setLoading(true);
-    try {
-      // Call the function and receive the Map with {filename, attachmentUrl}
-      const response = await savePdfToServer(proposalData, auth?.token);
-
-      // Set the response map to state if you need to use it further
-      // Ensure you receive the data
-      if (response) {
-        console.log("PDF saved on server:", response); // Verify response here
-        const filename = response.filename;
-        const attachmentUrl = response.attachmentUrl;
-        setAttachments({ filename: filename, attachmentUrl: attachmentUrl });
-        console.log("attachments", attachments);
-      } else {
-        console.error("Failed to get response from savePdfToServer");
-      }
-    } catch (error) {
-      console.error("Error saving PDF:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [proposalTemplates, setProposalTemplates] = useState([]);
-
-  const [content, setContent] = useState("");
-  const [selectedTemplate, setSelectedTemplate] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [error, setError] = useState(null);
-  const fetchUsers = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/user/users", {
-        headers: {
-          Authorization: `Bearer ${auth?.token}`,
-        },
-      });
-      setUsers(response.data.data);
-      console.log("Users", response.data.data);
-    } catch (error) {
-      console.error("Error fetching Users:", error);
-    }
-  };
-  const fetchProposalTemplates = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:3000/proposalTemplate/templates`,
-        {
-          headers: {
-            Authorization: `Bearer ${auth?.token}`,
-          },
-        }
-      );
-      setProposalTemplates(res.data.templates);
-      console.log("Template : ", res.data);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  // Fetch users, proposal templates, and products on mount or when `auth` changes
-  useEffect(() => {
-    fetchUsers();
-    fetchProposalTemplates();
-    getProduct();
-  }, [auth, currentPage, searchQuery]);
-
-  // Separate useEffect for recalculating totals based only on proposalData changes
-  useEffect(() => {
-    calculateGrandTotals();
-    console.log("proposalData");
-  }, []);
-
-  const handleTemplateSelect = (templateContent) => {
-    setProposalData((prevData) => ({
-      ...prevData,
-      content: templateContent,
-    }));
-    console.log("Selected TEmplate is : ", proposalData.content);
-    setShowModal(false);
-  };
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setProposalData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Update function to handle editor content changes
-  const handleEditorChange = (newContent) => {
-    setProposalData((prevData) => ({
-      ...prevData,
-      content: newContent,
-    }));
-  };
-
-  // Calculate the total for each product based on quantity, price, discount, and discountType
-  const calculateTotal = (quantity, salePrice, discount, discountType) => {
-    console.log(
-      "calculateTotal Data : ",
-      quantity,
-      salePrice,
-      discount,
-      discountType
-    );
-    // Parse values to ensure they are numbers
-    quantity = parseFloat(quantity) || 0;
-    salePrice = parseFloat(salePrice) || 0;
-    discount = parseFloat(discount) || 0;
-
-    // Base calculation without discount
-    let total = quantity * salePrice;
-    console.log("total before discount", total);
-    // Apply discount if it’s positive
-    if (total > 0) {
-      if (discountType === "Fixed" && discount > 0) {
-        total -= discount * quantity; // Apply fixed discount per item
-        console.log("total on fixted disxount", total);
-      } else if (discountType === "Percentage" && discount > 0) {
-        total -= total * (discount / 100); // Apply percentage discount
-        console.log("total on percentage discount", total);
-      }
-    }
-
-    // Return total or ensure it doesn’t go below zero
-    return total > 0 ? total : 0;
-  };
   // Function to handle currency change
   const handleCurrencyChange = (e) => {
     const newCurrency = e.target.value;
@@ -294,35 +442,159 @@ const NewProposal = () => {
       grandTotalCurrency: newCurrency,
     }));
   };
-  // / Handle change events to recalculate and update the total for each product
+  // Open and close modal
+  const handleShowProductModal = () => setShowProductModal(true);
+  const handleCloseProductModal = () => setShowProductModal(false);
+  const calculateGrandTotals = () => {
+    let total = 0;
+    let discount = 0;
+
+    proposalData.products.forEach((product) => {
+      total += product.total || 0;
+      discount += product.discount || 0;
+    });
+
+    const finalAmount = total - discount;
+
+    setProductTotal(total);
+    setGrandTotal(total);
+    setDiscountOnGrandTotal(discount);
+    setFinalAmount(finalAmount);
+
+    setProposalData((prevData) => ({
+      ...prevData,
+      productTotal: total,
+      grandTotal: total,
+      discountOnGrandTotal: discount,
+      finalAmount: finalAmount,
+    }));
+  };
+
+  const handleCheckboxChange = (productId) => {
+    setSelectedProducts((prevSelected) => {
+      const newSelected = new Set(prevSelected);
+      newSelected.has(productId)
+        ? newSelected.delete(productId)
+        : newSelected.add(productId);
+      return newSelected;
+    });
+  };
+
+  const getProduct = async () => {
+    if (!auth?.token) return;
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/product/getProducts?page=${currentPage}&limit=${productsPerPage}&search=${searchQuery}`,
+        {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        }
+      );
+      setProducts(Array.isArray(res.data.products) ? res.data.products : []);
+      setTotalProducts(res.data.total || 0);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  const handleSearchChange = (e) => setSearchQuery(e.target.value);
+
+  const handleNextPage = () => {
+    if (currentPage < Math.ceil(totalProducts / productsPerPage)) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  const fetchUsers = async () => {
+    if (!auth?.token) return;
+    try {
+      const response = await axios.get("http://localhost:3000/user/users", {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      });
+      setUsers(response.data.data);
+      console.log("users", response.data.data);
+    } catch (error) {
+      console.error("Error fetching Users:", error);
+    }
+  };
+
+  const fetchProposalTemplates = async () => {
+    if (!auth?.token) return;
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/proposalTemplate/templates`,
+        {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        }
+      );
+      setProposalTemplates(res.data.templates);
+    } catch (err) {
+      console.error("Error fetching templates:", err);
+    }
+  };
+
+  const handleTemplateSelect = (templateContent) => {
+    setProposalData((prevData) => ({
+      ...prevData,
+      content: templateContent,
+    }));
+    setShowModal(false);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProposalData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditorChange = (newContent) => {
+    setProposalData((prevData) => ({
+      ...prevData,
+      content: newContent,
+    }));
+  };
+
+  const calculateTotal = (quantity, salePrice, discount, discountType) => {
+    quantity = parseFloat(quantity) || 0;
+    salePrice = parseFloat(salePrice) || 0;
+    discount = parseFloat(discount) || 0;
+
+    let total = quantity * salePrice;
+
+    if (total > 0) {
+      if (discountType === "Fixed") {
+        total -= discount * quantity;
+      } else if (discountType === "Percentage") {
+        total -= total * (discount / 100);
+      }
+    }
+
+    return Math.max(0, total);
+  };
+
   const handleProductChange = (index, event) => {
     const { name, value } = event.target;
-    const updatedProducts = [...proposalData.products];
-    console.log("updatedProducts.total", updatedProducts.total);
-    // Update the changed field
-    updatedProducts[index][name] = value;
+    const updatedProducts = proposalData.products.map((product, i) =>
+      i === index ? { ...product, [name]: value } : product
+    );
 
-    // Parse values for calculation
-    const total = parseFloat(updatedProducts[index].total) || 0;
     const quantity = parseFloat(updatedProducts[index].quantity) || 1;
     const salePrice = parseFloat(updatedProducts[index].price) || 0;
     const discount = parseFloat(updatedProducts[index].discount) || 0;
     const discountType = updatedProducts[index].discountType;
 
-    // Recalculate total for this product
     updatedProducts[index].total = calculateTotal(
       quantity,
       salePrice,
       discount,
       discountType
     );
-    console.log(
-      "  updatedProducts[index].total :",
-      updatedProducts[index].total
-    );
-    // Update proposal data
-    setProposalData({ ...proposalData, products: updatedProducts });
-    console.log("updatedProducts :", updatedProducts);
+
+    setProposalData((prevData) => ({ ...prevData, products: updatedProducts }));
   };
 
   const removeProduct = (index) => {
@@ -331,12 +603,67 @@ const NewProposal = () => {
       products: prev.products.filter((_, i) => i !== index),
     }));
   };
+  const handleSavePdf = async () => {
+    try {
+      // console.log("proposalData", proposalData);
 
-  const handleSubmit = (e) => {
+      const response = await savePdfToServer(proposalData, auth?.token);
+      if (response) {
+        const filename = response.filename;
+        const attachmentUrl = response.attachmentUrl;
+        setAttachments({ filename: filename, attachmentUrl: attachmentUrl });
+        setProposalData((prevData) => ({
+          ...prevData,
+          attachments: attachments,
+        }));
+        return true;
+      } else {
+        console.error("Failed to save PDF on the server");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error saving PDF:", error);
+      return false;
+    }
+  };
+  const handleSubmit = async (e) => {
+    // navigate(-1)
+    // console.log("proposalData from handleSubmit ", proposalData);
+
     e.preventDefault();
-    console.log("Submitted proposal:", proposalData);
+    const status = handleSavePdf();
+    // if (!validateFields()) return;
+
+    if (status) {
+      try {
+        const res = await axios.post(
+          `http://localhost:3000/proposal/new`,
+          {
+            proposalData,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${auth?.token}`,
+            },
+          }
+        );
+        console.log(res);
+        navigate(-1);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
+  useEffect(() => {
+    fetchUsers();
+    fetchProposalTemplates();
+    getProduct();
+  }, [auth, currentPage, searchQuery]);
+
+  useEffect(() => {
+    calculateGrandTotals();
+  }, [proposalData.products]);
   return (
     <div className="content-wrapper">
       <div className="container-fluid">
@@ -350,7 +677,9 @@ const NewProposal = () => {
                   id="user-selector"
                   options={users}
                   labelKey="email" // Adjust based on your user object, e.g., 'email' or 'name'
-                  onChange={(selected) => setSelectedUser(selected[0] || null)}
+                  onChange={(selected) =>
+                    handleSelectecUserChange(selected[0] || null)
+                  }
                   selected={selectedUser ? [selectedUser] : []}
                   placeholder="Choose a user"
                 />
@@ -425,7 +754,7 @@ const NewProposal = () => {
                   >
                     <option value="$">$</option>
                     <option value="€">€</option>
-                    <option value="₹">₹</option>
+                    <option value="Rs">₹</option>
                     <option value="£">£</option>
                   </Input>
                 </div>
@@ -571,11 +900,12 @@ const NewProposal = () => {
                         );
                         return {
                           productId: product._id,
+                          currency: product.currency,
                           name: product.name,
                           category: product.category,
                           price: product.salePrice,
                           total: product.salePrice,
-                          discountType: "Fixed",
+                          discountType: product.discount,
                           quantity: 1,
                           discount: 0,
                         };
@@ -817,7 +1147,7 @@ const NewProposal = () => {
             </Form>
           </CardBody>
           <CardFooter className="d-flex justify-content-end">
-            <Button color="primary" onClick={handleSavePdf} type="submit">
+            <Button color="primary" onClick={handleSubmit} type="submit">
               Send Proposal
             </Button>
           </CardFooter>

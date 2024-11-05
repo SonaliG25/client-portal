@@ -20,18 +20,22 @@ export const VIEW_PROPOSAL_TEMPLATE = `${ADMIN_DASHBOARD}/viewproposaltemplete`;
 // User Management
 export const NEW_USER = `${ADMIN_DASHBOARD}/newuser`;
 export const ALL_USERS = `${ADMIN_DASHBOARD}/allusers`;
-export const VIEW_USER = `${ADMIN_DASHBOARD}/view`;
-export const UPDATE_USER = `${ADMIN_DASHBOARD}/update`;
+export const VIEW_USER = `${ADMIN_DASHBOARD}/view/:id`;
+export const UPDATE_USER = `${ADMIN_DASHBOARD}/update/:id`;
 
 // Product Management
 export const ALL_PRODUCTS = `${ADMIN_DASHBOARD}/products`;
 export const NEW_PRODUCT = `${ADMIN_DASHBOARD}/newproduct`;
+export const VIEW_PRODUCT = `${ADMIN_DASHBOARD}/viewproduct/:id`;
+export const UPDATE_PRODUCT = `${ADMIN_DASHBOARD}/updateproduct/:id`;
+
+// Order Management
 export const ALL_ORDERS = `${ADMIN_DASHBOARD}/orders`;
 
 // Proposal Routes
 export const ALL_PROPOSALS = `${ADMIN_DASHBOARD}/proposals`;
 export const NEW_PROPOSAL = `${ADMIN_DASHBOARD}/newProposal`;
-export const UPDATE_PROPOSAL = `${ADMIN_DASHBOARD}/updateProposal`;
+export const UPDATE_PROPOSAL = `${ADMIN_DASHBOARD}/updateProposal/:id`;
 
 // Client Routes (if any other than dashboard can be added here)
 // e.g. export const CLIENT_PROFILE = '/user-dashboard/profile';

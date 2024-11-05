@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const Users = () => {
   const [auth] = useAuth();
-  const [UserDetails, setUserDetails] = useEditUserContext();
+  // const [UserDetails, setUserDetails] = useEditUserContext();
   const [userdata, setUserdata] = useState([]);
   const [deleteId, setDeleteId] = useState();
   const [currentPage, setCurrentPage] = useState(1);
@@ -60,13 +60,13 @@ const Users = () => {
   };
 
   const HandleView = (data) => {
-    setUserDetails(data);
-    navigate("/admin-dashboard/view");
+    // setUserDetails(data);
+    navigate(`/admin-dashboard/view/${data._id}`);
   };
 
   const handleUpdateForm = (data) => {
-    setUserDetails(data);
-    navigate("/admin-dashboard/Update");
+    // setUserDetails(data);
+    navigate(`/admin-dashboard/Update/${data._id}`);
   };
 
   const handleDeleteID = (id) => {

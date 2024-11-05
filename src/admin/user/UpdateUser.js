@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useEditUserContext } from "../../context/EditUserContext.jsx";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -6,10 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
 
 function UpdateForm() {
-  const [UserDetails] = useEditUserContext(); // Get user details from context
+  // const [UserDetails] = useEditUserContext(); // Get user details from context
+  const [UserDetails, setUserDetails] = useState();
   const [auth] = useAuth(); // Get auth context (token)
+  const { id } = useParams();
   const navigate = useNavigate();
 
   // Formik setup
@@ -41,7 +44,7 @@ function UpdateForm() {
     onSubmit: async (values) => {
       try {
         const res = await axios.patch(
-          `http://localhost:3000/user/${UserDetails?._id}`,
+          `http://localhost:3000/user/${id}`,
           {
             firstName: values.firstName,
             lastName: values.lastName,
@@ -57,9 +60,8 @@ function UpdateForm() {
           }
         );
 
-        const updatedUser =
-          typeof res.data === "string" ? JSON.parse(res.data) : res.data;
-        console.log("Updated User:", updatedUser);
+        setUserDetails(res.data);
+        console.log("Updated User:", res.data);
         toast.success("updated successfully");
         navigate("/admin-dashboard/allusers");
       } catch (error) {
@@ -69,6 +71,16 @@ function UpdateForm() {
       }
     },
   });
+  useEffect(() => {
+    if (auth?.token) {
+      axios
+        .get(`http://localhost:3000/user/${id}`, {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        })
+        .then((res) => setUserDetails(res.data))
+        .catch((error) => console.error(error));
+    }
+  }, [auth]);
 
   useEffect(() => {
     if (UserDetails) {
@@ -344,11 +356,7 @@ function UpdateForm() {
                       )}
                   </div>
                   <div className="card-footer">
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      onClick={formik.handleSubmit}
-                    >
+                    <button type="submit" className="btn btn-primary">
                       Update User
                     </button>
                   </div>
