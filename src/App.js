@@ -69,7 +69,6 @@ function App() {
           path: RouteNames.VIEW_PROPOSAL_TEMPLATE,
           element: <ViewProposalTemplete />,
         },
-<<<<<<< HEAD
         { path: Routes.NEW_USER, element: <Register /> },
         { path: Routes.ALL_USERS, element: <Users /> },
         { path: Routes.VIEW_USER, element: <View /> },
@@ -87,20 +86,6 @@ function App() {
         { path: "product", element: <Products /> },
         { path: "viewproduct/:id", element: <ViewProduct /> },
         { path: "updateproduct/:id", element: <UpdateProduct /> },
-=======
-        //user
-        { path: RouteNames.NEW_USER, element: <Register /> },
-        { path: RouteNames.ALL_USERS, element: <Users /> },
-        { path: RouteNames.VIEW_USER, element: <View /> },
-        { path: RouteNames.UPDATE_USER, element: <UpdateForm /> },
-        //Product
-        { path: RouteNames.NEW_PRODUCT, element: <NewProduct /> },
-        { path: RouteNames.ALL_PRODUCTS, element: <Products /> },
-        { path: RouteNames.VIEW_PRODUCT, element: <ViewProduct /> },
-        { path: RouteNames.UPDATE_PRODUCT, element: <UpdateProduct /> },
-        //Order
-        { path: RouteNames.ALL_ORDERS, element: <Orders /> },
->>>>>>> 933e49e410dc7b5c141bc87afb836e08b663f1b9
       ],
     },
     { path: RouteNames.NOT_FOUND, element: <Login /> }, // Fallback for unmatched RouteNames
