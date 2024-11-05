@@ -51,7 +51,7 @@ function App() {
       children: [
         { path: Routes.HOME, element: <Home /> },
         { path: Routes.PROPOSALS, element: <Proposals /> },
-        { path: Routes.NEW_PROPOSAL, element: <NewProposal /> },
+        { path: `${Routes.NEW_PROPOSAL}/:id`, element: <NewProposal /> },
         { path: Routes.CATEGORYS, element: <Category /> },
         {
           path: Routes.NEW_PROPOSAL_TEMPLATE,
@@ -76,12 +76,12 @@ function App() {
 
         { path: "newuser", element: <Register /> },
         { path: "allusers", element: <Users /> },
-        { path: "view", element: <View /> },
-        { path: "Update", element: <UpdateForm /> },
+        { path: "view/:id", element: <View /> },
+        { path: "Update/:id", element: <UpdateForm /> },
         { path: "updateproposaltemplete", element: <UpdateProposalTemplate /> },
         { path: "viewproposaltemplete", element: <ViewProposalTemplete /> },
         { path: "product", element: <Products /> },
-        { path: "viewproduct", element: <ViewProduct /> },
+        { path: "viewproduct/:id", element: <ViewProduct /> },
         { path: "updateproduct", element: <UpdateProduct /> },
       ],
     },

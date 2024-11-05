@@ -1,28 +1,33 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useEditUserContext } from "../../context/EditUserContext";
+import { useParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+// import { useEditUserContext } from "../../context/EditUserContext";
 
 function View() {
-  const [UserDetails, setUserDetails] = useEditUserContext();
+  // const [UserDetails, setUserDetails] = useEditUserContext();
+  // const [UserDetails, setUserDetails] = useState();
   const [viewInfo, setViewInfo] = useState(null);
+  const [auth, seAuth] = useAuth();
+  const { id } = useParams();
 
-  useEffect(() => {
-    if (UserDetails) {
-      setViewInfo({
-        username: UserDetails.username || "",
-        email: UserDetails.email || "",
-        password: UserDetails.password || "",
-        role: UserDetails.role || "",
-        subscription: UserDetails.subscription || [],
-        purchaseHistory: UserDetails.purchaseHistory || [],
-        firstName: UserDetails.firstName || "",
-        lastName: UserDetails.lastName || "",
-        phone: UserDetails.phone || "",
-        addresses: UserDetails.addresses || [
-          { street: "", city: "", state: "", zipCode: "", country: "" },
-        ],
+  const viewpage = async () => {
+    try {
+      const res = await axios.get(`http://localhost:3000/user/${id}`, {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
       });
+      setViewInfo(res.data);
+    } catch (error) {
+      console.log(error);
     }
-  }, [UserDetails]);
+  };
+  useEffect(() => {
+    if (auth?.token) {
+      viewpage();
+    }
+  }, [auth]);
 
   return (
     <>
