@@ -4,7 +4,6 @@ import * as Yup from "yup"; // Import Yup for validation
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { ALL_USERS } from "../../utils/routeNames";
 
 const Register = () => {
   const navigate = useNavigate();

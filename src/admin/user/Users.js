@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useEditUserContext } from "../../context/EditUserContext.jsx";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Users = () => {
   const [auth] = useAuth();
@@ -36,15 +37,17 @@ const Users = () => {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (data) => {
     try {
-      await axios.delete(`http://localhost:3000/user/${deleteId}`, {
+      await axios.delete(`http://localhost:3000/user/${data}`, {
         headers: {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
+      toast.success("deleted Suceessfully");
       getUser(); // Refresh the user list after deletion
     } catch (error) {
+      toast.error("Unble to delete");
       console.log(error);
     }
   };
@@ -67,10 +70,6 @@ const Users = () => {
   const handleUpdateForm = (data) => {
     // setUserDetails(data);
     navigate(`/admin-dashboard/Update/${data._id}`);
-  };
-
-  const handleDeleteID = (id) => {
-    setDeleteId(id);
   };
 
   return (
@@ -137,43 +136,41 @@ const Users = () => {
                         >
                           <thead>
                             <tr>
-                              <th>Last Name</th>
-                              <th>First Name</th>
-                              <th>Phone</th>
-                              <th>User Type</th>
-                              <th>Number of Subscriptions</th>
-                              <th>Action</th>
+                              <th className="text-center">First Name</th>
+                              <th className="text-center">Last Name</th>
+                              <th className="text-center">Phone</th>
+                              <th className="text-center">User Type</th>
+                              <th className="text-center">Action</th>
                             </tr>
                           </thead>
                           <tbody>
                             {userdata.map((data) => (
                               <tr key={data._id}>
-                                <td>{data.lastName}</td>
                                 <td>{data.firstName}</td>
+                                <td>{data.lastName}</td>
                                 <td>{data.phone}</td>
                                 <td>{data.userType}</td>
-                                <td>{data.subscription.length}</td>
                                 <td>
                                   <div className="d-flex justify-content-center m-2">
                                     <button
                                       className="btn btn-primary px-4 py-2 m-1"
                                       onClick={() => HandleView(data)}
                                     >
-                                      View
+                                      <i className="fas fa-file-alt"></i>
                                     </button>
                                     <button
                                       className="btn btn-danger px-4 py-2 m-1"
                                       data-toggle="modal"
                                       data-target="#exampleModalCenter"
-                                      onClick={() => handleDeleteID(data._id)}
+                                      onClick={() => handleDelete(data._id)}
                                     >
-                                      Delete
+                                      <i className="fas fa-trash-alt"></i>
                                     </button>
                                     <button
                                       className="btn btn-dark px-4 py-2 m-1"
                                       onClick={() => handleUpdateForm(data)}
                                     >
-                                      Edit
+                                      <i className="fas fa-edit"></i>
                                     </button>
                                   </div>
                                 </td>
