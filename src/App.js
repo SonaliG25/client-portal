@@ -17,7 +17,7 @@ import UpdateProposalTemplate from "./admin/proposalTemplate/UpdateProposalTempl
 import ViewProposalTemplete from "./admin/proposalTemplate/ViewProposalTemplete";
 import NewProduct from "./admin/product/NewProduct";
 // Import route names
-import * as Routes from "./utils/routeNames";
+import * as RouteNames from "./utils/routeNames";
 import UserLayout from "./client/UserLayout";
 import GetProposal from "./client/GetProposal";
 import ProposalInfo from "./client/ProposalInfo";
@@ -28,7 +28,7 @@ import NewProposal from "./admin/proposal/NewProposal";
 
 function App() {
   const router = createBrowserRouter([
-    { path: Routes.LOGIN, element: <Login /> },
+    { path: RouteNames.LOGIN, element: <Login /> },
 
     {
       path: "user-dashboard",
@@ -46,46 +46,44 @@ function App() {
     },
 
     {
-      path: Routes.ADMIN_DASHBOARD,
+      path: RouteNames.ADMIN_DASHBOARD,
       element: <AdminLayout />,
       children: [
-        { path: Routes.HOME, element: <Home /> },
-        { path: Routes.PROPOSALS, element: <Proposals /> },
-        { path: `${Routes.NEW_PROPOSAL}/:id`, element: <NewProposal /> },
-        { path: Routes.CATEGORYS, element: <Category /> },
+        { path: RouteNames.HOME, element: <Home /> },
+        //Proposal
+        { path: RouteNames.PROPOSALS, element: <Proposals /> },
+        { path: `${RouteNames.NEW_PROPOSAL}/:id`, element: <NewProposal /> },
+        //Category
+        { path: RouteNames.CATEGORYS, element: <Category /> },
+        //ProposalTemplete
         {
-          path: Routes.NEW_PROPOSAL_TEMPLATE,
+          path: RouteNames.NEW_PROPOSAL_TEMPLATE,
           element: <NewProposalTemplete />,
         },
-        { path: Routes.PROPOSAL_TEMPLATES, element: <Proposaltemplete /> },
+        { path: RouteNames.PROPOSAL_TEMPLATES, element: <Proposaltemplete /> },
         {
-          path: Routes.UPDATE_PROPOSAL_TEMPLATE,
+          path: RouteNames.UPDATE_PROPOSAL_TEMPLATE,
           element: <UpdateProposalTemplate />,
         },
         {
-          path: Routes.VIEW_PROPOSAL_TEMPLATE,
+          path: RouteNames.VIEW_PROPOSAL_TEMPLATE,
           element: <ViewProposalTemplete />,
         },
-        { path: Routes.NEW_USER, element: <Register /> },
-        { path: Routes.ALL_USERS, element: <Users /> },
-        { path: Routes.VIEW_USER, element: <View /> },
-        { path: Routes.UPDATE_USER, element: <UpdateForm /> },
-        { path: Routes.NEW_PRODUCT, element: <NewProduct /> },
-        { path: Routes.ALL_PRODUCTS, element: <Products /> },
-        { path: Routes.ALL_ORDERS, element: <Orders /> },
-
-        { path: "newuser", element: <Register /> },
-        { path: "allusers", element: <Users /> },
-        { path: "view/:id", element: <View /> },
-        { path: "Update/:id", element: <UpdateForm /> },
-        { path: "updateproposaltemplete", element: <UpdateProposalTemplate /> },
-        { path: "viewproposaltemplete", element: <ViewProposalTemplete /> },
-        { path: "product", element: <Products /> },
-        { path: "viewproduct/:id", element: <ViewProduct /> },
-        { path: "updateproduct", element: <UpdateProduct /> },
+        //user
+        { path: RouteNames.NEW_USER, element: <Register /> },
+        { path: RouteNames.ALL_USERS, element: <Users /> },
+        { path: RouteNames.VIEW_USER, element: <View /> },
+        { path: RouteNames.UPDATE_USER, element: <UpdateForm /> },
+        //Product
+        { path: RouteNames.NEW_PRODUCT, element: <NewProduct /> },
+        { path: RouteNames.ALL_PRODUCTS, element: <Products /> },
+        { path: RouteNames.VIEW_PRODUCT, element: <ViewProduct /> },
+        { path: RouteNames.UPDATE_PRODUCT, element: <UpdateProduct /> },
+        //Order
+        { path: RouteNames.ALL_ORDERS, element: <Orders /> },
       ],
     },
-    { path: Routes.NOT_FOUND, element: <Login /> }, // Fallback for unmatched routes
+    { path: RouteNames.NOT_FOUND, element: <Login /> }, // Fallback for unmatched RouteNames
   ]);
 
   return <RouterProvider router={router} />;
