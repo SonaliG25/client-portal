@@ -49,7 +49,7 @@ function Products() {
 
   const handleView = (data) => {
     setProductDetails(data);
-    navigate("/admin-dashboard/viewproduct");
+    navigate(`/admin-dashboard/viewproduct/${data._id}`);
   };
 
   const handleAddProduct = () => {
