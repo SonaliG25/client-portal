@@ -9,7 +9,6 @@ import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 
 function UpdateForm() {
-  // const [UserDetails] = useEditUserContext(); // Get user details from context
   const [UserDetails, setUserDetails] = useState();
   const [auth] = useAuth(); // Get auth context (token)
   const { id } = useParams();

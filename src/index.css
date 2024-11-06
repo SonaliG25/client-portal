@@ -94,3 +94,8 @@ body {
     background-position: 1000px 0;
   }
 }
+
+.shrink-column {
+  width: 1%;
+  white-space: nowrap;
+}

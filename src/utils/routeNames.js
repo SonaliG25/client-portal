@@ -31,6 +31,8 @@ export const UPDATE_PRODUCT = `${ADMIN_DASHBOARD}/updateproduct/:id`;
 
 // Order Management
 export const ALL_ORDERS = `${ADMIN_DASHBOARD}/orders`;
+export const VIEW_ORDER = `${ADMIN_DASHBOARD}/orders/:id`;
+export const UPDATE_ORDER = `${ADMIN_DASHBOARD}/orders/update/:id`;
 
 // Proposal Routes
 export const ALL_PROPOSALS = `${ADMIN_DASHBOARD}/proposals`;

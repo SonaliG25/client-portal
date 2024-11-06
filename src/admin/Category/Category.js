@@ -182,7 +182,7 @@ function Category() {
                         <thead>
                           <tr>
                             <th>Category</th>
-                            <th className="text-center">Action</th>
+                            <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -190,9 +190,9 @@ function Category() {
                             ? categoryNameList.map((category) => (
                                 <tr key={category._id}>
                                   <td>{category.name}</td>
-                                  <td className="text-center">
-                                    <div className="d-flex justify-content-center">
-                                      <button
+                                  <td>
+                                    <div>
+                                      <span
                                         className="m-1 btn btn-primary"
                                         data-toggle="modal"
                                         data-target="#viewCategoryModal"
@@ -201,8 +201,8 @@ function Category() {
                                         }
                                       >
                                         <i className="fas fa-file-alt p-2"></i>
-                                      </button>
-                                      <button
+                                      </span>
+                                      <span
                                         className="m-1 btn btn-danger"
                                         data-toggle="modal"
                                         data-target="#deleteCategoryModal"
@@ -211,8 +211,8 @@ function Category() {
                                         }
                                       >
                                         <i className="fas fa-trash-alt p-2"></i>
-                                      </button>
-                                      <button
+                                      </span>
+                                      <span
                                         className="m-1 btn btn-dark"
                                         data-toggle="modal"
                                         data-target="#editCategoryModal"
@@ -224,7 +224,7 @@ function Category() {
                                         }
                                       >
                                         <i className="fas fa-edit p-2"></i>
-                                      </button>
+                                      </span>
                                     </div>
                                   </td>
                                 </tr>
