@@ -34,7 +34,7 @@ const NewProduct = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/category/categories",
+          "http://localhost:3000/category/allCategory",
           {
             headers: {
               Authorization: `Bearer ${auth?.token}`,
@@ -97,7 +97,7 @@ const NewProduct = () => {
         }
       );
 
-      const imageUrl = uploadResponse.data.imageUrl;
+      const imageUrl = uploadResponse.data.fileUrl;
       console.log("Image uploaded successfully:", imageUrl);
 
       // Step 2: Create new product with the uploaded image URL and other form data
@@ -119,7 +119,7 @@ const NewProduct = () => {
 
       console.log("Product created successfully:", productData);
       // setMessage("Product created successfully!");
-      navigate(-1)
+      navigate(-1);
     } catch (error) {
       console.error("Error uploading image or creating product:", error);
       setMessage("Failed to upload image or create product.");

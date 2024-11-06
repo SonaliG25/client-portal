@@ -13,7 +13,7 @@ function Products() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [productsPerPage] = useState(6);
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [totalProducts, setTotalProducts] = useState(0); // Track total products
   const navigate = useNavigate();
@@ -29,17 +29,15 @@ function Products() {
           },
         }
       );
-      setProducts(res.data.products); 
-      setTotalPages(res.data.totalPages)
-      setTotalProducts(res.data.total); 
-      setProductDetails(res.data.products)
+      setProducts(res.data.products);
+      setTotalPages(res.data.totalPages);
+      setTotalProducts(res.data.total);
+      setProductDetails(res.data.products);
       console.log(res.data);
-      
     } catch (error) {
       console.error(error);
     }
   };
-
 
   useEffect(() => {
     if (auth?.token) {
@@ -88,11 +86,13 @@ function Products() {
                     placeholder="Search by Product Name"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    aria-label="Search Products"
                   />
                   <div className="input-group-append">
                     <button
                       className="btn btn-outline-secondary btn-md"
                       type="button"
+                      aria-label="Search"
                     >
                       <i className="fa fa-search" />
                     </button>
@@ -104,6 +104,7 @@ function Products() {
               <button
                 onClick={handleAddProduct}
                 className="btn btn-success ml-2"
+                aria-label="Add Product"
               >
                 <i className="fas fa-plus mr-1"></i> Add Product
               </button>
@@ -116,64 +117,64 @@ function Products() {
         <div className="row">
           {products.length > 0 ? (
             products.map((prod) => (
-              <div
-                className="col-md-4"
-                key={prod._id}
-                onClick={() => handleView(prod)}
-              >
-                <div className="card mb-4 shadow-sm">
+              <div className="col-md-4 mb-4" key={prod._id}>
+                <div
+                  className="card shadow-sm h-100"
+                  onClick={() => handleView(prod)}
+                >
                   <img
-                    src={
-                      "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"
+                    onError={(e) =>
+                      (e.target.src = BASE_URL + "/uploads/placeholder.png")
                     }
-                    className="card-img"
+                    src={BASE_URL + prod.imageUrl}
+                    className="card-img-top"
                     alt={prod.name}
                   />
                   <div className="card-body">
                     <h5 className="card-title">{prod.name}</h5>
                     <p className="card-text">{prod.category}</p>
                     <p className="card-text">
-                      {prod.currency + "" + prod.salePrice}
+                      {prod.currency} {prod.salePrice}
                     </p>
                   </div>
                 </div>
               </div>
             ))
           ) : (
-            <p>No products found</p>
+            <div className="col-12">
+              <p className="text-center">No products found</p>
+            </div>
           )}
         </div>
 
         {/* Pagination */}
-        <div className="d-flex ">
-                          <button
-                            className="btn btn-outline-primary mr-2"
-                            disabled={currentPage === 1}
-                            onClick={handlePreviousPage}
-                          >
-                            Previous
-                          </button>
-                          {Array.from({ length: totalPages }, (_, index) => (
-                            <button
-                              key={index + 1}
-                              onClick={() => setCurrentPage(index + 1)}
-                              className={`btn mr-2 ${
-                                currentPage === index + 1
-                                  ? "btn-primary"
-                                  : "btn-light"
-                              }`}
-                            >
-                              {index + 1}
-                            </button>
-                          ))}
-                          <button
-                            className="btn btn-outline-primary"
-                            disabled={currentPage === totalPages}
-                            onClick={ handleNextPage}
-                          >
-                            Next
-                          </button>
-                        </div>
+        <div className="d-flex justify-content-center mt-4">
+          <button
+            className="btn btn-outline-primary mr-2"
+            disabled={currentPage === 1}
+            onClick={handlePreviousPage}
+          >
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => setCurrentPage(index + 1)}
+              className={`btn mr-2 ${
+                currentPage === index + 1 ? "btn-primary" : "btn-light"
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+          <button
+            className="btn btn-outline-primary"
+            disabled={currentPage === totalPages}
+            onClick={handleNextPage}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );
