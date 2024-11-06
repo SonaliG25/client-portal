@@ -14,8 +14,8 @@ export const PROPOSALS = `${ADMIN_DASHBOARD}/proposal`;
 export const CATEGORYS = `${ADMIN_DASHBOARD}/categories`;
 export const NEW_PROPOSAL_TEMPLATE = `${ADMIN_DASHBOARD}/newproposaltemplete`;
 export const PROPOSAL_TEMPLATES = `${ADMIN_DASHBOARD}/proposaltempletes`;
-export const UPDATE_PROPOSAL_TEMPLATE = `${ADMIN_DASHBOARD}/updateproposaltemplete`;
-export const VIEW_PROPOSAL_TEMPLATE = `${ADMIN_DASHBOARD}/viewproposaltemplete`;
+export const UPDATE_PROPOSAL_TEMPLATE = `${ADMIN_DASHBOARD}/updateproposaltemplete/:id`;
+export const VIEW_PROPOSAL_TEMPLATE = `${ADMIN_DASHBOARD}/viewproposaltemplete/:id`;
 
 // User Management
 export const NEW_USER = `${ADMIN_DASHBOARD}/newuser`;

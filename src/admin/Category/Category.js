@@ -67,6 +67,7 @@ function Category() {
       fetchCategories(); // Refresh categories
       document.getElementById("closeModalButton").click(); // Close modal
     } catch (error) {
+      toast.error("Unable to Add");
       console.error("Error adding category:", error);
     }
   };
@@ -86,6 +87,7 @@ function Category() {
       fetchCategories();
       document.getElementById("closeEditModalButton").click(); // Close modal
     } catch (error) {
+      toast.error("Unable to update");
       console.error("Error updating category:", error);
     }
   };
@@ -97,10 +99,12 @@ function Category() {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
+      toast.success("Category Deleted");
       fetchCategories();
       setDeleteCategoryId(null);
       document.getElementById("closeDeleteModalButton").click(); // Close modal
     } catch (error) {
+      toast.error("Unable to Delete");
       console.error("Error deleting category:", error);
     }
   };
@@ -196,7 +200,7 @@ function Category() {
                                           setSelectedCategory(category)
                                         }
                                       >
-                                        View
+                                        <i className="fas fa-file-alt p-2"></i>
                                       </button>
                                       <button
                                         className="m-1 btn btn-danger"
@@ -206,7 +210,7 @@ function Category() {
                                           setDeleteCategoryId(category._id)
                                         }
                                       >
-                                        Delete
+                                        <i className="fas fa-trash-alt p-2"></i>
                                       </button>
                                       <button
                                         className="m-1 btn btn-dark"
@@ -219,7 +223,7 @@ function Category() {
                                           })
                                         }
                                       >
-                                        Edit
+                                        <i className="fas fa-edit p-2"></i>
                                       </button>
                                     </div>
                                   </td>
