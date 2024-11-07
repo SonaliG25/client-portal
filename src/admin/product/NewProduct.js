@@ -227,7 +227,7 @@ const NewProduct = () => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="purchasePrice">Purchase Price</label>
+                  <label htmlFor="purchasePrice">Cost</label>
                   <input
                     type="number"
                     className="form-control"
@@ -242,7 +242,7 @@ const NewProduct = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="mrp">MRP</label>
+                  <label htmlFor="mrp">Tax</label>
                   <input
                     type="number"
                     className="form-control"
@@ -257,9 +257,9 @@ const NewProduct = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="salePrice">Sale Price</label>
+                  <label htmlFor="salePrice">Total Price</label>
                   <input
-                    type="number"
+                    type="text"
                     className="form-control"
                     id="salePrice"
                     name="salePrice"
