@@ -5,33 +5,99 @@ import { useNavigate } from "react-router-dom";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import toast from "react-hot-toast";
+import {
+  Button,
+  Card,
+  CardBody,
+  Form,
+  FormGroup,
+  FormFeedback,
+  Input,
+  Label,
+  Table,
+} from "reactstrap";
 const NewProduct = () => {
   const navigate = useNavigate();
   const [auth] = useAuth();
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({
     sku: "",
     name: "",
     description: "",
-    purchasePrice: "",
-    mrp: "",
-    salePrice: "",
-    stock: "",
+    cost: 0,
+    tax: 0,
+    totalCost: 0,
+    // productManager: auth?.user.userId,
     category: "",
     purchaseType: "one-time",
     currency: "USD",
-    isAvailable: false,
-    tags: "",
-    keywords: "",
+    status: "Active",
+    tags: [],
+    keywords: [],
+    // imageUrl:"",
+    activeSubscriptions: 0,
+    revenueGenerated: 0,
+    // duration 0, 
   });
-
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [message, setMessage] = useState("");
-
   const [categories, setCategories] = useState([]);
+
+  
+    const fetchUsers = async () => {
+      if (!auth?.token) return;
+      try {
+        const response = await axios.get("http://localhost:3000/user/clients", {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        });
+        setUsers(response.data);
+        // console.log("users", response.data.data);
+      } catch (error) {
+        console.error("Error fetching Users:", error);
+      }
+    };
+
+    
+
+  const handleSelectecUserChange = (selectedUser) => {
+    setSelectedUser(selectedUser);
+
+    if (selectedUser) {
+      const userid = selectedUser._id;
+      const useremail = selectedUser.email;
+      const username = selectedUser.name
+
+      setFormData((prevData) => ({
+        ...prevData,
+        productManager: userid,
+      }));
+    } else {
+      // Reset the values if no user is selected
+      setFormData((prevData) => ({
+        ...prevData,
+        productManager: null,
+        
+      }));
+    }
+  };
+
+
+
+  // Calculate total cost
+  useEffect(() => {
+    const cost = parseFloat(formData.cost) || 0;
+    const tax = parseFloat(formData.tax) || 0;
+    setFormData((prevData) => ({
+      ...prevData,
+      totalCost: (cost + tax).toFixed(2),
+    }));
+  }, [formData.cost, formData.tax]);
 
   // Fetch categories
   useEffect(() => {
+    fetchUsers()
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
@@ -43,9 +109,8 @@ const NewProduct = () => {
           }
         );
         setCategories(response.data.categories);
-
-        console.log("categories", categories);
-        console.log(response.data);
+        console.log(response.data.categories);
+        
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -54,9 +119,23 @@ const NewProduct = () => {
     fetchCategories();
   }, []);
 
-  // Handle input changes for all fields except the file upload
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    if (name === "tags" || name === "keywords") {
+      // Ensure it's always an array
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value ? value.split(",").map((item) => item.trim()) : [], // Split by commas and remove extra spaces, or set an empty array if value is empty
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    }
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: type === "checkbox" ? checked : value,
@@ -77,16 +156,17 @@ const NewProduct = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    toast.success("Product Added Suceessfully")
+    toast.success("Product Added Successfully");
+
     if (!file) {
       setMessage("Please select an image file.");
       return;
     }
 
     try {
-      // Step 1: Upload image
+      // Image upload
       const uploadData = new FormData();
-      uploadData.append("image", file); // Image field matches multer configuration
+      uploadData.append("image", file);
 
       const uploadResponse = await axios.post(
         "http://localhost:3000/upload/productImage",
@@ -100,33 +180,65 @@ const NewProduct = () => {
       );
 
       const imageUrl = uploadResponse.data.fileUrl;
-      console.log("Image uploaded successfully:", imageUrl);
+      console.log("ImageUrl", imageUrl);
 
-      // Step 2: Create new product with the uploaded image URL and other form data
+      // Prepare productData with proper data types
       const productData = {
         ...formData,
         imageUrl,
+        cost: parseFloat(formData.cost), // Ensure cost is a number
+        tax: parseFloat(formData.tax), // Ensure tax is a number
+        totalCost: parseFloat(formData.totalCost), // Ensure totalCost is a number
+        tags: formData.tags.split(","), // Ensure tags are properly trimmed strings
+        keywords: formData.keywords.split(","), // Ensure keywords are properly trimmed strings
       };
-      console.log("Image uploaded productData is:", productData);
+      if (formData.purchaseType === "subscription" && formData.duration) {
+        productData.duration = parseInt(formData.duration); // Only add if purchaseType is subscription
+      }
+      console.log("DataProd", productData);
 
-      await axios.post(
-        "http://localhost:3000/product/newProduct",
-        productData,
-        {
-          headers: {
-            Authorization: `Bearer ${auth?.token}`,
-          },
-        }
-      );
+     
+      // const formDataa = new FormData();
+      // formDataa.append("sku", productData.sku);
+      // formDataa.append("name", productData.name);
+      // formDataa.append("description", productData.description);
+      // formDataa.append("cost", parseFloat(formData.cost));
+      // formDataa.append("tax", parseFloat(formData.tax));
+      // formDataa.append("totalCost", parseFloat(formData.totalCost));
+      // formDataa.append("productManager", auth?.user.userId);
+      // formDataa.append("status", productData.status);
+      // formDataa.append(
+      //   "activeSubscriptions",
+      //   parseFloat(formData.activeSubscriptions)
+      // );
+      // formDataa.append(
+      //   "revenueGenerated",
+      //   parseFloat(formData.revenueGenerated)
+      // );
+      // formDataa.append("category", productData.category);
+      // formDataa.append("imageUrl", imageUrl); // Assuming fileInput is the input element
+      // formDataa.append("purchaseType", productData.purchaseType);
+      // formDataa.append("currency", productData.currency);
+      // formDataa.append("duration", parseFloat(formData.duration));
+      // formDataa.append("tags", formData.tags.split(",")); // Convert array to string if needed
+      // formDataa.append("keywords", formData.keywords.split(","));
+      // console.log("formata", formDataa);
 
-      console.log("Product created successfully:", productData);
-      // setMessage("Product created successfully!");
-      navigate(-1);
+      // Send the product data to the backend
+      await axios.post("http://localhost:3000/product/newProduct", productData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
+
+      navigate(-1); // Navigate back after successful submission
     } catch (error) {
       console.error("Error uploading image or creating product:", error);
       setMessage("Failed to upload image or create product.");
     }
   };
+
   return (
     <div className="content-wrapper">
       <section className="content-header">
@@ -227,13 +339,13 @@ const NewProduct = () => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="purchasePrice">Cost</label>
+                  <label htmlFor="cost">Cost</label>
                   <input
                     type="number"
                     className="form-control"
-                    id="purchasePrice"
-                    name="purchasePrice"
-                    value={formData.purchasePrice}
+                    id="cost"
+                    name="cost"
+                    value={formData.cost}
                     onChange={handleChange}
                     min="0"
                     step="0.01"
@@ -242,37 +354,33 @@ const NewProduct = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="mrp">Tax</label>
+                  <label htmlFor="tax">Tax</label>
                   <input
                     type="number"
                     className="form-control"
-                    id="mrp"
-                    name="mrp"
-                    value={formData.mrp}
+                    id="tax"
+                    name="tax"
+                    value={formData.tax}
                     onChange={handleChange}
                     min="0"
                     step="0.01"
-                    placeholder="Enter MRP"
+                    placeholder="Enter Tax"
                     required
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="salePrice">Total Price</label>
+                  <label htmlFor="totalCost">Total Cost</label>
                   <input
                     type="text"
                     className="form-control"
-                    id="salePrice"
-                    name="salePrice"
-                    value={formData.salePrice}
-                    onChange={handleChange}
-                    min="0"
-                    step="0.01"
-                    placeholder="Enter Sale Price"
-                    required
+                    id="totalCost"
+                    name="totalCost"
+                    value={formData.totalCost}
+                    readOnly
                   />
                 </div>
 
-                <div className="form-group">
+                {/* <div className="form-group">
                   <div className="form-check">
                     <input
                       type="checkbox"
@@ -286,7 +394,7 @@ const NewProduct = () => {
                       Available
                     </label>
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Right Column */}
@@ -329,18 +437,35 @@ const NewProduct = () => {
                   </small>
                 </div>
 
+                <FormGroup>
+                <Label>Product Manager</Label>
+                <Typeahead
+                  id="user-selector"
+                  options={users}
+                  labelKey="username" // Adjust based on your user object, e.g., 'email' or 'name'
+                  onChange={(selected) =>
+                    handleSelectecUserChange(selected[0] || null)
+                  }
+                  // onInputChange={(input) => handleEmailTo(input)}
+                  selected={selectedUser ? [selectedUser] : []}
+                  placeholder="Choose a user"
+                />
+              </FormGroup>
+
                 <div className="form-group">
-                  <label htmlFor="stock">Stock</label>
-                  <input
-                    type="number"
+                  <label htmlFor="status">Status</label>
+                  <select
                     className="form-control"
-                    id="stock"
-                    name="stock"
-                    value={formData.stock}
+                    id="status"
+                    name="status"
+                    value={formData.status}
                     onChange={handleChange}
-                    min="0"
-                    placeholder="Enter Stock"
-                  />
+                    required
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Retired">Retired</option>
+                  </select>
                 </div>
 
                 <div className="form-group">
@@ -374,6 +499,23 @@ const NewProduct = () => {
                     <option value="subscription">Subscription</option>
                   </select>
                 </div>
+
+                {/* Conditionally render the Duration field */}
+                {formData.purchaseType === "subscription" && (
+                  <div className="form-group">
+                    <label htmlFor="duration">Duration (in days)</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="duration"
+                      name="duration"
+                      value={formData.duration}
+                      onChange={handleChange}
+                      min="1"
+                      placeholder="Enter duration in days"
+                    />
+                  </div>
+                )}
 
                 <div className="form-group">
                   <label htmlFor="tags">Tags</label>
