@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { useEditUserContext } from "../../context/EditUserContext.jsx";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import * as Routes from "../../utils/routeNames"
+import * as Routes from "../../utils/routeNames";
 
 const Users = () => {
   const [auth] = useAuth();
@@ -137,20 +137,40 @@ const Users = () => {
                         >
                           <thead>
                             <tr>
-                              <th className="text-center">First Name</th>
-                              <th className="text-center">Last Name</th>
-                              <th className="text-center">Phone</th>
-                              <th className="text-center">User Type</th>
+                              <th className="text-center">Active Account</th>
+                              <th className="text-center">ClientName</th>
+                              <th className="text-center">Company Type</th>
+                              <th className="text-center">Address</th>
+                              <th className="text-center">Timezone</th>
+                              <th className="text-center">
+                                PreferedContactMethod
+                              </th>
                               <th className="text-center">Action</th>
                             </tr>
                           </thead>
                           <tbody>
                             {userdata.map((data) => (
                               <tr key={data._id}>
-                                <td>{data.firstName}</td>
-                                <td>{data.lastName}</td>
-                                <td>{data.phone}</td>
-                                <td>{data.userType}</td>
+                                <td className="text-center">
+                                  <span
+                                    className={`badge ${
+                                      data.activeAccount
+                                        ? "badge-success"
+                                        : "badge-danger"
+                                    }`}
+                                  >
+                                    {data.activeAccount ? "Active" : "Inactive"}
+                                  </span>
+                                </td>
+                                <td>{data?.businessDetails?.clientName}</td>
+                                <td>{data?.businessDetails?.companyType}</td>
+                                <td>
+                                  {data?.address?.street1},
+                                  {data?.address?.state},
+                                  {data?.address?.country}
+                                </td>
+                                <td>{data?.timeZone}</td>
+                                <td>{data?.preferredContactMethod}</td>
                                 <td>
                                   <div className="d-flex justify-content-center m-2">
                                     <button

@@ -99,3 +99,7 @@ body {
   width: 1%;
   white-space: nowrap;
 }
+
+.pointer-event-none {
+  pointer-events: none;
+}
