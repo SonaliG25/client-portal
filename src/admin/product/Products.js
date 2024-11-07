@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import * as Routes from "../../utils/routeNames";
-import { BASE_URL } from "../../utils/routeNames.js";
+import { BASE_URL } from "../../utils/endPointNames.js";
 
 function Products() {
   // const [productDetails, setProductDetails] = useEditUserContext();

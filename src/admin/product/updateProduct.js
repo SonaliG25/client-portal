@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { Typeahead } from "react-bootstrap-typeahead";
-import { BASE_URL } from "../../utils/routeNames.js";
+import { BASE_URL } from "../../utils/endPointNames.js";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import toast from "react-hot-toast";
 
@@ -18,7 +18,7 @@ function UpdateProduct() {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [categories, setCategories] = useState([]);
-  const { id } = useParams()
+  const { id } = useParams();
 
   const getProduct = async () => {
     try {
@@ -28,8 +28,8 @@ function UpdateProduct() {
         },
       });
       console.log("Update Single Product", res.data);
-      setProduct(res.data); 
-      setLoading(!loading)
+      setProduct(res.data);
+      setLoading(!loading);
     } catch (error) {
       console.error(error);
     }
@@ -39,7 +39,7 @@ function UpdateProduct() {
     if (auth?.token) {
       getProduct();
     }
-    
+
     // if (productDetails) {
     //   setProduct(productDetails);
     //   console.log("ProductDetails", productDetails);
@@ -109,7 +109,7 @@ function UpdateProduct() {
 
         imageUrl = uploadResponse.data.imageUrl; // Update imageUrl to the uploaded image URL
         console.log("Image uploaded successfully:", imageUrl);
-        toast.success("Product Updated Successfully")
+        toast.success("Product Updated Successfully");
       }
 
       // Step 2: Update product with the new or existing image URL and other form data
@@ -126,7 +126,7 @@ function UpdateProduct() {
           },
         }
       );
-      navigate(-1)
+      navigate(-1);
       // navigate("/admin-dashboard/products");
     } catch (error) {
       console.error("Error updating product:", error);
@@ -304,8 +304,9 @@ function UpdateProduct() {
                 {!preview && (
                   <div className="form-group">
                     <img
-                     onError={(e) => (e.target.src = BASE_URL + "/uploads/placeholder.png")}
-                
+                      onError={(e) =>
+                        (e.target.src = BASE_URL + "/uploads/placeholder.png")
+                      }
                       src={BASE_URL + product.imageUrl}
                       alt="Selected Preview"
                       className="img-thumbnail"

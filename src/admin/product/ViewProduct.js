@@ -4,7 +4,7 @@ import { useEditUserContext } from "../../context/EditUserContext";
 import axios from "axios";
 import moment from "moment";
 import { useNavigate, useParams } from "react-router-dom";
-import { BASE_URL } from "../../utils/routeNames.js";
+import { BASE_URL } from "../../utils/endPointNames.js";
 
 function ViewProduct() {
   const [productDetails] = useEditUserContext();

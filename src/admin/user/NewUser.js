@@ -1,81 +1,97 @@
 import React from "react";
 import { useFormik } from "formik";
-import * as Yup from "yup"; // Import Yup for validation
+import * as Yup from "yup";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 
-const Register = () => {
+const NewUser = () => {
+  const [auth] = useAuth();
   const navigate = useNavigate();
 
-  // Define Yup validation schema
   const validationSchema = Yup.object({
-    firstName: Yup.string()
-      .required("First name is required")
-      .min(2, "First name should be at least 2 characters"),
-    lastName: Yup.string()
-      .required("Last name is required")
-      .min(2, "Last name should be at least 2 characters"),
+    name: Yup.string().required("Name is required"),
     phone: Yup.string()
-      .required("Phone number is required")
-      .matches(/^[0-9]{10}$/, "Phone number should be 10 digits"),
-    username: Yup.string()
-      .required("Username is required")
-      .min(4, "Username should be at least 4 characters"),
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-    password: Yup.string()
-      .required("Password is required")
-      .min(4, "Password should be at least 4 characters"),
-    role: Yup.string().required("Role is required"),
-    addresses: Yup.object({
-      street: Yup.string().required("Street is required"),
+      .matches(/^[0-9]{10}$/, "Phone number should be 10 digits")
+      .required("Phone number is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    password: Yup.string().required("Password is required"),
+    businessDetails: Yup.object({
+      clientName: Yup.string().required("Client name is required"),
+      companyType: Yup.string().required("Company type is required"),
+      taxId: Yup.string().required("Tax ID is required"),
+      employeeSize: Yup.string().required("Employee size is required"),
+      ownerPhone: Yup.string().required("Owner phone is required"),
+      ownerEmail: Yup.string()
+        .email("Invalid email")
+        .required("Owner email is required"),
+    }),
+    timeZone: Yup.string().required("Time zone is required"),
+
+    address: Yup.object({
+      street1: Yup.string().required("Street address is required"),
+      street2: Yup.string(),
+      zipCode: Yup.string().required("ZIP Code is required"),
       city: Yup.string().required("City is required"),
       state: Yup.string().required("State is required"),
-      zipCode: Yup.string()
-        .required("Zip code is required")
-        .matches(/^[0-9]{6}$/, "Zip code should be 6 digits"),
-      country: Yup.string().required("Country is required"),
     }),
+    allowLogin: Yup.boolean(),
+    activeAccount: Yup.boolean(),
+    bannedAccount: Yup.boolean(),
   });
 
-  // Set up Formik hook with validation schema
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
+      name: "",
       phone: "",
-      username: "",
+      userType: "lead",
       email: "",
       password: "",
       role: "client",
-      addresses: {
-        street: "",
+      businessDetails: {
+        clientName: "",
+        companyType: "",
+        taxId: "",
+        employeeSize: "",
+        ownerPhone: "",
+        ownerEmail: "",
+      },
+      timeZone: "",
+      preferredContactMethod: "email",
+      paymentStatus: "noPaymentYet",
+      address: {
+        street1: "",
+        street2: "",
+        zipCode: "",
         city: "",
         state: "",
-        zipCode: "",
-        country: "",
       },
+      allowLogin: true,
+      activeAccount: true,
+      bannedAccount: false,
     },
-    validationSchema, // Pass validation schema to Formik
+    validationSchema,
     onSubmit: async (values) => {
+      console.log("clicked on submit", values);
+
       try {
         const res = await axios.post(
           "http://localhost:3000/user/register",
-          values
+          values,
+          {
+            headers: {
+              Authorization: `Bearer ${auth?.token}`,
+            },
+          }
         );
-        // console.log(res);
-        toast.success(" created Successfully");
+        toast.success("User created successfully");
         navigate("/admin-dashboard/allusers");
       } catch (error) {
-        toast.error(error.response.data.message);
-        console.error(error);
+        toast.error(error.response?.data?.message || "Error creating user");
       }
     },
   });
-
-  const { values, handleChange, handleSubmit, touched, errors } = formik;
 
   return (
     <div className="content-wrapper">
@@ -83,218 +99,245 @@ const Register = () => {
         <div className="container-fluid">
           <div className="row mb-2">
             <div className="col-sm-6">
-              <h1 className="text-dark">Add User</h1>
+              <h1 className="text-dark">Create Client Account</h1>
             </div>
             <div className="col-sm-6">
               <ol className="breadcrumb float-sm-right">
                 <li className="breadcrumb-item">
                   <a href="#">Home</a>
                 </li>
-                <li className="breadcrumb-item active">Add User</li>
+                <li className="breadcrumb-item active">
+                  Create Client Account
+                </li>
               </ol>
             </div>
           </div>
         </div>
       </section>
-
       <section className="content">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={formik.handleSubmit}>
           <div className="row">
+            {/* Business Details Card */}
             <div className="col-md-6">
-              <div className="card card-primary">
-                <div className="card-header">
-                  <h3 className="card-title">Personal Information</h3>
+              <div className="card mb-6">
+                <div className="card-header bg-info">
+                  <h5 className="card-title">Business Details</h5>
                 </div>
                 <div className="card-body">
-                  <div className="form-group">
-                    <label htmlFor="firstName">First Name</label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={values.firstName}
-                      onChange={handleChange}
-                      className="form-control"
-                    />
-                    {touched.firstName && errors.firstName ? (
-                      <div className="text-danger">{errors.firstName}</div>
-                    ) : null}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="lastName">Last Name</label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={values.lastName}
-                      onChange={handleChange}
-                      className="form-control"
-                    />
-                    {touched.lastName && errors.lastName ? (
-                      <div className="text-danger">{errors.lastName}</div>
-                    ) : null}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="phone">Mobile Number</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={values.phone}
-                      onChange={handleChange}
-                      className="form-control"
-                    />
-                    {touched.phone && errors.phone ? (
-                      <div className="text-danger">{errors.phone}</div>
-                    ) : null}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="username">Username</label>
-                    <input
-                      type="text"
-                      name="username"
-                      value={values.username}
-                      onChange={handleChange}
-                      className="form-control"
-                    />
-                    {touched.username && errors.username ? (
-                      <div className="text-danger">{errors.username}</div>
-                    ) : null}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input
-                      type="password"
-                      name="password"
-                      value={values.password}
-                      onChange={handleChange}
-                      className="form-control"
-                    />
-                    {touched.password && errors.password ? (
-                      <div className="text-danger">{errors.password}</div>
-                    ) : null}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="email">Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={values.email}
-                      onChange={handleChange}
-                      className="form-control"
-                    />
-                    {touched.email && errors.email ? (
-                      <div className="text-danger">{errors.email}</div>
-                    ) : null}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="role">Role</label>
-                    <select
-                      name="role"
-                      value={values.role}
-                      onChange={handleChange}
-                      className="form-control custom-select"
-                    >
-                      <option value="client">Client</option>
-                      <option value="admin">Admin</option>
-                      <option value="manager">Manager</option>
-                      <option value="developer">Developer</option>
-                    </select>
-                    {touched.role && errors.role ? (
-                      <div className="text-danger">{errors.role}</div>
-                    ) : null}
-                  </div>
+                  {[
+                    "clientName",
+                    "companyType",
+                    "taxId",
+                    "employeeSize",
+                    "ownerPhone",
+                    "ownerEmail",
+                  ].map((field, index) => (
+                    <div className="form-group" key={index}>
+                      <label>
+                        {field
+                          .replace(/([A-Z])/g, " $1")
+                          .replace(/^./, (str) => str.toUpperCase())}
+                      </label>
+                      <input
+                        type="text"
+                        name={`businessDetails.${field}`}
+                        value={formik.values.businessDetails[field]}
+                        onChange={formik.handleChange}
+                        className="form-control"
+                      />
+                      {formik.touched.businessDetails?.[field] &&
+                        formik.errors.businessDetails?.[field] && (
+                          <div className="text-danger">
+                            {formik.errors.businessDetails[field]}
+                          </div>
+                        )}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
-
+            {/* Auth Details Card */}
             <div className="col-md-6">
-              <div className="card card-secondary">
-                <div className="card-header">
-                  <h3 className="card-title">Address</h3>
+              <div className="card mb-3">
+                <div className="card-header bg-primary">
+                  <h5 className="card-title">Auth Details</h5>
                 </div>
                 <div className="card-body">
                   <div className="form-group">
-                    <label htmlFor="addresses.street">Street</label>
+                    <label>Name</label>
                     <input
                       type="text"
-                      name="addresses.street"
-                      value={values.addresses.street}
-                      onChange={handleChange}
+                      name="name"
+                      value={formik.values.name}
+                      onChange={formik.handleChange}
                       className="form-control"
                     />
-                    {touched.addresses?.street && errors.addresses?.street ? (
-                      <div className="text-danger">
-                        {errors.addresses.street}
-                      </div>
-                    ) : null}
+                    {formik.touched.name && formik.errors.name && (
+                      <div className="text-danger">{formik.errors.name}</div>
+                    )}
                   </div>
                   <div className="form-group">
-                    <label htmlFor="addresses.city">City</label>
+                    <label>Phone</label>
                     <input
                       type="text"
-                      name="addresses.city"
-                      value={values.addresses.city}
-                      onChange={handleChange}
+                      name="phone"
+                      value={formik.values.phone}
+                      onChange={formik.handleChange}
                       className="form-control"
                     />
-                    {touched.addresses?.city && errors.addresses?.city ? (
-                      <div className="text-danger">{errors.addresses.city}</div>
-                    ) : null}
+                    {formik.touched.phone && formik.errors.phone && (
+                      <div className="text-danger">{formik.errors.phone}</div>
+                    )}
                   </div>
                   <div className="form-group">
-                    <label htmlFor="addresses.state">State</label>
+                    <label>Email</label>
                     <input
-                      type="text"
-                      name="addresses.state"
-                      value={values.addresses.state}
-                      onChange={handleChange}
+                      type="email"
+                      name="email"
+                      value={formik.values.email}
+                      onChange={formik.handleChange}
                       className="form-control"
                     />
-                    {touched.addresses?.state && errors.addresses?.state ? (
-                      <div className="text-danger">
-                        {errors.addresses.state}
-                      </div>
-                    ) : null}
+                    {formik.touched.email && formik.errors.email && (
+                      <div className="text-danger">{formik.errors.email}</div>
+                    )}
                   </div>
                   <div className="form-group">
-                    <label htmlFor="addresses.zipCode">Zip Code</label>
+                    <label>Password</label>
                     <input
-                      type="text"
-                      name="addresses.zipCode"
-                      value={values.addresses.zipCode}
-                      onChange={handleChange}
+                      type="password"
+                      name="password"
+                      value={formik.values.password}
+                      onChange={formik.handleChange}
                       className="form-control"
                     />
-                    {touched.addresses?.zipCode && errors.addresses?.zipCode ? (
+                    {formik.touched.password && formik.errors.password && (
                       <div className="text-danger">
-                        {errors.addresses.zipCode}
+                        {formik.errors.password}
                       </div>
-                    ) : null}
+                    )}
                   </div>
                   <div className="form-group">
-                    <label htmlFor="addresses.country">Country</label>
+                    <label>Role</label>
                     <input
                       type="text"
-                      name="addresses.country"
-                      value={values.addresses.country}
-                      onChange={handleChange}
+                      name="role"
+                      value={formik.values.role}
                       className="form-control"
+                      readOnly
                     />
-                    {touched.addresses?.country && errors.addresses?.country ? (
-                      <div className="text-danger">
-                        {errors.addresses.country}
-                      </div>
-                    ) : null}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <button type="submit" className="btn-block btn-primary">
-            Submit
-          </button>
+
+          {/* Address Details */}
+          <div className="row">
+            <div className="col-md-6">
+              <div className="card mb-3">
+                <div className="card-header bg-secondary">
+                  <h5 className="card-title">Address</h5>
+                </div>
+                <div className="card-body">
+                  {["street1", "street2", "zipCode", "city", "state"].map(
+                    (field, index) => (
+                      <div className="form-group" key={index}>
+                        <label>
+                          {field
+                            .replace(/([A-Z])/g, " $1")
+                            .replace(/^./, (str) => str.toUpperCase())}
+                        </label>
+                        <input
+                          type="text"
+                          name={`address.${field}`}
+                          value={formik.values.address[field]}
+                          onChange={formik.handleChange}
+                          className="form-control"
+                        />
+                        {formik.touched.address?.[field] &&
+                          formik.errors.address?.[field] && (
+                            <div className="text-danger">
+                              {formik.errors.address[field]}
+                            </div>
+                          )}
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Miscellaneous */}
+            <div className="col-md-6">
+              <div className="card mb-3">
+                <div className="card-header bg-warning">
+                  <h5 className="card-title">Miscellaneous</h5>
+                </div>
+                <div className="card-body">
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      name="allowLogin"
+                      checked={formik.values.allowLogin}
+                      onChange={() =>
+                        formik.setFieldValue(
+                          "allowLogin",
+                          !formik.values.allowLogin
+                        )
+                      }
+                      className="form-check-input"
+                    />
+                    <label className="form-check-label">Allow login</label>
+                  </div>
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      name="activeAccount"
+                      checked={formik.values.activeAccount}
+                      onChange={() =>
+                        formik.setFieldValue(
+                          "activeAccount",
+                          !formik.values.activeAccount
+                        )
+                      }
+                      className="form-check-input"
+                    />
+                    <label className="form-check-label">Account Active</label>
+                  </div>
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      name="bannedAccount"
+                      checked={formik.values.bannedAccount}
+                      onChange={() =>
+                        formik.setFieldValue(
+                          "bannedAccount",
+                          !formik.values.bannedAccount
+                        )
+                      }
+                      className="form-check-input"
+                    />
+                    <label className="form-check-label">Account Banned</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="form-group text-center">
+            <button
+              type="submit"
+              className="btn btn-success"
+              onClick={formik.handleSubmit}
+            >
+              Submit
+            </button>
+          </div>
         </form>
       </section>
     </div>
   );
 };
 
-export default Register;
+export default NewUser;

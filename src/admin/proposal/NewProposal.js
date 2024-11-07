@@ -1,342 +1,3 @@
-// import React, { useState, navigate, useRef, useEffect } from "react";
-// import axios from "axios";
-// import { useAuth } from "../../context/AuthContext";
-// import { CardFooter, Modal } from "react-bootstrap";
-// import { Typeahead } from "react-bootstrap-typeahead";
-// import "react-bootstrap-typeahead/css/Typeahead.css";
-// import { useNavigate } from "react-router-dom";
-// import JoditEditor from "jodit-react";
-
-// import { BASE_URL } from "../../utils/routeNames.js";
-// import {
-//   Button,
-//   Card,
-//   CardBody,
-//   Form,
-//   FormGroup,
-//   Input,
-//   Label,
-//   Table,
-// } from "reactstrap";
-// import { savePdfToServer } from "./saveProposalPdfToServer.js";
-
-// const NewProposal = () => {
-//   const navigate = useNavigate();
-//   const [auth] = useAuth();
-//   const [selectedProducts, setSelectedProducts] = useState(() => new Set());
-
-//   const [showProductModal, setShowProductModal] = useState(false);
-
-//   // Function to open the modal
-//   const handleShowProductModal = () => setShowProductModal(true);
-
-//   // Function to close the modal
-//   const handleCloseProductModal = () => setShowProductModal(false);
-//   const [products, setProducts] = useState([]);
-//   const [description, setDescription] = useState("");
-//   const [totalProducts, setTotalProducts] = useState(0);
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [productsPerPage] = useState(5); // Adjust the number of products per page as needed
-//   const [searchQuery, setSearchQuery] = useState("");
-//   // Handle checkbox change
-//   // Handle checkbox change for each product
-//   const handleCheckboxChange = (productId) => {
-//     setSelectedProducts((prevSelected) => {
-//       const newSelected = new Set(prevSelected); // Create a copy of the Set
-
-//       if (newSelected.has(productId)) {
-//         newSelected.delete(productId); // Unselect if already selected
-//       } else {
-//         newSelected.add(productId); // Select if not already selected
-//       }
-
-//       return newSelected; // Return the new Set
-//     });
-//   };
-
-//   // Fetch products from API
-//   const getProduct = async () => {
-//     try {
-//       const res = await axios.get(
-//         `http://localhost:3000/product/getProducts?page=${currentPage}&limit=${productsPerPage}&search=${searchQuery}`,
-//         {
-//           headers: {
-//             Authorization: `Bearer ${auth?.token}`,
-//           },
-//         }
-//       );
-//       setProducts(Array.isArray(res.data.products) ? res.data.products : []);
-//       setTotalProducts(res.data.total || 0); // Ensure total is a valid number
-//       console.log("Product Data:", res.data);
-//     } catch (error) {
-//       console.error("Error fetching products:", error);
-//     }
-//   };
-
-//   // Handle search input change
-//   const handleSearchChange = (e) => {
-//     setSearchQuery(e.target.value);
-//   };
-
-//   // Pagination control
-//   const handleNextPage = () => {
-//     if (currentPage < Math.ceil(totalProducts / productsPerPage)) {
-//       setCurrentPage(currentPage + 1);
-//     }
-//   };
-
-//   const handlePreviousPage = () => {
-//     if (currentPage > 1) {
-//       setCurrentPage(currentPage - 1);
-//     }
-//   };
-//   const editor = useRef(null);
-//   const editorConfig = {
-//     minHeight: 400,
-//     readonly: false,
-//     toolbarSticky: false,
-//     buttons: [
-//       "bold",
-//       "italic",
-//       "underline",
-//       "strikethrough",
-//       "ul",
-//       "ol",
-//       "font",
-//       "fontsize",
-//       "paragraph",
-//       "image",
-//       "link",
-//       "align",
-//       "undo",
-//       "redo",
-//     ],
-//     showXPathInStatusbar: false,
-//     spellcheck: false,
-//   };
-
-//   const [proposalData, setProposalData] = useState({
-//     emailTo: "",
-//     title: "",
-//     content: "",
-//     products: [],
-//     grandTotalCurrency: "$",
-//     productTotal: 0,
-//     grandTotal: 0,
-//     discountOnGrandTotal: 0,
-//     finalAmount: 0,
-//   });
-//   // Variables to hold the calculated values
-//   const [productTotal, setProductTotal] = useState(0);
-//   const [grandTotal, setGrandTotal] = useState(0);
-//   const [discountOnGrandTotal, setDiscountOnGrandTotal] = useState(0);
-//   const [finalAmount, setFinalAmount] = useState(0);
-
-//   // Function to calculate totals whenever products change
-//   const calculateGrandTotals = () => {
-//     let total = 0;
-//     let discount = 0;
-
-//     proposalData.products.forEach((product) => {
-//       total += product.total; // Assuming product.total is already calculated based on quantity and unit price
-//       discount += product.discount; // Add discount to total discount
-//     });
-
-//     setProductTotal(total);
-//     setGrandTotal(total); // You may want to adjust this if you have other calculations for the grand total
-//     setDiscountOnGrandTotal(discount);
-//     setFinalAmount(total - discount); // Adjust if you need to factor in other fees
-//     // Update proposalData with new values
-//     setProposalData((prevData) => ({
-//       ...prevData,
-//       productTotal: total,
-//       grandTotal: total,
-//       discountOnGrandTotal: discount,
-//       finalAmount: finalAmount,
-//     }));
-//   };
-//   // Effect to recalculate totals whenever proposalData changes
-//   const [attachments, setAttachments] = useState(null);
-//   const [loading, setLoading] = useState(false);
-
-//   const handleSavePdf = async () => {
-//     setLoading(true);
-//     try {
-//       // Call the function and receive the Map with {filename, attachmentUrl}
-//       const response = await savePdfToServer(proposalData, auth?.token);
-
-//       // Set the response map to state if you need to use it further
-//       // Ensure you receive the data
-//       if (response) {
-//         console.log("PDF saved on server:", response); // Verify response here
-//         const filename = response.filename;
-//         const attachmentUrl = response.attachmentUrl;
-//         setAttachments({ filename: filename, attachmentUrl: attachmentUrl });
-//         console.log("attachments", attachments);
-//       } else {
-//         console.error("Failed to get response from savePdfToServer");
-//       }
-//     } catch (error) {
-//       console.error("Error saving PDF:", error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const [users, setUsers] = useState([]);
-//   const [selectedUser, setSelectedUser] = useState(null);
-//   const [proposalTemplates, setProposalTemplates] = useState([]);
-
-//   const [content, setContent] = useState("");
-//   const [selectedTemplate, setSelectedTemplate] = useState("");
-//   const [showModal, setShowModal] = useState(false);
-//   const [error, setError] = useState(null);
-//   const fetchUsers = async () => {
-//     try {
-//       const response = await axios.get("http://localhost:3000/user/users", {
-//         headers: {
-//           Authorization: `Bearer ${auth?.token}`,
-//         },
-//       });
-//       setUsers(response.data.data);
-//       console.log("Users", response.data.data);
-//     } catch (error) {
-//       console.error("Error fetching Users:", error);
-//     }
-//   };
-//   const fetchProposalTemplates = async () => {
-//     try {
-//       const res = await axios.get(
-//         `http://localhost:3000/proposalTemplate/templates`,
-//         {
-//           headers: {
-//             Authorization: `Bearer ${auth?.token}`,
-//           },
-//         }
-//       );
-//       setProposalTemplates(res.data.templates);
-//       console.log("Template : ", res.data);
-//     } catch (err) {
-//       setError(err.message);
-//     }
-//   };
-
-//   // Fetch users, proposal templates, and products on mount or when `auth` changes
-//   useEffect(() => {
-//     fetchUsers();
-//     fetchProposalTemplates();
-//     getProduct();
-//   }, [auth, currentPage, searchQuery]);
-
-//   // Separate useEffect for recalculating totals based only on proposalData changes
-//   useEffect(() => {
-//     calculateGrandTotals();
-//     console.log("proposalData");
-//   }, [proposalData]);
-
-//   const handleTemplateSelect = (templateContent) => {
-//     setProposalData((prevData) => ({
-//       ...prevData,
-//       content: templateContent,
-//     }));
-//     console.log("Selected TEmplate is : ", proposalData.content);
-//     setShowModal(false);
-//   };
-//   const handleInputChange = (e) => {
-//     const { name, value } = e.target;
-//     setProposalData((prev) => ({ ...prev, [name]: value }));
-//   };
-
-//   // Update function to handle editor content changes
-//   const handleEditorChange = (newContent) => {
-//     setProposalData((prevData) => ({
-//       ...prevData,
-//       content: newContent,
-//     }));
-//   };
-
-//   // Calculate the total for each product based on quantity, price, discount, and discountType
-//   const calculateTotal = (quantity, salePrice, discount, discountType) => {
-//     console.log(
-//       "calculateTotal Data : ",
-//       quantity,
-//       salePrice,
-//       discount,
-//       discountType
-//     );
-//     // Parse values to ensure they are numbers
-//     quantity = parseFloat(quantity) || 0;
-//     salePrice = parseFloat(salePrice) || 0;
-//     discount = parseFloat(discount) || 0;
-
-//     // Base calculation without discount
-//     let total = quantity * salePrice;
-//     console.log("total before discount", total);
-//     // Apply discount if it’s positive
-//     if (total > 0) {
-//       if (discountType === "Fixed" && discount > 0) {
-//         total -= discount * quantity; // Apply fixed discount per item
-//         console.log("total on fixted disxount", total);
-//       } else if (discountType === "Percentage" && discount > 0) {
-//         total -= total * (discount / 100); // Apply percentage discount
-//         console.log("total on percentage discount", total);
-//       }
-//     }
-
-//     // Return total or ensure it doesn’t go below zero
-//     return total > 0 ? total : 0;
-//   };
-//   // Function to handle currency change
-//   const handleCurrencyChange = (e) => {
-//     const newCurrency = e.target.value;
-//     setProposalData((prevData) => ({
-//       ...prevData,
-//       grandTotalCurrency: newCurrency,
-//     }));
-//   };
-//   // / Handle change events to recalculate and update the total for each product
-//   const handleProductChange = (index, event) => {
-//     const { name, value } = event.target;
-//     const updatedProducts = [...proposalData.products];
-//     console.log("updatedProducts.total", updatedProducts.total);
-//     // Update the changed field
-//     updatedProducts[index][name] = value;
-
-//     // Parse values for calculation
-//     const total = parseFloat(updatedProducts[index].total) || 0;
-//     const quantity = parseFloat(updatedProducts[index].quantity) || 1;
-//     const salePrice = parseFloat(updatedProducts[index].price) || 0;
-//     const discount = parseFloat(updatedProducts[index].discount) || 0;
-//     const discountType = updatedProducts[index].discountType;
-
-//     // Recalculate total for this product
-//     updatedProducts[index].total = calculateTotal(
-//       quantity,
-//       salePrice,
-//       discount,
-//       discountType
-//     );
-//     console.log(
-//       "  updatedProducts[index].total :",
-//       updatedProducts[index].total
-//     );
-//     // Update proposal data
-//     setProposalData({ ...proposalData, products: updatedProducts });
-//     console.log("updatedProducts :", updatedProducts);
-//   };
-
-//   const removeProduct = (index) => {
-//     setProposalData((prev) => ({
-//       ...prev,
-//       products: prev.products.filter((_, i) => i !== index),
-//     }));
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     console.log("Submitted proposal:", proposalData);
-//   };
-
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
@@ -345,14 +6,15 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import { useNavigate } from "react-router-dom";
 import JoditEditor from "jodit-react";
-
-import { BASE_URL } from "../../utils/routeNames.js";
+import toast from "react-hot-toast";
+import { BASE_URL } from "../../utils/endPointNames.js";
 import {
   Button,
   Card,
   CardBody,
   Form,
   FormGroup,
+  FormFeedback,
   Input,
   Label,
   Table,
@@ -364,33 +26,87 @@ const NewProposal = () => {
   const [auth] = useAuth();
   const [selectedProducts, setSelectedProducts] = useState(new Set());
   const [showProductModal, setShowProductModal] = useState(false);
-
+  const [recipientId, setReceipientId] = useState(null);
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
 
+  const createUser = async () => {
+    const email = proposalData.emailTo;
+    const userName = proposalData.emailTo.split("@")[0];
+
+    const userData = {
+      firstName: userName,
+      lastName: userName,
+      phone: "N/A",
+      username: userName,
+      email: email,
+      password: "123456",
+      role: "client",
+      addresses: {
+        street: "N/A",
+        city: "N/A",
+        state: "N/A",
+        zipCode: "N/A",
+        country: "N/A",
+      },
+    };
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/user/register",
+        userData
+      );
+      // console.log(res);
+      if (res.data) {
+        setReceipientId(res.data._id);
+        return true;
+      }
+      toast.success(" created Successfully");
+      navigate("/admin-dashboard/allusers");
+    } catch (error) {
+      toast.error(error.response.data.message);
+      console.error(error);
+      return false;
+    }
+  };
+  const handleEmailTo = (input) => {
+    setProposalData((prevData) => ({
+      ...prevData,
+      recipient: null,
+      emailTo: input,
+    }));
+  };
   const handleSelectecUserChange = (selectedUser) => {
     setSelectedUser(selectedUser);
 
-    const recipient = selectedUser._id;
-    const emailTo = selectedUser.email;
+    if (selectedUser) {
+      const recipient = selectedUser._id;
+      const emailTo = selectedUser.email;
 
-    setProposalData((prevData) => ({
-      ...prevData,
-      recipient: recipient,
-      emailTo: emailTo,
-    }));
-    console.log("handleSelectecUserChange", selectedUser);
+      setProposalData((prevData) => ({
+        ...prevData,
+        recipient: recipient,
+        emailTo: emailTo,
+      }));
+    } else {
+      // Reset the values if no user is selected
+      setProposalData((prevData) => ({
+        ...prevData,
+        recipient: null,
+        emailTo: null,
+      }));
+    }
   };
+
   const [proposalTemplates, setProposalTemplates] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [attachments, setAttachments] = useState(null);
   // Product data and pagination
   const [products, setProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [moreAttachmentsToUpload, setMoreAttachmentsToUpload] = useState([]);
   const [proposalData, setProposalData] = useState({
     recipient: "",
     emailTo: "",
@@ -403,6 +119,7 @@ const NewProposal = () => {
     discountOnGrandTotal: 0,
     finalAmount: 0,
     attachments: [],
+    status: "",
   });
 
   const [productTotal, setProductTotal] = useState(0);
@@ -434,6 +151,48 @@ const NewProposal = () => {
     showXPathInStatusbar: false,
     spellcheck: false,
   };
+  // multiple attachments
+  const handleFileChange = (event) => {
+    setMoreAttachmentsToUpload(Array.from(event.target.files));
+  };
+  const handleUploadFiles = async () => {
+    const formData = new FormData();
+    moreAttachmentsToUpload.forEach((file) => {
+      formData.append("docs", file);
+    });
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/upload/docs",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${auth.token}`,
+          },
+        }
+      );
+      response.data.files.map((file) => {
+        const newAttachment = {
+          filename: file.filename,
+          path: `${BASE_URL}${file.url}`,
+        };
+        proposalData.attachments.push(newAttachment);
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Error uploading files:", error);
+      return false;
+    }
+  };
+
+  // const handleDocumentNameChange = (index, newName) => {
+  //   const updatedAttachments = [...moreAttachmentsToUpload];
+  //   updatedAttachments[index].filename = newName; // Update the filename correctly
+  //   setMoreAttachmentsToUpload(updatedAttachments); // Update the state
+
+  // };
   // Function to handle currency change
   const handleCurrencyChange = (e) => {
     const newCurrency = e.target.value;
@@ -513,11 +272,11 @@ const NewProposal = () => {
   const fetchUsers = async () => {
     if (!auth?.token) return;
     try {
-      const response = await axios.get("http://localhost:3000/user/users", {
+      const response = await axios.get("http://localhost:3000/user/clients", {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
-      setUsers(response.data.data);
-      console.log("users", response.data.data);
+      setUsers(response.data);
+      // console.log("users", response.data.data);
     } catch (error) {
       console.error("Error fetching Users:", error);
     }
@@ -605,17 +364,17 @@ const NewProposal = () => {
   };
   const handleSavePdf = async () => {
     try {
-      // console.log("proposalData", proposalData);
-
       const response = await savePdfToServer(proposalData, auth?.token);
       if (response) {
-        const filename = response.filename;
-        const attachmentUrl = response.attachmentUrl;
-        setAttachments({ filename: filename, attachmentUrl: attachmentUrl });
-        setProposalData((prevData) => ({
-          ...prevData,
-          attachments: attachments,
-        }));
+        const newAttachment = {
+          filename: response.filename,
+          path: `${BASE_URL}${response.attachmentUrl}`,
+        };
+
+        // Adding directly to `proposalData` to avoid waiting for state update in `sendProposal`
+        proposalData.attachments.push(newAttachment);
+
+        console.log("Attachment added:", newAttachment);
         return true;
       } else {
         console.error("Failed to save PDF on the server");
@@ -626,16 +385,33 @@ const NewProposal = () => {
       return false;
     }
   };
-  const handleSubmit = async (e) => {
-    // navigate(-1)
-    // console.log("proposalData from handleSubmit ", proposalData);
 
+  const sendProposal = async (e) => {
     e.preventDefault();
-    const status = handleSavePdf();
-    // if (!validateFields()) return;
 
-    if (status) {
+    // First, save the PDF (if needed) and check if it's successful
+    const status = await handleSavePdf();
+    if (!status) {
+      console.log("Failed to save PDF.");
+      return;
+    }
+
+    // Then upload the files and check if the upload was successful
+    const uploadFilesDone = await handleUploadFiles();
+    if (!uploadFilesDone) {
+      console.log("File upload failed.");
+      return;
+    }
+
+    if (status && uploadFilesDone) {
       try {
+        if (proposalData.recipient === null) {
+          // create user
+          const res = await createUser();
+          if (!res) {
+            return;
+          }
+        }
         const res = await axios.post(
           `http://localhost:3000/proposal/new`,
           {
@@ -650,7 +426,7 @@ const NewProposal = () => {
         console.log(res);
         navigate(-1);
       } catch (error) {
-        console.log(error);
+        console.log("sendProposal", error);
       }
     }
   };
@@ -680,6 +456,7 @@ const NewProposal = () => {
                   onChange={(selected) =>
                     handleSelectecUserChange(selected[0] || null)
                   }
+                  onInputChange={(input) => handleEmailTo(input)}
                   selected={selectedUser ? [selectedUser] : []}
                   placeholder="Choose a user"
                 />
@@ -759,7 +536,76 @@ const NewProposal = () => {
                   </Input>
                 </div>
               </div>
+              <div className="container-fluid">
+                {/* File Upload Section */}
 
+                <div className="input-group">
+                  <div className="custom-file">
+                    <input
+                      type="file"
+                      className="custom-file-input"
+                      id="fileUpload"
+                      name="fileUpload"
+                      accept="application/*"
+                      multiple
+                      onChange={handleFileChange}
+                    />
+                    <label className="custom-file-label" htmlFor="fileUpload">
+                      Choose files
+                    </label>
+                  </div>
+                </div>
+                <small className="form-text text-muted">
+                  Supported formats: PDF, DOC, DOCX, etc. Max size: 5MB.
+                </small>
+                {/* Document Table Section */}
+                <div className="card">
+                  <div className="card-header bg-primary">
+                    <h3 className="card-title">Uploaded Documents</h3>
+                  </div>
+                  <div className="card-body table-responsive">
+                    <table className="table table-bordered table-striped">
+                      {/* <thead className="thead-dark">
+                        <tr>
+                          <th>Document Name</th>
+                          <th>New Document Name</th> 
+                        </tr>
+                      </thead> */}
+                      <tbody>
+                        {moreAttachmentsToUpload.map((attachment, index) => (
+                          <tr key={index}>
+                            <td>{attachment.name}</td>
+                            {/* <td>
+                              <input
+                                type="text"
+                                value={attachment.filename}
+                                onChange={(e) =>
+                                  handleDocumentNameChange(
+                                    index,
+                                    e.target.value
+                                  )
+                                }
+                                className="form-control"
+                              />
+                            </td> */}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                {/* Button to Upload Documents
+                <div className="row mt-3">
+                  <div className="col-12">
+                    <button
+                      onClick={handleUploadFiles}
+                      className="btn btn-primary btn-block"
+                    >
+                      Upload Documents
+                    </button>
+                  </div>
+                </div> */}
+              </div>
               <div className="d-flex justify-content-between align-items-center mt-4 mb-4">
                 <h5>Selected Products</h5>
                 <Button variant="primary" onClick={handleShowProductModal}>
@@ -919,7 +765,7 @@ const NewProposal = () => {
                         ],
                       }));
 
-                      console.log("Selected Products:", selectedProductArray);
+                      // console.log("Selected Products:", selectedProductArray);
                       selectedProducts.clear();
                       handleCloseProductModal();
                     }}
@@ -1147,7 +993,7 @@ const NewProposal = () => {
             </Form>
           </CardBody>
           <CardFooter className="d-flex justify-content-end">
-            <Button color="primary" onClick={handleSubmit} type="submit">
+            <Button color="primary" onClick={sendProposal} type="submit">
               Send Proposal
             </Button>
           </CardFooter>

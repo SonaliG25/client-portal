@@ -77,8 +77,8 @@ function NewProposalTemplate() {
 
   const handleSubmit = async (e) => {
     // navigate(-1)
-    e.preventDefault()
-    toast.success("Templete Added Suceessfully")
+    e.preventDefault();
+    toast.success("Templete Added Suceessfully");
     if (!validateFields()) return;
 
     try {
@@ -98,7 +98,7 @@ function NewProposalTemplate() {
         }
       );
       console.log(res);
-       navigate(-1)
+      navigate(-1);
       // navigate("/admin-dashboard/proposaltemplete");
     } catch (error) {
       console.log(error);
