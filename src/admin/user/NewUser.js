@@ -231,16 +231,6 @@ const NewUser = () => {
                       </div>
                     )}
                   </div>
-                  <div className="form-group">
-                    <label>Role</label>
-                    <input
-                      type="text"
-                      name="role"
-                      value={formik.values.role}
-                      className="form-control"
-                      readOnly
-                    />
-                  </div>
                 </div>
               </div>
             </div>

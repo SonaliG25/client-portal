@@ -122,113 +122,10 @@ function UpdateUserForm() {
           {({ setFieldValue, values, handleChange, errors, touched }) => (
             <Form>
               <div className="row">
-                {/* Basic Information */}
-                <div className="col-md-6">
-                  <div className="card">
-                    <div className="card-header bg-primary">
-                      Basic Information
-                    </div>
-                    <div className="card-body">
-                      <div className="form-group">
-                        <label>Full Name</label>
-                        <Field
-                          type="text"
-                          name="name"
-                          className="form-control"
-                        />
-                        <ErrorMessage
-                          name="name"
-                          component="div"
-                          className="text-danger"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label>Email</label>
-                        <Field
-                          type="email"
-                          name="email"
-                          className="form-control"
-                        />
-                        <ErrorMessage
-                          name="email"
-                          component="div"
-                          className="text-danger"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label>Phone</label>
-                        <Field
-                          type="text"
-                          name="phone"
-                          className="form-control"
-                        />
-                        <ErrorMessage
-                          name="phone"
-                          component="div"
-                          className="text-danger"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label>Role</label>
-                        <Field
-                          type="text"
-                          name="role"
-                          className="form-control"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label>User Type</label>
-                        <Field
-                          type="text"
-                          name="userType"
-                          className="form-control"
-                        />
-                        <ErrorMessage
-                          name="userType"
-                          component="div"
-                          className="text-danger"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Address Information */}
-                <div className="col-md-6">
-                  <div className="card">
-                    <div className="card-header bg-info">
-                      Address Information
-                    </div>
-                    <div className="card-body">
-                      {["street1", "street2", "city", "state", "zipCode"].map(
-                        (field, index) => (
-                          <div className="form-group" key={index}>
-                            <label>
-                              {field.charAt(0).toUpperCase() + field.slice(1)}
-                            </label>
-                            <Field
-                              type="text"
-                              name={`address.${field}`}
-                              className="form-control"
-                            />
-                            <ErrorMessage
-                              name={`address.${field}`}
-                              component="div"
-                              className="text-danger"
-                            />
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </div>
-
                 {/* Business Details */}
                 <div className="col-md-6">
                   <div className="card">
-                    <div className="card-header bg-warning">
-                      Business Details
-                    </div>
+                    <div className="card-header bg-info">Business Details</div>
                     <div className="card-body">
                       {[
                         "clientName",
@@ -257,11 +154,109 @@ function UpdateUserForm() {
                     </div>
                   </div>
                 </div>
+                {/* Basic Information */}
+                <div className="col-md-6">
+                  <div className="card">
+                    <div className="card-header bg-primary">Auth Details</div>
+                    <div className="card-body">
+                      <div className="form-group">
+                        <label>Full Name</label>
+                        <Field
+                          type="text"
+                          name="name"
+                          className="form-control"
+                        />
+                        <ErrorMessage
+                          name="name"
+                          component="div"
+                          className="text-danger"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Email</label>
+                        <Field
+                          type="email"
+                          name="email"
+                          readOnly // Correct camelCase for the attribute
+                          className="form-control"
+                        />
+                        <ErrorMessage
+                          name="email"
+                          component="div"
+                          className="text-danger"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Phone</label>
+                        <Field
+                          type="text"
+                          name="phone"
+                          className="form-control"
+                        />
+                        <ErrorMessage
+                          name="phone"
+                          component="div"
+                          className="text-danger"
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>User Type</label>
+                        <Field
+                          as="select"
+                          name="userType"
+                          className="form-control"
+                        >
+                          <option value="">Select User Type</option>{" "}
+                          {/* Default placeholder */}
+                          <option value="lead">Lead</option>
+                          <option value="prospect">Prospect</option>
+                          <option value="opportunity">Opportunity</option>
+                          <option value="customer">Customer</option>
+                        </Field>
+                        <ErrorMessage
+                          name="userType"
+                          component="div"
+                          className="text-danger"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* Address Information */}
+                <div className="col-md-6">
+                  <div className="card">
+                    <div className="card-header bg-secondary">
+                      Address Information
+                    </div>
+                    <div className="card-body">
+                      {["street1", "street2", "city", "state", "zipCode"].map(
+                        (field, index) => (
+                          <div className="form-group" key={index}>
+                            <label>
+                              {field.charAt(0).toUpperCase() + field.slice(1)}
+                            </label>
+                            <Field
+                              type="text"
+                              name={`address.${field}`}
+                              className="form-control"
+                            />
+                            <ErrorMessage
+                              name={`address.${field}`}
+                              component="div"
+                              className="text-danger"
+                            />
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </div>
 
                 {/* Account Status */}
                 <div className="col-md-6">
                   <div className="card">
-                    <div className="card-header bg-danger">Account Status</div>
+                    <div className="card-header bg-warning">Miscellaneous</div>
                     <div className="card-body">
                       {["allowLogin", "activeAccount", "bannedAccount"].map(
                         (field, index) => (

@@ -138,12 +138,11 @@ const Users = () => {
                           <thead>
                             <tr>
                               <th className="text-center">Active Account</th>
-                              <th className="text-center">ClientName</th>
-                              <th className="text-center">Company Type</th>
-                              <th className="text-center">Address</th>
-                              <th className="text-center">Timezone</th>
+                              <th>ClientName</th>
+                              <th>Address</th>
+                              <th>Timezone</th>
                               <th className="text-center">
-                                PreferedContactMethod
+                                Prefered Contact Method
                               </th>
                               <th className="text-center">Action</th>
                             </tr>
@@ -153,17 +152,21 @@ const Users = () => {
                               <tr key={data._id}>
                                 <td className="text-center">
                                   <span
-                                    className={`badge ${
+                                    className={`badge online ${
                                       data.activeAccount
                                         ? "badge-success"
                                         : "badge-danger"
                                     }`}
                                   >
-                                    {data.activeAccount ? "Active" : "Inactive"}
+                                    &nbsp;
                                   </span>
                                 </td>
-                                <td>{data?.businessDetails?.clientName}</td>
-                                <td>{data?.businessDetails?.companyType}</td>
+                                <td>
+                                  <div>{data?.businessDetails?.clientName}</div>
+                                  <b>
+                                    {data?.businessDetails?.companyType}
+                                  </b>{" "}
+                                </td>
                                 <td>
                                   {data?.address?.street1},
                                   {data?.address?.state},
@@ -174,13 +177,13 @@ const Users = () => {
                                 <td>
                                   <div className="d-flex justify-content-center m-2">
                                     <button
-                                      className="btn btn-primary px-4 py-2 m-1"
+                                      className="btn btn-primary btn-sm m-1"
                                       onClick={() => HandleView(data)}
                                     >
                                       <i className="fas fa-file-alt"></i>
                                     </button>
                                     <button
-                                      className="btn btn-danger px-4 py-2 m-1"
+                                      className="btn btn-danger btn-sm m-1"
                                       data-toggle="modal"
                                       data-target="#exampleModalCenter"
                                       onClick={() => handleDelete(data._id)}
@@ -188,7 +191,7 @@ const Users = () => {
                                       <i className="fas fa-trash-alt"></i>
                                     </button>
                                     <button
-                                      className="btn btn-dark px-4 py-2 m-1"
+                                      className="btn btn-dark btn-sm m-1"
                                       onClick={() => handleUpdateForm(data)}
                                     >
                                       <i className="fas fa-edit"></i>
