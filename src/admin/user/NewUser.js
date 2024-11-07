@@ -311,7 +311,7 @@ const NewUser = () => {
                 <div className="card-header bg-warning">
                   <h5 className="card-title">Miscellaneous</h5>
                 </div>
-                <div className="card-body">
+                <div className="card-body ">
                   <div className="form-check">
                     <input
                       type="checkbox"
