@@ -32,6 +32,8 @@ const Users = () => {
       setUserdata(res.data.data); // Assuming 'data' contains the user list
       setTotalPages(res.data.totalPages); // Assuming 'totalPages' is in the response
       setLoading(false); // Stop loading after successful response
+      console.log(res.data.data);
+      
     } catch (error) {
       console.error(error);
       setLoading(false); // Stop loading after an error
