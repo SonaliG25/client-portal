@@ -25,6 +25,8 @@ import UpdateProduct from "./admin/product/updateProduct";
 import Home from "./admin/home/home";
 import Category from "./admin/Category/Category";
 import NewProposal from "./admin/proposal/NewProposal";
+import ViewOrder from "./admin/orders/ViewOrder";
+import UpdateOrder from "./admin/orders/UpdateOrder";
 
 function App() {
   const router = createBrowserRouter([
@@ -49,6 +51,8 @@ function App() {
       path: RoutesNames.ADMIN_DASHBOARD,
       element: <AdminLayout />,
       children: [
+        { path: RoutesNames.VIEW_ORDER, element: <ViewOrder /> },
+        { path: RoutesNames.UPDATE_ORDER, element: <UpdateOrder /> },
         { path: RoutesNames.HOME, element: <Home /> },
         { path: RoutesNames.PROPOSALS, element: <Proposals /> },
         { path: RoutesNames.NEW_PROPOSAL, element: <NewProposal /> },
