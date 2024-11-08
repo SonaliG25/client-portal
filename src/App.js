@@ -30,6 +30,8 @@ import UpdateOrder from "./admin/orders/UpdateOrder";
 import ServiceDesk from "./client/serviceDesk/ServiceDesk";
 import CreateTicket from "./client/serviceDesk/NewTicket";
 import ClientHome from "./client/clientHome/ClientHome.js";
+import ViewTicket from "./client/serviceDesk/ViewTicket.js";
+import Tickets from "./admin/Ticket/Tickets.js";
 
 function App() {
   const router = createBrowserRouter([
@@ -60,6 +62,10 @@ function App() {
           path: RoutesNames.NEW_TICKET,
           element: <CreateTicket />,
         },
+        {
+          path: RoutesNames.VIEW_TICKET,
+          element: <ViewTicket />,
+        },
       ],
     },
 
@@ -73,6 +79,7 @@ function App() {
         { path: RoutesNames.PROPOSALS, element: <Proposals /> },
         { path: RoutesNames.NEW_PROPOSAL, element: <NewProposal /> },
         { path: RoutesNames.CATEGORYS, element: <Category /> },
+        { path: RoutesNames.TICKETS, element: <Tickets /> },
         {
           path: RoutesNames.NEW_PROPOSAL_TEMPLATE,
           element: <NewProposalTemplete />,

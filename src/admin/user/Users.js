@@ -33,7 +33,6 @@ const Users = () => {
       setTotalPages(res.data.totalPages); // Assuming 'totalPages' is in the response
       setLoading(false); // Stop loading after successful response
       console.log(res.data.data);
-      
     } catch (error) {
       console.error(error);
       setLoading(false); // Stop loading after an error
@@ -90,7 +89,7 @@ const Users = () => {
                     <input
                       type="search"
                       className="form-control"
-                      placeholder="Search by Product Name"
+                      placeholder="Search..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
