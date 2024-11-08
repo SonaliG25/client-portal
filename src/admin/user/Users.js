@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { useEditUserContext } from "../../context/EditUserContext.jsx";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import * as Routes from "../../utils/routeNames"
+import * as Routes from "../../utils/routeNames";
 
 const Users = () => {
   const [auth] = useAuth();
@@ -32,6 +32,8 @@ const Users = () => {
       setUserdata(res.data.data); // Assuming 'data' contains the user list
       setTotalPages(res.data.totalPages); // Assuming 'totalPages' is in the response
       setLoading(false); // Stop loading after successful response
+      console.log(res.data.data);
+      
     } catch (error) {
       console.error(error);
       setLoading(false); // Stop loading after an error
@@ -137,30 +139,53 @@ const Users = () => {
                         >
                           <thead>
                             <tr>
-                              <th className="text-center">First Name</th>
-                              <th className="text-center">Last Name</th>
-                              <th className="text-center">Phone</th>
-                              <th className="text-center">User Type</th>
+                              <th className="text-center">Active Account</th>
+                              <th>ClientName</th>
+                              <th>Address</th>
+                              <th>Timezone</th>
+                              <th className="text-center">
+                                Prefered Contact Method
+                              </th>
                               <th className="text-center">Action</th>
                             </tr>
                           </thead>
                           <tbody>
                             {userdata.map((data) => (
                               <tr key={data._id}>
-                                <td>{data.firstName}</td>
-                                <td>{data.lastName}</td>
-                                <td>{data.phone}</td>
-                                <td>{data.userType}</td>
+                                <td className="text-center">
+                                  <span
+                                    className={`badge online ${
+                                      data.activeAccount
+                                        ? "badge-success"
+                                        : "badge-danger"
+                                    }`}
+                                  >
+                                    &nbsp;
+                                  </span>
+                                </td>
+                                <td>
+                                  <div>{data?.businessDetails?.clientName}</div>
+                                  <b>
+                                    {data?.businessDetails?.companyType}
+                                  </b>{" "}
+                                </td>
+                                <td>
+                                  {data?.address?.street1},
+                                  {data?.address?.state},
+                                  {data?.address?.country}
+                                </td>
+                                <td>{data?.timeZone}</td>
+                                <td>{data?.preferredContactMethod}</td>
                                 <td>
                                   <div className="d-flex justify-content-center m-2">
                                     <button
-                                      className="btn btn-primary px-4 py-2 m-1"
+                                      className="btn btn-primary btn-sm m-1"
                                       onClick={() => HandleView(data)}
                                     >
                                       <i className="fas fa-file-alt"></i>
                                     </button>
                                     <button
-                                      className="btn btn-danger px-4 py-2 m-1"
+                                      className="btn btn-danger btn-sm m-1"
                                       data-toggle="modal"
                                       data-target="#exampleModalCenter"
                                       onClick={() => handleDelete(data._id)}
@@ -168,7 +193,7 @@ const Users = () => {
                                       <i className="fas fa-trash-alt"></i>
                                     </button>
                                     <button
-                                      className="btn btn-dark px-4 py-2 m-1"
+                                      className="btn btn-dark btn-sm m-1"
                                       onClick={() => handleUpdateForm(data)}
                                     >
                                       <i className="fas fa-edit"></i>

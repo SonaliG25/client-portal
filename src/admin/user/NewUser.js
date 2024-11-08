@@ -2,13 +2,25 @@ import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast"; // Ensure this import is correct
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 
 const NewUser = () => {
   const [auth] = useAuth();
   const navigate = useNavigate();
+
+  const timeZones = [
+    "UTC",
+    "America/New_York",
+    "America/Chicago",
+    "America/Los_Angeles",
+    "Europe/London",
+    "Europe/Paris",
+    "Asia/Kolkata",
+    "Asia/Tokyo",
+    "Australia/Sydney",
+  ];
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -28,13 +40,14 @@ const NewUser = () => {
         .required("Owner email is required"),
     }),
     timeZone: Yup.string().required("Time zone is required"),
-
     address: Yup.object({
       street1: Yup.string().required("Street address is required"),
-      street2: Yup.string(),
+      street2: Yup.string().required("Street address is required"),
+
       zipCode: Yup.string().required("ZIP Code is required"),
       city: Yup.string().required("City is required"),
       state: Yup.string().required("State is required"),
+      country: Yup.string().required("country is required"),
     }),
     allowLogin: Yup.boolean(),
     activeAccount: Yup.boolean(),
@@ -57,7 +70,7 @@ const NewUser = () => {
         ownerPhone: "",
         ownerEmail: "",
       },
-      timeZone: "",
+      timeZone: "UTC",
       preferredContactMethod: "email",
       paymentStatus: "noPaymentYet",
       address: {
@@ -66,6 +79,7 @@ const NewUser = () => {
         zipCode: "",
         city: "",
         state: "",
+        country: "",
       },
       allowLogin: true,
       activeAccount: true,
@@ -217,16 +231,6 @@ const NewUser = () => {
                       </div>
                     )}
                   </div>
-                  <div className="form-group">
-                    <label>Role</label>
-                    <input
-                      type="text"
-                      name="role"
-                      value={formik.values.role}
-                      className="form-control"
-                      readOnly
-                    />
-                  </div>
                 </div>
               </div>
             </div>
@@ -240,30 +244,53 @@ const NewUser = () => {
                   <h5 className="card-title">Address</h5>
                 </div>
                 <div className="card-body">
-                  {["street1", "street2", "zipCode", "city", "state"].map(
-                    (field, index) => (
-                      <div className="form-group" key={index}>
-                        <label>
-                          {field
-                            .replace(/([A-Z])/g, " $1")
-                            .replace(/^./, (str) => str.toUpperCase())}
-                        </label>
-                        <input
-                          type="text"
-                          name={`address.${field}`}
-                          value={formik.values.address[field]}
-                          onChange={formik.handleChange}
-                          className="form-control"
-                        />
-                        {formik.touched.address?.[field] &&
-                          formik.errors.address?.[field] && (
-                            <div className="text-danger">
-                              {formik.errors.address[field]}
-                            </div>
-                          )}
-                      </div>
-                    )
-                  )}
+                  .
+                  <div class="mb-3">
+                    <label for="" class="form-label">
+                      Timezone
+                    </label>
+                    <select
+                      className="form-control"
+                      onChange={(item) =>
+                        formik.setFieldValue("timeZone", item.target.value)
+                      }
+                    >
+                      {timeZones.map((item) => (
+                        <option value={item} key={item}>
+                          {item}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {[
+                    "street1",
+                    "street2",
+                    "zipCode",
+                    "city",
+                    "state",
+                    "country",
+                  ].map((field, index) => (
+                    <div className="form-group" key={index}>
+                      <label>
+                        {field
+                          .replace(/([A-Z])/g, " $1")
+                          .replace(/^./, (str) => str.toUpperCase())}
+                      </label>
+                      <input
+                        type="text"
+                        name={`address.${field}`}
+                        value={formik.values.address[field]}
+                        onChange={formik.handleChange}
+                        className="form-control"
+                      />
+                      {formik.touched.address?.[field] &&
+                        formik.errors.address?.[field] && (
+                          <div className="text-danger">
+                            {formik.errors.address[field]}
+                          </div>
+                        )}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -274,7 +301,7 @@ const NewUser = () => {
                 <div className="card-header bg-warning">
                   <h5 className="card-title">Miscellaneous</h5>
                 </div>
-                <div className="card-body">
+                <div className="card-body ">
                   <div className="form-check">
                     <input
                       type="checkbox"
@@ -288,7 +315,7 @@ const NewUser = () => {
                       }
                       className="form-check-input"
                     />
-                    <label className="form-check-label">Allow login</label>
+                    <label className="form-check-label">Allow Login</label>
                   </div>
                   <div className="form-check">
                     <input
@@ -303,7 +330,7 @@ const NewUser = () => {
                       }
                       className="form-check-input"
                     />
-                    <label className="form-check-label">Account Active</label>
+                    <label className="form-check-label">Active Account</label>
                   </div>
                   <div className="form-check">
                     <input
@@ -318,22 +345,20 @@ const NewUser = () => {
                       }
                       className="form-check-input"
                     />
-                    <label className="form-check-label">Account Banned</label>
+                    <label className="form-check-label">Banned Account</label>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="form-group text-center">
-            <button
-              type="submit"
-              className="btn btn-success"
-              onClick={formik.handleSubmit}
-            >
-              Submit
-            </button>
-          </div>
+          <button
+            onClick={() => console.log("error", formik.errors)}
+            type="submit"
+            className="btn btn-success btn-lg btn-block"
+          >
+            Create User
+          </button>
         </form>
       </section>
     </div>
