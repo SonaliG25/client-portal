@@ -1,7 +1,7 @@
 // src/components/UserSidebar.js
 import React from "react";
 import { NavLink } from "react-router-dom";
-
+import * as RouteNames from "../utils/routeNames.js";
 function UserSidebar() {
   return (
     <aside
@@ -45,7 +45,7 @@ function UserSidebar() {
           >
             <li className="nav-item">
               <NavLink
-                to="/user-dashboard"
+                to={RouteNames.USER_HOME}
                 className={({ isActive }) =>
                   isActive ? "nav-link active" : "nav-link"
                 }
@@ -67,16 +67,16 @@ function UserSidebar() {
             </li>
             <li className="nav-item">
               <NavLink
-                to="categories"
+                to={RouteNames.SERVICE_DESK}
                 className={({ isActive }) =>
                   isActive ? "nav-link active" : "nav-link"
                 }
               >
                 <i className="nav-icon fas fa-tachometer-alt"></i>
-                <p>Categories</p>
+                <p>Service Desk</p>
               </NavLink>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <NavLink
                 to="userlist"
                 className={({ isActive }) =>
@@ -86,7 +86,7 @@ function UserSidebar() {
                 <i className="nav-icon fas fa-tachometer-alt"></i>
                 <p>Userlist</p>
               </NavLink>
-            </li>
+            </li> */}
           </ul>
         </nav>
       </div>

@@ -5,7 +5,6 @@ export const REGISTER = "/register";
 
 // Dashboard Routes
 export const ADMIN_DASHBOARD = "/admin-dashboard";
-export const USER_DASHBOARD = "/user-dashboard";
 
 // Admin Sub-Routes
 export const HOME = `${ADMIN_DASHBOARD}/home`;
@@ -43,3 +42,9 @@ export const UPDATE_PROPOSAL = `${ADMIN_DASHBOARD}/updateProposal/:id`;
 
 // Fallback/NotFound Route
 export const NOT_FOUND = "*";
+
+export const USER_DASHBOARD = "/user-dashboard";
+export const USER_HOME = `${USER_DASHBOARD}/home`;
+
+export const SERVICE_DESK = `${USER_DASHBOARD}/serviceDesk`;
+export const NEW_TICKET = `${USER_DASHBOARD}/newTicket`;
