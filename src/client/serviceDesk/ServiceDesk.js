@@ -1,11 +1,14 @@
 import { useAuth } from "../../context/AuthContext"; // Adjust the path according to where your useAuth hook is located
 import { BASE_URL } from "../../utils/endPointNames";
 
+import { useNavigate } from "react-router-dom";
 // TicketsTable.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { NEW_TICKET } from "../../utils/routeNames";
 
 const ServiceDesk = () => {
+  const navigate = useNavigate();
   const [auth] = useAuth(); // Get the logged-in user info (including clientId)
   const [tickets, setTickets] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -43,10 +46,16 @@ const ServiceDesk = () => {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+  const handleAddProduct = () => {
+    navigate(NEW_TICKET);
+  };
 
   return (
     <div className="content-wrapper">
       <h3>My Tickets</h3>
+      <button onClick={handleAddProduct} className="btn btn-success ml-2">
+        <i className="fas fa-plus mr-1"></i> Add Ticket
+      </button>
       <table className="table">
         <thead>
           <tr>

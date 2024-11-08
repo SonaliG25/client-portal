@@ -13,7 +13,11 @@ const CreateTicket = () => {
     title: "",
     description: "",
     priority: "",
-    client: auth.user.userId,
+    client: {
+      user: auth.user.userId,
+      name: auth.user.role,
+      email: auth.user.email,
+    },
     attachments: [],
   });
 

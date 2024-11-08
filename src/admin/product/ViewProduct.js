@@ -19,7 +19,9 @@ function ViewProduct() {
   };
 
   const handleDelete = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this product?");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this product?"
+    );
     if (!confirmDelete) return;
 
     try {
@@ -29,7 +31,7 @@ function ViewProduct() {
         },
       });
       // alert("Product deleted successfully");
-      toast.success("Product Deleted Successfully")
+      toast.success("Product Deleted Successfully");
       navigate("/admin-dashboard/products"); // Redirect to product list after deletion
     } catch (error) {
       console.error("Failed to delete product:", error);
@@ -83,19 +85,29 @@ function ViewProduct() {
       </section>
       <section className="content">
         <div className="row">
-          <div className="col-md-7 mt-1">
+          {/* Product Image and Overview */}
+          <div className="col-lg-7 col-md-12 mt-1">
             <div className="card card-primary shadow-sm">
-              <div className="card-header">
+              <div className="card-header d-flex justify-content-between align-items-center">
                 <h3 className="card-title">{product.name}</h3>
+                <span
+                  className={`badge ${
+                    product.status === "Active"
+                      ? "badge-success"
+                      : "badge-secondary"
+                  }`}
+                >
+                  {product.status}
+                </span>
               </div>
               <div className="card-body">
                 <div className="text-center mb-3">
                   <img
                     onError={(e) =>
-                      (e.target.src = BASE_URL + "/uploads/placeholder.png")
+                      (e.target.src = `${BASE_URL}/uploads/placeholder.png`)
                     }
                     className="img-fluid img-cover rounded"
-                    src={BASE_URL + product.imageUrl}
+                    src={`${BASE_URL}${product.imageUrl}`}
                     alt="product"
                   />
                 </div>
@@ -105,67 +117,80 @@ function ViewProduct() {
                 </div>
                 <div className="mb-3">
                   <strong>Tags:</strong>
-                  <p>{product.tags}</p>
+                  <p>{product.tags?.join(", ")}</p>
                 </div>
                 <div className="mb-3">
                   <strong>Keywords:</strong>
-                  <p>{product.keywords}</p>
+                  <p>{product.keywords?.join(", ")}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="col-md-5 mt-1">
+          {/* Product Pricing and Additional Information */}
+          <div className="col-lg-5 col-md-12 mt-1">
+            {/* Pricing Information */}
             <div className="card card-info shadow-sm mb-3">
               <div className="card-header">
                 <h3 className="card-title">Pricing Information</h3>
               </div>
               <div className="card-body">
                 <div className="mb-3">
-                  <strong>SKU:</strong>
-                  <p>{product.sku}</p>
+                  <i className="fas fa-barcode mr-2"></i>
+                  <strong>SKU:</strong> <span>{product.sku}</span>
                 </div>
                 <div className="mb-3">
-                  <strong>Cost:</strong>
-                  <p>{product.currency} {product.cost}</p>
+                  <i className="fas fa-dollar-sign mr-2"></i>
+                  <strong>Cost:</strong>{" "}
+                  <span>
+                    {product.currency} {product.cost}
+                  </span>
                 </div>
                 <div className="mb-3">
-                  <strong>Tax:</strong>
-                  <p>{product.currency} {product.tax}</p>
+                  <i className="fas fa-percentage mr-2"></i>
+                  <strong>Tax:</strong>{" "}
+                  <span>
+                    {product.currency} {product.tax}
+                  </span>
                 </div>
                 <div className="mb-3">
-                  <strong>Total Cost:</strong>
-                  <p>{product.currency} {product.totalCost}</p>
+                  <i className="fas fa-money-bill-alt mr-2"></i>
+                  <strong>Total Cost:</strong>{" "}
+                  <span>
+                    {product.currency} {product.totalCost}
+                  </span>
                 </div>
               </div>
             </div>
 
+            {/* Additional Information */}
             <div className="card card-secondary shadow-sm">
               <div className="card-header">
                 <h3 className="card-title">Additional Information</h3>
               </div>
               <div className="card-body">
                 <div className="mb-3">
-                  <strong>Category:</strong>
-                  <p>{product.category}</p>
+                  <i className="fas fa-tags mr-2"></i>
+                  <strong>Category:</strong> <span>{product.category}</span>
                 </div>
                 <div className="mb-3">
-                  <strong>Purchase Type:</strong>
-                  <p>{product.purchaseType}</p>
+                  <i className="fas fa-shopping-cart mr-2"></i>
+                  <strong>Purchase Type:</strong>{" "}
+                  <span>{product.purchaseType}</span>
                 </div>
                 {product.purchaseType === "subscription" && (
                   <div className="mb-3">
-                    <strong>Duration:</strong>
-                    <p>{product.duration} months</p>
+                    <i className="fas fa-calendar-alt mr-2"></i>
+                    <strong>Duration:</strong>{" "}
+                    <span>{product.duration} months</span>
                   </div>
                 )}
                 <div className="mb-3">
-                  <strong>Status:</strong>
-                  <p>{product.status}</p>
-                </div>
-                <div className="mb-3">
-                  <strong>Created On:</strong>
-                  <p>{moment(product.createdAt).format("MMMM DD, YYYY")}</p>
+                  <i className="fas fa-clock mr-2"></i>
+                  <strong>Created On:</strong>{" "}
+                  <span>
+                    {moment(product.createdAt).format("MMMM DD, YYYY")}
+                  </span>
                 </div>
               </div>
             </div>
