@@ -27,10 +27,13 @@ import Category from "./admin/Category/Category";
 import NewProposal from "./admin/proposal/NewProposal";
 import ViewOrder from "./admin/orders/ViewOrder";
 import UpdateOrder from "./admin/orders/UpdateOrder";
+// import AdminChat from "./chats/chat";
+import Chat from "./chats/Chat";
 
 function App() {
   const router = createBrowserRouter([
     { path: RoutesNames.LOGIN, element: <Login /> },
+    {path: '/chats',element:<Chat/>},
 
     {
       path: "user-dashboard",
@@ -93,6 +96,7 @@ function App() {
         { path: RoutesNames.ALL_PRODUCTS, element: <Products /> },
         { path: RoutesNames.VIEW_PRODUCT, element: <ViewProduct /> },
         { path: RoutesNames.UPDATE_PRODUCT, element: <UpdateProduct /> },
+        
       ],
     },
     { path: RoutesNames.NOT_FOUND, element: <Login /> }, // Fallback for unmatched routesNamesRoutesNames

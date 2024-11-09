@@ -38,6 +38,8 @@ export const ALL_PROPOSALS = `${ADMIN_DASHBOARD}/proposals`;
 export const NEW_PROPOSAL = `${ADMIN_DASHBOARD}/newProposal`;
 export const UPDATE_PROPOSAL = `${ADMIN_DASHBOARD}/updateProposal/:id`;
 
+// Chat Routes
+export const CHATS = `/chats`
 // Client Routes (if any other than dashboard can be added here)
 // e.g. export const CLIENT_PROFILE = '/user-dashboard/profile';
 

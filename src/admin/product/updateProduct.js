@@ -23,7 +23,7 @@ function UpdateProduct() {
   const [productDetails, setProductDetails] = useEditUserContext();
   const [product, setProduct] = useState(null);
   const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);; // Fetch users
+  const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [auth] = useAuth();
@@ -40,13 +40,11 @@ function UpdateProduct() {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       setUsers(response.data);
-      // console.log("users", response.data.data);
     } catch (error) {
       console.error("Error fetching Users:", error);
     }
   };
 
-  // Get product details
   const getProduct = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/product/${id}`, {
@@ -54,9 +52,11 @@ function UpdateProduct() {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
+      console.log("product",res.data);
+      
       setProduct(res.data);
+      setPreview(BASE_URL+res.data.imageUrl || null); // Set initial preview to existing image URL
       setLoading(false);
-      console.log("Update product", res.data);
     } catch (error) {
       console.error(error);
       setError("Failed to load product data.");
@@ -82,12 +82,10 @@ function UpdateProduct() {
     fetchCategories();
   }, [auth]);
 
-  // Update product state based on field changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const updatedValue = type === "checkbox" ? checked : value;
 
-    // If the cost or tax changes, recalculate totalCost
     if (name === "cost" || name === "tax") {
       const updatedProduct = {
         ...product,
@@ -105,22 +103,16 @@ function UpdateProduct() {
 
   const handleSelectecUserChange = (selectedUser) => {
     setSelectedUser(selectedUser);
-
     if (selectedUser) {
       const userid = selectedUser._id;
-      const useremail = selectedUser.email;
-      const username = selectedUser.name
-
       setProduct((prevData) => ({
         ...prevData,
         productManager: userid,
       }));
     } else {
-      // Reset the values if no user is selected
       setProduct((prevData) => ({
         ...prevData,
         productManager: null,
-        
       }));
     }
   };
@@ -135,17 +127,19 @@ function UpdateProduct() {
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Set imageUrl to the existing product image URL initially
       let imageUrl = product.imageUrl;
-
-      if (file) {
+  
+      
         const uploadData = new FormData();
         uploadData.append("image", file);
+        console.log("file", file, uploadData);
+  
         const uploadResponse = await axios.post(
-          `${BASE_URL}/upload/productImage`,
+          `http://localhost:3000/upload/productImage`,
           uploadData,
           {
             headers: {
@@ -154,14 +148,21 @@ function UpdateProduct() {
             },
           }
         );
-        imageUrl = uploadResponse.data.imageUrl;
+  
+        imageUrl = uploadResponse.data.fileUrl; // Update imageUrl with new uploaded URL
         toast.success("Image uploaded successfully");
-      }
-
+        console.log("image",uploadResponse);
+        
+      
+  
+      // Prepare the updated product data, including the correct imageUrl
       const updatedProductData = { ...product, imageUrl };
+      console.log("imgUrl", imageUrl, updatedProductData);
+  
       await axios.patch(`${BASE_URL}/product/${product._id}`, updatedProductData, {
         headers: { Authorization: `Bearer ${auth?.token}` },
       });
+  
       toast.success("Product updated successfully");
       navigate(-1);
     } catch (error) {
@@ -169,6 +170,7 @@ function UpdateProduct() {
       setError("Failed to update product. Please try again.");
     }
   };
+  
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -212,7 +214,7 @@ function UpdateProduct() {
                   }
                   //  onInputChange={(input) => handleEmailTo(input)}
                   selected={selectedUser ? [selectedUser] : []}
-                  placeholder="Choose a user"
+                  placeholder="Choose a product manager"
                 />
               </FormGroup>
                 
@@ -247,7 +249,7 @@ function UpdateProduct() {
               </div>
 
               <div className="col-md-6">
-                <div className="form-group">
+              <div className="form-group">
                   <label htmlFor="imageUpload" className="font-weight-bold">
                     Selected Image
                   </label>
@@ -271,10 +273,7 @@ function UpdateProduct() {
                         accept="image/*"
                         onChange={handleFileChange}
                       />
-                      <label
-                        className="custom-file-label"
-                        htmlFor="imageUpload"
-                      >
+                      <label className="custom-file-label" htmlFor="imageUpload">
                         Choose file
                       </label>
                     </div>
@@ -284,18 +283,21 @@ function UpdateProduct() {
                   </small>
                 </div>
                 <div className="form-group">
-                  <label htmlFor="category">Category</label>
-                  <Typeahead
-                    id="category"
-                    options={categories}
-                    labelKey="name"
-                    onChange={(selected) => {
-                      setProduct((prevData) => ({ ...prevData, category: selected[0]?.name || "" }));
-                    }}
-                    selected={product.category ? [product.category] : []}
-                    placeholder="Choose a category"
-                  />
-                </div>
+      <label htmlFor="category">Category</label>
+      <Typeahead
+        id="category"
+        options={categories}
+        labelKey="name"
+        onChange={(selected) => {
+          setProduct((prevData) => ({ ...prevData, category: selected[0]?.name || "" }));
+        }}
+        selected={product.category ? [product.category] : []}
+        placeholder="Choose a category"
+        maxResults={10}  // Limits results shown before scrolling
+        paginate  // Enables pagination for scrolling
+        minLength={1}  // Starts search only after typing at least one character
+      />
+    </div>
                 <div className="form-group">
                   <label htmlFor="status">Status</label>
                   <select className="form-control" id="status" name="status" value={product.status} onChange={handleChange} required>
