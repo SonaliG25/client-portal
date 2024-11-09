@@ -128,11 +128,6 @@ const NewProduct = () => {
         [name]: type === "checkbox" ? checked : value,
       }));
     }
-
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
   };
 
   // Handle file upload change
@@ -189,32 +184,6 @@ const NewProduct = () => {
         productData.duration = parseInt(formData.duration); // Only add if purchaseType is subscription
       }
       console.log("DataProd", productData);
-
-      // const formDataa = new FormData();
-      // formDataa.append("sku", productData.sku);
-      // formDataa.append("name", productData.name);
-      // formDataa.append("description", productData.description);
-      // formDataa.append("cost", parseFloat(formData.cost));
-      // formDataa.append("tax", parseFloat(formData.tax));
-      // formDataa.append("totalCost", parseFloat(formData.totalCost));
-      // formDataa.append("productManager", auth?.user.userId);
-      // formDataa.append("status", productData.status);
-      // formDataa.append(
-      //   "activeSubscriptions",
-      //   parseFloat(formData.activeSubscriptions)
-      // );
-      // formDataa.append(
-      //   "revenueGenerated",
-      //   parseFloat(formData.revenueGenerated)
-      // );
-      // formDataa.append("category", productData.category);
-      // formDataa.append("imageUrl", imageUrl); // Assuming fileInput is the input element
-      // formDataa.append("purchaseType", productData.purchaseType);
-      // formDataa.append("currency", productData.currency);
-      // formDataa.append("duration", parseFloat(formData.duration));
-      // formDataa.append("tags", formData.tags.split(",")); // Convert array to string if needed
-      // formDataa.append("keywords", formData.keywords.split(","));
-      // console.log("formata", formDataa);
 
       // Send the product data to the backend
       await axios.post(
@@ -466,7 +435,6 @@ const NewProduct = () => {
 
                 <div className="form-group">
                   <label htmlFor="category">Category</label>
-
                   <Typeahead
                     id="category"
                     options={categories}
@@ -474,11 +442,16 @@ const NewProduct = () => {
                     onChange={(selected) => {
                       setFormData((prevData) => ({
                         ...prevData,
-                        category: selected[0]["name"] || "", // Set selected category or empty string
+                        category: selected.length ? selected[0].name : "", // Set selected category or empty string
                       }));
                     }}
-                    selected={formData.category ? [formData.category] : []}
+                    selected={
+                      formData.category ? [{ name: formData.category }] : []
+                    }
                     placeholder="Choose a category"
+                    paginate
+                    maxResults={5} // Show 5 results at a time to enable scrolling
+                    inputProps={{ autoComplete: "off" }}
                   />
                 </div>
 

@@ -8,8 +8,7 @@ export const ADMIN_DASHBOARD = "/admin-dashboard";
 
 // Admin Sub-Routes
 export const HOME = `${ADMIN_DASHBOARD}/home`;
-
-// Category Management
+export const TICKETS = `${ADMIN_DASHBOARD}/tickets`;
 export const CATEGORYS = `${ADMIN_DASHBOARD}/categories`;
 
 // Proposal template management
@@ -44,6 +43,8 @@ export const VIEW_PROPOSAL = `${ADMIN_DASHBOARD}/proposal/:id`;
 export const UPDATE_PROPOSAL = `${ADMIN_DASHBOARD}/updateProposal/:id`;
 export const PROPOSALS = `${ADMIN_DASHBOARD}/proposal`;
 
+// Chat Routes
+export const CHATS = `/chats`;
 // Client Routes (if any other than dashboard can be added here)
 // e.g. export const CLIENT_PROFILE = '/user-dashboard/profile';
 
@@ -55,3 +56,4 @@ export const USER_HOME = `${USER_DASHBOARD}/home`;
 
 export const SERVICE_DESK = `${USER_DASHBOARD}/serviceDesk`;
 export const NEW_TICKET = `${USER_DASHBOARD}/newTicket`;
+export const VIEW_TICKET = `${USER_DASHBOARD}/:id`;

@@ -25,17 +25,22 @@ import UpdateProduct from "./admin/product/updateProduct";
 import AdminHome from "./admin/home/home.js";
 import Category from "./admin/Category/Category";
 import NewProposal from "./admin/proposal/NewProposal";
+import ViewOrder from "./admin/orders/ViewOrder";
+import UpdateOrder from "./admin/orders/UpdateOrder";
+
+// import AdminChat from "./chats/chat";
+import Chat from "./chats/Chat.js";
 
 import ServiceDesk from "./client/serviceDesk/ServiceDesk";
 import CreateTicket from "./client/serviceDesk/NewTicket";
 import ClientHome from "./client/clientHome/ClientHome.js";
-import ProposalDetails from "./admin/proposal/ProposalDetails.js";
-import SubscriptionDetails from "./admin/subscription/SubscriptionsDetails.js";
-import Subscriptions from "./admin/subscription/Subscriptions.js";
+import ViewTicket from "./client/serviceDesk/ViewTicket.js";
+import Tickets from "./admin/Ticket/Tickets.js";
 
 function App() {
   const router = createBrowserRouter([
     { path: RoutesNames.LOGIN, element: <Login /> },
+    { path: "/chats", element: <Chat /> },
 
     {
       path: "user-dashboard",
@@ -61,6 +66,10 @@ function App() {
         {
           path: RoutesNames.NEW_TICKET,
           element: <CreateTicket />,
+        },
+        {
+          path: RoutesNames.VIEW_TICKET,
+          element: <ViewTicket />,
         },
       ],
     },
@@ -90,8 +99,7 @@ function App() {
 
         //Category
         { path: RoutesNames.CATEGORYS, element: <Category /> },
-
-        // PROPOSAL_TEMPLATE
+        { path: RoutesNames.TICKETS, element: <Tickets /> },
         {
           path: RoutesNames.NEW_PROPOSAL_TEMPLATE,
           element: <NewProposalTemplete />,

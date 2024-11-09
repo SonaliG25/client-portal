@@ -84,6 +84,7 @@ export const Login = () => {
         setError("Invalid email or password");
       }
     } catch (err) {
+      toast.error("login failed");
       if (err.response && err.response.data) {
         setError("Login failed. Please try again.");
       } else {
