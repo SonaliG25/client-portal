@@ -127,6 +127,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
+import { LOGIN } from "../../utils/routeNames";
 
 const AdminSidebar = () => {
   const [auth, setAuth] = useAuth();
@@ -146,7 +147,7 @@ const AdminSidebar = () => {
 
   useEffect(() => {
     checkTokenExpiration();
-    const intervalId = setInterval(checkTokenExpiration, 1000*60*10);
+    const intervalId = setInterval(checkTokenExpiration, 1000 * 60 * 10);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -155,7 +156,7 @@ const AdminSidebar = () => {
     localStorage.clear("token");
     setAuth({ user: null, token: "" });
     toast.success("Logout successfully");
-    navigate("/login");
+    navigate(LOGIN);
   };
 
   const toggleSidebar = () => {
@@ -187,7 +188,7 @@ const AdminSidebar = () => {
         {/* Brand Logo */}
         <a href="index3.html" className="brand-link">
           <img
-            src="img/AdminLTELogo.png"
+            src="/img/AdminLTELogo.png"
             alt="AdminLTE Logo"
             className="brand-image img-circle elevation-3"
             style={{ opacity: ".8" }}
@@ -275,13 +276,24 @@ const AdminSidebar = () => {
               </li>
               <li className="nav-item">
                 <NavLink
-                  to="orders"
+                  to="subscriptions"
                   className={({ isActive }) =>
                     isActive ? "nav-link active" : "nav-link"
                   }
                 >
                   <i className="nav-icon fas fa-shopping-cart"></i>
-                  <p>Orders</p>
+                  <p>Subscriptions</p>
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  to="tickets"
+                  className={({ isActive }) =>
+                    isActive ? "nav-link active" : "nav-link"
+                  }
+                >
+                  <i className="nav-icon fas fa-shopping-cart"></i>
+                  <p>Tickets</p>
                 </NavLink>
               </li>
             </ul>

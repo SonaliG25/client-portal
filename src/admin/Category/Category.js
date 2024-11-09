@@ -67,6 +67,7 @@ function Category() {
       fetchCategories(); // Refresh categories
       document.getElementById("closeModalButton").click(); // Close modal
     } catch (error) {
+      toast.error("Unable to Add");
       console.error("Error adding category:", error);
     }
   };
@@ -86,6 +87,7 @@ function Category() {
       fetchCategories();
       document.getElementById("closeEditModalButton").click(); // Close modal
     } catch (error) {
+      toast.error("Unable to update");
       console.error("Error updating category:", error);
     }
   };
@@ -97,10 +99,12 @@ function Category() {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
+      toast.success("Category Deleted");
       fetchCategories();
       setDeleteCategoryId(null);
       document.getElementById("closeDeleteModalButton").click(); // Close modal
     } catch (error) {
+      toast.error("Unable to Delete");
       console.error("Error deleting category:", error);
     }
   };
@@ -178,7 +182,7 @@ function Category() {
                         <thead>
                           <tr>
                             <th>Category</th>
-                            <th className="text-center">Action</th>
+                            <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -186,9 +190,9 @@ function Category() {
                             ? categoryNameList.map((category) => (
                                 <tr key={category._id}>
                                   <td>{category.name}</td>
-                                  <td className="text-center">
-                                    <div className="d-flex justify-content-center">
-                                      <button
+                                  <td>
+                                    <div>
+                                      <span
                                         className="m-1 btn btn-primary"
                                         data-toggle="modal"
                                         data-target="#viewCategoryModal"
@@ -196,9 +200,9 @@ function Category() {
                                           setSelectedCategory(category)
                                         }
                                       >
-                                        View
-                                      </button>
-                                      <button
+                                        <i className="fas fa-file-alt p-2"></i>
+                                      </span>
+                                      <span
                                         className="m-1 btn btn-danger"
                                         data-toggle="modal"
                                         data-target="#deleteCategoryModal"
@@ -206,9 +210,9 @@ function Category() {
                                           setDeleteCategoryId(category._id)
                                         }
                                       >
-                                        Delete
-                                      </button>
-                                      <button
+                                        <i className="fas fa-trash-alt p-2"></i>
+                                      </span>
+                                      <span
                                         className="m-1 btn btn-dark"
                                         data-toggle="modal"
                                         data-target="#editCategoryModal"
@@ -219,8 +223,8 @@ function Category() {
                                           })
                                         }
                                       >
-                                        Edit
-                                      </button>
+                                        <i className="fas fa-edit p-2"></i>
+                                      </span>
                                     </div>
                                   </td>
                                 </tr>

@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import JoditEditor from "jodit-react";
+import toast from "react-hot-toast";
 import {
   Button,
   Card,
@@ -76,7 +77,8 @@ function NewProposalTemplate() {
 
   const handleSubmit = async (e) => {
     // navigate(-1)
-    e.preventDefault()
+    e.preventDefault();
+    toast.success("Templete Added Suceessfully");
     if (!validateFields()) return;
 
     try {
@@ -96,7 +98,7 @@ function NewProposalTemplate() {
         }
       );
       console.log(res);
-       navigate(-1)
+      navigate(-1);
       // navigate("/admin-dashboard/proposaltemplete");
     } catch (error) {
       console.log(error);

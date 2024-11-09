@@ -1,23 +1,23 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { useEditUserContext } from "../../context/EditUserContext.jsx";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import * as Routes from "../../utils/routeNames";
 
 const Users = () => {
   const [auth] = useAuth();
-  const [UserDetails, setUserDetails] = useEditUserContext();
   const [userdata, setUserdata] = useState([]);
   const [deleteId, setDeleteId] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const [searchQuery, setSearchQuery] = useState("");
   const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const getUser = async () => {
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
       const res = await axios.get(
         `http://localhost:3000/user/users?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`,
@@ -30,21 +30,24 @@ const Users = () => {
       setUserdata(res.data.data); // Assuming 'data' contains the user list
       setTotalPages(res.data.totalPages); // Assuming 'totalPages' is in the response
       setLoading(false); // Stop loading after successful response
+      console.log(res.data.data);
     } catch (error) {
       console.error(error);
-      setLoading(false); // Stop loading after an error
+      setLoading(false);
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (data) => {
     try {
-      await axios.delete(`http://localhost:3000/user/${deleteId}`, {
+      await axios.delete(`http://localhost:3000/user/${data}`, {
         headers: {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
-      getUser(); // Refresh the user list after deletion
+      toast.success("Deleted Successfully");
+      getUser();
     } catch (error) {
+      toast.error("Unable to delete");
       console.log(error);
     }
   };
@@ -56,21 +59,20 @@ const Users = () => {
   }, [auth, currentPage, searchQuery]);
 
   const handleAddUser = () => {
-    navigate("/admin-dashboard/newuser");
+    navigate(Routes.NEW_USER);
   };
 
   const HandleView = (data) => {
-    setUserDetails(data);
-    navigate("/admin-dashboard/view");
+    navigate(`/admin-dashboard/view/${data._id}`);
   };
 
   const handleUpdateForm = (data) => {
-    setUserDetails(data);
-    navigate("/admin-dashboard/Update");
+    navigate(`/admin-dashboard/Update/${data._id}`);
   };
 
-  const handleDeleteID = (id) => {
-    setDeleteId(id);
+  const handleSupportChat = () => {
+  //  navigate(Routes.CHATS);
+  navigate('/chats')
   };
 
   return (
@@ -88,7 +90,7 @@ const Users = () => {
                     <input
                       type="search"
                       className="form-control"
-                      placeholder="Search by Product Name"
+                      placeholder="Search..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -137,43 +139,70 @@ const Users = () => {
                         >
                           <thead>
                             <tr>
-                              <th>Last Name</th>
-                              <th>First Name</th>
-                              <th>Phone</th>
-                              <th>User Type</th>
-                              <th>Number of Subscriptions</th>
-                              <th>Action</th>
+                              <th className="text-center">Active Account</th>
+                              <th>ClientName</th>
+                              <th>Address</th>
+                              <th>Timezone</th>
+                              <th className="text-center">
+                                Prefered Contact Method
+                              </th>
+                              <th className="text-center">Action</th>
                             </tr>
                           </thead>
                           <tbody>
                             {userdata.map((data) => (
                               <tr key={data._id}>
-                                <td>{data.lastName}</td>
-                                <td>{data.firstName}</td>
-                                <td>{data.phone}</td>
-                                <td>{data.userType}</td>
-                                <td>{data.subscription.length}</td>
+                                <td className="text-center">
+                                  <span
+                                    className={`badge online ${
+                                      data.activeAccount
+                                        ? "badge-success"
+                                        : "badge-danger"
+                                    }`}
+                                  >
+                                    &nbsp;
+                                  </span>
+                                </td>
+                                <td>
+                                  <div>{data?.businessDetails?.clientName}</div>
+                                  <b>
+                                    {data?.businessDetails?.companyType}
+                                  </b>{" "}
+                                </td>
+                                <td>
+                                  {data?.address?.street1},
+                                  {data?.address?.state},
+                                  {data?.address?.country}
+                                </td>
+                                <td>{data?.timeZone}</td>
+                                <td>{data?.preferredContactMethod}</td>
                                 <td>
                                   <div className="d-flex justify-content-center m-2">
                                     <button
-                                      className="btn btn-primary px-4 py-2 m-1"
+                                      className="btn btn-primary btn-sm m-1"
                                       onClick={() => HandleView(data)}
                                     >
-                                      View
+                                      <i className="fas fa-file-alt"></i>
                                     </button>
                                     <button
-                                      className="btn btn-danger px-4 py-2 m-1"
+                                      className="btn btn-danger btn-sm m-1"
                                       data-toggle="modal"
                                       data-target="#exampleModalCenter"
-                                      onClick={() => handleDeleteID(data._id)}
+                                      onClick={() => handleDelete(data._id)}
                                     >
-                                      Delete
+                                      <i className="fas fa-trash-alt"></i>
                                     </button>
                                     <button
-                                      className="btn btn-dark px-4 py-2 m-1"
+                                      className="btn btn-dark btn-sm m-1"
                                       onClick={() => handleUpdateForm(data)}
                                     >
-                                      Edit
+                                      <i className="fas fa-edit"></i>
+                                    </button>
+                                    <button
+                                      className="btn btn-info btn-sm m-1"
+                                      onClick={handleSupportChat}
+                                    >
+                                      <i className="fas fa-comments"></i>
                                     </button>
                                   </div>
                                 </td>

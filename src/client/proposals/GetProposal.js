@@ -100,8 +100,8 @@
 // export default GetProposal;
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useAuth } from "../context/AuthContext";
-import { useProposalView } from "../context/ProposalViewContext";
+import { useAuth } from "../../context/AuthContext";
+import { useProposalView } from "../../context/ProposalViewContext";
 import { useNavigate } from "react-router-dom";
 function GetProposal() {
   const [proposals, setProposals] = useState([]);
