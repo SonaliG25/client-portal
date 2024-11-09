@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { CardFooter, Modal } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
@@ -21,103 +21,141 @@ import {
 } from "reactstrap";
 import { savePdfToServer } from "./saveProposalPdfToServer.js";
 
-const NewProposal = () => {
+const UpdateProposal = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [auth] = useAuth();
+  const [proposal, setProposal] = useState(null);
+  const [proposalData, setProposalData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [selectedProducts, setSelectedProducts] = useState(new Set());
   const [showProductModal, setShowProductModal] = useState(false);
-  const [recipientId, setReceipientId] = useState(null);
-  const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
-
-  const createUser = async () => {
-    const email = proposalData.emailTo;
-    const userName = proposalData.emailTo.split("@")[0];
-
-    const userData = {
-      // Basic user information
-      name: userName,
-      phone: "N/A",
-      username: userName,
-      email: email,
-      password: "123456", // Should be hashed in production
-
-      // Business Details
-      businessDetails: {
-        clientName: "N/A",
-        companyType: "N/A",
-        taxId: "N/A",
-        employeeSize: "N/A",
-        ownerPhone: "N/A",
-        ownerEmail: "N/A",
-      },
-
-      // Contact and preferences
-      timeZone: "N/A",
-      preferredContactMethod: "email", // "email", "phone", or "both"
-
-      // Account status
-      allowLogin: true,
-      activeAccount: true,
-      bannedAccount: false,
-
-      // Address details
-      address: {
-        street1: "N/A",
-        street2: "N/A",
-        zipCode: "N/A",
-        city: "N/A",
-        state: "N/A",
-        country: "N/A",
-      },
-    };
-
+  // Fetch proposal data
+  const fetchProposal = async () => {
     try {
-      const res = await axios.post(
-        "http://localhost:3000/user/register",
-        userData
-      );
-      // console.log(res);
-      if (res.data) {
-        setReceipientId(res.data._id);
-        return true;
-      }
-      toast.success(" created Successfully");
-      navigate("/admin-dashboard/allusers");
+      const response = await axios.get(`${BASE_URL}/proposal/${id}`, {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
+      setProposal(response.data);
+      setProposalData(response.data);
+      console.log("status", updateStatus);
+      setLoading(false);
     } catch (error) {
-      toast.error(error.response.data.message);
-      console.error(error);
-      return false;
+      console.error("Error fetching proposal:", error);
+      toast.error(error);
+      setLoading(false);
     }
   };
-  const handleEmailTo = (input) => {
-    setProposalData((prevData) => ({
-      ...prevData,
-      recipient: null,
-      emailTo: input,
-    }));
-  };
-  const handleSelectecUserChange = (selectedUser) => {
-    setSelectedUser(selectedUser);
 
-    if (selectedUser) {
-      const recipient = selectedUser._id;
-      const emailTo = selectedUser.email;
-
-      setProposalData((prevData) => ({
-        ...prevData,
-        recipient: recipient,
-        emailTo: emailTo,
-      }));
-    } else {
-      // Reset the values if no user is selected
-      setProposalData((prevData) => ({
-        ...prevData,
-        recipient: null,
-        emailTo: null,
-      }));
+  // Fetch data on component mount and when search or page changes
+  useEffect(() => {
+    if (auth?.token) {
+      fetchProposal();
     }
-  };
+  }, [auth]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!proposal) {
+    return <div>Proposal not found</div>;
+  }
+
+  // //   const [recipientId, setReceipientId] = useState(null);
+  // //   const [users, setUsers] = useState([]);
+  // //   const [selectedUser, setSelectedUser] = useState(null);
+
+  // //   const createUser = async () => {
+  // //     const email = proposalData.emailTo;
+  // //     const userName = proposalData.emailTo.split("@")[0];
+
+  // //     const userData = {
+  // //       // Basic user information
+  // //       name: userName,
+  // //       phone: "N/A",
+  // //       username: userName,
+  // //       email: email,
+  // //       password: "123456", // Should be hashed in production
+
+  // //       // Business Details
+  // //       businessDetails: {
+  // //         clientName: "N/A",
+  // //         companyType: "N/A",
+  // //         taxId: "N/A",
+  // //         employeeSize: "N/A",
+  // //         ownerPhone: "N/A",
+  // //         ownerEmail: "N/A",
+  // //       },
+
+  // //       // Contact and preferences
+  // //       timeZone: "N/A",
+  // //       preferredContactMethod: "email", // "email", "phone", or "both"
+
+  // //       // Account status
+  // //       allowLogin: true,
+  // //       activeAccount: true,
+  // //       bannedAccount: false,
+
+  // //       // Address details
+  // //       address: {
+  // //         street1: "N/A",
+  // //         street2: "N/A",
+  // //         zipCode: "N/A",
+  // //         city: "N/A",
+  // //         state: "N/A",
+  // //         country: "N/A",
+  // //       },
+  // //     };
+
+  //     try {
+  //       const res = await axios.post(
+  //         "http://localhost:3000/user/register",
+  //         userData
+  //       );
+  //       // console.log(res);
+  //       if (res.data) {
+  //         setReceipientId(res.data._id);
+  //         return true;
+  //       }
+  //       toast.success(" created Successfully");
+  //       navigate("/admin-dashboard/allusers");
+  //     } catch (error) {
+  //       toast.error(error.response.data.message);
+  //       console.error(error);
+  //       return false;
+  //     }
+  //   };
+  //   const handleEmailTo = (input) => {
+  //     setProposalData((prevData) => ({
+  //       ...prevData,
+  //       recipient: null,
+  //       emailTo: input,
+  //     }));
+  //   };
+  //   const handleSelectecUserChange = (selectedUser) => {
+  //     setSelectedUser(selectedUser);
+
+  //     if (selectedUser) {
+  //       const recipient = selectedUser._id;
+  //       const emailTo = selectedUser.email;
+
+  //       setProposalData((prevData) => ({
+  //         ...prevData,
+  //         recipient: recipient,
+  //         emailTo: emailTo,
+  //       }));
+  //     } else {
+  //       // Reset the values if no user is selected
+  //       setProposalData((prevData) => ({
+  //         ...prevData,
+  //         recipient: null,
+  //         emailTo: null,
+  //       }));
+  //     }
+  //   };
 
   const [proposalTemplates, setProposalTemplates] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -128,21 +166,6 @@ const NewProposal = () => {
   const [productsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
   const [moreAttachmentsToUpload, setMoreAttachmentsToUpload] = useState([]);
-  const [proposalData, setProposalData] = useState({
-    recipient: "",
-    emailTo: "",
-    title: "",
-    content: "",
-    products: [],
-    grandTotalCurrency: "$",
-    productTotal: 0,
-    grandTotal: 0,
-    discountOnGrandTotal: 0,
-    finalAmount: 0,
-    attachments: [],
-    status: "",
-  });
-
   const [productTotal, setProductTotal] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
   const [discountOnGrandTotal, setDiscountOnGrandTotal] = useState(0);
@@ -994,4 +1017,4 @@ const NewProposal = () => {
   );
 };
 
-export default NewProposal;
+export default UpdateProposal;

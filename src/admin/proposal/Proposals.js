@@ -5,19 +5,68 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import * as Routes from "../../utils/routeNames";
 
+import { BASE_URL } from "../../utils/endPointNames.js";
+
 function Proposals() {
+  const [auth] = useAuth();
+  const navigate = useNavigate();
+
   const [proposals, setProposals] = useState([]);
-  const [currentPage,setCurrentPage] = useState(1)
-  const [totalPages,setTotalPages] = useState(1)
+  // Pagination variablees
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [proposalsPerPage] = useState(6);
+  const [totalProposals, setTotalProposals] = useState(0);
+
   //Search for Proposal
   const [searchQuery, setSearchQuery] = useState("");
-  const filteredProposals = proposals.filter((proposal) =>
-    proposal.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  const navigate = useNavigate();
+  // const filteredProposals = proposals.filter((proposal) =>
+  //   // proposal.name.includes(searchQuery)
+  // );
+
   const handleAddProposal = () => {
     navigate(Routes.NEW_PROPOSAL);
   };
+
+  const HandleView = (data) => {
+    // setUserDetails(data);
+    navigate(`/admin-dashboard/proposal/${data._id}`);
+  };
+  const getProposals = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/proposal/proposals?page=${currentPage}&limit=${proposalsPerPage}&search=${searchQuery}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
+      );
+      console.log("proposals", res.data.proposals);
+
+      setProposals(res.data.proposals);
+      setTotalPages(res.data.totalPages);
+      setTotalProposals(res.data.total);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleNextPage = () => {
+    if (currentPage < Math.ceil(totalProposals / proposalsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+  useEffect(() => {
+    if (auth?.token) {
+      getProposals();
+    }
+  }, [auth, currentPage, searchQuery]);
 
   return (
     <div className="content-wrapper">
@@ -37,7 +86,7 @@ function Proposals() {
                   <input
                     type="search"
                     className="form-control"
-                    placeholder="Search by Product Name"
+                    placeholder="Search"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -67,82 +116,96 @@ function Proposals() {
         <div className="row m-2">
           <div className="col-12">
             <div className="card">
-              <div className="card-body table-responsive p-0">
+              <div className="card-body table-responsive p-4">
                 <table
                   id="example2"
                   className="table table-bordered table-hover"
                 >
-                  <thead>
+                  <thead className="bg-secondary text-white">
                     <tr>
-                      <th>Proposed To</th>
+                      <th>Sent To</th>
                       <th>Title</th>
                       <th>Sent On</th>
-                      <th className="text-center">Action</th>
+                      <th>Status</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
                     {/* Dynamic data or fallback message */}
-                    {/* {filteredProposals.length > 0 ? (
-                    filteredProposals.map((proposal) => (
-                      <tr key={proposal.id}>
-                        <td>{proposal.proposedTo}</td>
-                        <td>{proposal.title}</td>
-                        <td>{proposal.sentOn}</td>
-                        <td>
-                          <div className="d-flex justify-content-center">
-                            <button className="btn btn-primary btn-sm mx-1">View</button>
+                    {proposals.length > 0 ? (
+                      proposals.map((proposal) => (
+                        <tr key={proposal.id}>
+                          <td>{proposal.emailTo}</td>
+                          <td>{proposal.title}</td>
+                          <td>
+                            {new Date(proposal.createdAt).toLocaleString(
+                              "en-GB",
+                              {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              }
+                            )}
+                          </td>
+                          <td>{proposal.status}</td>
+                          <td>
                             <button
-                              className="btn btn-danger btn-sm mx-1"
-                              data-toggle="modal"
-                              data-target="#exampleModalCenter"
+                              onClick={() => HandleView(proposal)}
+                              className="btn btn-primary btn-sm m-1"
                             >
-                              Delete
+                              <i className="fas fa-file-alt"></i>
                             </button>
-                            <button className="btn btn-dark btn-sm mx-1">Edit</button>
-                          </div>
+                            {/* <div className="d-flex justify-content-center m-2">
+                              
+
+                              {/* <button className="btn btn-warning btn-sm m-1">
+                                <i className="fas fa-edit"></i>
+                              </button> 
+                            </div> */}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="4" className="text-center">
+                          No matching Proposal found
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="4" className="text-center">
-                        No matching Proposal found
-                      </td>
-                    </tr>
-                  )} */}
+                    )}
                   </tbody>
                 </table>
 
                 {/* Pagination Controls */}
-                <div className="d-flex ">
-                          <button
-                            className="btn btn-outline-primary mr-2"
-                            disabled={currentPage === 1}
-                            onClick={() => setCurrentPage(currentPage - 1)}
-                          >
-                            Previous
-                          </button>
-                          {Array.from({ length: totalPages }, (_, index) => (
-                            <button
-                              key={index + 1}
-                              onClick={() => setCurrentPage(index + 1)}
-                              className={`btn mr-2 ${
-                                currentPage === index + 1
-                                  ? "btn-primary"
-                                  : "btn-light"
-                              }`}
-                            >
-                              {index + 1}
-                            </button>
-                          ))}
-                          <button
-                            className="btn btn-outline-primary"
-                            disabled={currentPage === totalPages}
-                            onClick={() => setCurrentPage(currentPage + 1)}
-                          >
-                            Next
-                          </button>
-                        </div>
+                <div className="d-flex mt-3 flex-column flex-md-row">
+                  <button
+                    className="btn btn-outline-primary mr-2"
+                    disabled={currentPage === 1}
+                    onClick={handlePreviousPage}
+                  >
+                    Previous
+                  </button>
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <button
+                      key={index + 1}
+                      onClick={() => setCurrentPage(index + 1)}
+                      className={`btn mr-2 mt-2 mt-md-0 ${
+                        currentPage === index + 1 ? "btn-primary" : "btn-light"
+                      }`}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                  <button
+                    className="btn btn-outline-primary mt-2 mt-md-0"
+                    disabled={currentPage === totalPages}
+                    onClick={handleNextPage}
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
             </div>
           </div>

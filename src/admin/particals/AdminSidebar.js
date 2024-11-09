@@ -276,13 +276,13 @@ const AdminSidebar = () => {
               </li>
               <li className="nav-item">
                 <NavLink
-                  to="orders"
+                  to="subscriptions"
                   className={({ isActive }) =>
                     isActive ? "nav-link active" : "nav-link"
                   }
                 >
                   <i className="nav-icon fas fa-shopping-cart"></i>
-                  <p>Orders</p>
+                  <p>Subscriptions</p>
                 </NavLink>
               </li>
               <li className="nav-item">

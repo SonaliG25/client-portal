@@ -3,10 +3,11 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import { BASE_URL } from "../../utils/endPointNames.js";
 
-const Orders = () => {
+const Subscriptions = () => {
   const [loader, setLoader] = useState(true);
-  const [orders, setOrders] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -15,11 +16,11 @@ const Orders = () => {
   const [auth] = useAuth();
 
   // Fetch orders from the API
-  const getOrders = async () => {
+  const getSubscriptions = async () => {
     setLoader(true);
     try {
       const res = await axios.get(
-        `http://localhost:3000/order/allOrders?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`,
+        `${BASE_URL}/subscription/allSubscriptions?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`,
         {
           headers: {
             Authorization: `Bearer ${auth?.token}`,
@@ -27,7 +28,9 @@ const Orders = () => {
         }
       );
 
-      setOrders(res.data.data);
+      setSubscriptions(res.data.data);
+      console.log("res.data.data", res.data.data);
+
       setTotalPages(res.data.totalPages);
       setLoader(false);
     } catch (error) {
@@ -38,7 +41,7 @@ const Orders = () => {
 
   useEffect(() => {
     if (auth?.token) {
-      getOrders();
+      getSubscriptions();
     }
   }, [auth, searchQuery, currentPage]);
 
@@ -56,7 +59,7 @@ const Orders = () => {
   };
 
   const handleViewOrder = (data) => {
-    navigate(`/admin-dashboard/orders/${data._id}`);
+    navigate(`/admin-dashboard/subscription/${data._id}`);
   };
   const handleUpdateOrder = (data) => {
     navigate(`/admin-dashboard/orders/update/${data._id}`);
@@ -68,7 +71,7 @@ const Orders = () => {
         <div className="container-fluid">
           <div className="row align-items-center justify-content-between my-3">
             <div className="col-12 col-md-4 mb-2 mb-md-0">
-              <h1 className="font-weight-bold">Orders</h1>
+              <h1 className="font-weight-bold">Subscriptions</h1>
             </div>
             <div className="col-12 col-md-8 d-flex flex-column flex-md-row justify-content-md-end">
               <div className="form-group mb-2 mb-md-0 flex-grow-1 mr-md-3">
@@ -80,15 +83,6 @@ const Orders = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
-                  <div className="input-group-append">
-                    <button
-                      className="btn btn-outline-secondary"
-                      type="button"
-                      onClick={() => getOrders()}
-                    >
-                      <i className="fa fa-search" />
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -105,69 +99,68 @@ const Orders = () => {
               <>
                 <div className="table-responsive">
                   <table className="table table-bordered table-hover">
-                    <thead>
+                    <thead className="table-dark">
                       <tr>
-                        <th>Customer</th>
-                        <th>Products</th>
-                        <th>Shipping Address</th>
-                        <th>Payment Method</th>
-                        <th>Payment Status</th>
-                        <th>Order Status</th>
-                        <th>Shipping Cost</th>
-                        <th>Total Amount</th>
-                        <th>Discount</th>
-                        <th>Grand Total</th>
-                        <th>Order Date</th>
+                        <th>Customer Name</th>
+                        <th>Product Name(s)</th>
+                        <th>Created On</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {orders.length === 0 ? (
+                      {subscriptions.length === 0 ? (
                         <tr>
                           <td colSpan="11" className="text-center">
-                            No matching orders found
+                            No matching subscriptions found
                           </td>
                         </tr>
                       ) : (
-                        orders.map((order) => (
-                          <tr key={order._id}>
-                            <td>{order.customer?.name || "N/A"}</td>
+                        subscriptions.map((subscription) => (
+                          <tr key={subscription._id}>
+                            <td>{subscription.customer?.name || "N/A"}</td>
+                            <td>
+                              {subscription.products &&
+                              subscription.products.length > 0 ? (
+                                subscription.products.map((product, index) => (
+                                  <p key={index}>
+                                    {product.productId.name ||
+                                      "No Name Available"}
+                                  </p>
+                                ))
+                              ) : (
+                                <p>No products</p>
+                              )}
+                            </td>
+                            <td>
+                              {new Date(subscription.createdAt).toLocaleString(
+                                "en-GB",
+                                {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: true,
+                                }
+                              )}
+                            </td>
                             <td>
                               <div className="d-flex flex-column flex-md-row">
                                 <button
                                   className="btn btn-primary m-1"
-                                  onClick={() => handleViewOrder(order)}
+                                  onClick={() => handleViewOrder(subscription)}
                                 >
                                   <i className="fas fa-file-alt"></i>
                                 </button>
                                 <button
                                   className="btn btn-success m-1"
-                                  onClick={() => handleUpdateOrder(order)}
+                                  onClick={() =>
+                                    handleUpdateOrder(subscription)
+                                  }
                                 >
                                   <i className="fas fa-edit"></i>
                                 </button>
                               </div>
-                            </td>
-                            <td>
-                              {order.shippingAddress?.addressLine1},{" "}
-                              {order.shippingAddress?.addressLine2},{" "}
-                              {order.shippingAddress?.city},{" "}
-                              {order.shippingAddress?.state},{" "}
-                              {order.shippingAddress?.postalCode},{" "}
-                              {order.shippingAddress?.country}
-                            </td>
-                            <td>{order.paymentMethod}</td>
-                            <td>{order.paymentStatus}</td>
-                            <td>{order.orderStatus}</td>
-                            <td>{order.shippingCost}</td>
-                            <td>
-                              {order.totalAmountCurrency} {order.totalAmount}
-                            </td>
-                            <td>{order.discount}</td>
-                            <td>
-                              {order.grandTotalCurrency} {order.grandTotal}
-                            </td>
-                            <td>
-                              {moment(order.orderDate).format("MMMM DD, YYYY")}
                             </td>
                           </tr>
                         ))
@@ -213,4 +206,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default Subscriptions;

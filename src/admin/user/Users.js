@@ -1,25 +1,23 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { useEditUserContext } from "../../context/EditUserContext.jsx";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import * as Routes from "../../utils/routeNames";
 
 const Users = () => {
   const [auth] = useAuth();
-  // const [UserDetails, setUserDetails] = useEditUserContext();
   const [userdata, setUserdata] = useState([]);
   const [deleteId, setDeleteId] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const [searchQuery, setSearchQuery] = useState("");
   const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const getUser = async () => {
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
       const res = await axios.get(
         `http://localhost:3000/user/users?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`,
@@ -35,7 +33,7 @@ const Users = () => {
       console.log(res.data.data);
     } catch (error) {
       console.error(error);
-      setLoading(false); // Stop loading after an error
+      setLoading(false);
     }
   };
 
@@ -46,10 +44,10 @@ const Users = () => {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
-      toast.success("deleted Suceessfully");
-      getUser(); // Refresh the user list after deletion
+      toast.success("Deleted Successfully");
+      getUser();
     } catch (error) {
-      toast.error("Unble to delete");
+      toast.error("Unable to delete");
       console.log(error);
     }
   };
@@ -65,13 +63,16 @@ const Users = () => {
   };
 
   const HandleView = (data) => {
-    // setUserDetails(data);
     navigate(`/admin-dashboard/view/${data._id}`);
   };
 
   const handleUpdateForm = (data) => {
-    // setUserDetails(data);
     navigate(`/admin-dashboard/Update/${data._id}`);
+  };
+
+  const handleSupportChat = () => {
+  //  navigate(Routes.CHATS);
+  navigate('/chats')
   };
 
   return (
@@ -196,6 +197,12 @@ const Users = () => {
                                       onClick={() => handleUpdateForm(data)}
                                     >
                                       <i className="fas fa-edit"></i>
+                                    </button>
+                                    <button
+                                      className="btn btn-info btn-sm m-1"
+                                      onClick={handleSupportChat}
+                                    >
+                                      <i className="fas fa-comments"></i>
                                     </button>
                                   </div>
                                 </td>

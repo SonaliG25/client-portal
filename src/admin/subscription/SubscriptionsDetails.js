@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 
-function ViewOrder() {
+function SubscriptionDetails() {
   const [auth] = useAuth();
   const { id } = useParams();
   const [orderInfo, setOrderInfo] = useState(null);
@@ -113,4 +113,4 @@ function ViewOrder() {
   );
 }
 
-export default ViewOrder;
+export default SubscriptionDetails;

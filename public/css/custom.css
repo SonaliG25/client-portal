@@ -1,0 +1,10 @@
+@font-face {
+  font-family: "Hero Light";
+  src: url("/public/HeroLight-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: "Hero Light", sans-serif;
+}
