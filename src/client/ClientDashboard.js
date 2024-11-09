@@ -1,9 +1,7 @@
-// import React from "react";
-// const ClientDashboard = () => {
+import React from "react";
 
-//   return (
+function ClientDashboard() {
+  return <div></div>;
+}
 
-//   );
-// };
-
-// export default ClientDashboard;
+export default ClientDashboard;

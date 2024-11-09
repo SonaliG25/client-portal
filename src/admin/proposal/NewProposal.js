@@ -565,46 +565,16 @@ const NewProposal = () => {
                   </div>
                   <div className="card-body table-responsive">
                     <table className="table table-bordered table-striped">
-                      {/* <thead className="thead-dark">
-                        <tr>
-                          <th>Document Name</th>
-                          <th>New Document Name</th> 
-                        </tr>
-                      </thead> */}
                       <tbody>
                         {moreAttachmentsToUpload.map((attachment, index) => (
                           <tr key={index}>
                             <td>{attachment.name}</td>
-                            {/* <td>
-                              <input
-                                type="text"
-                                value={attachment.filename}
-                                onChange={(e) =>
-                                  handleDocumentNameChange(
-                                    index,
-                                    e.target.value
-                                  )
-                                }
-                                className="form-control"
-                              />
-                            </td> */}
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
                 </div>
-                {/* Button to Upload Documents
-                <div className="row mt-3">
-                  <div className="col-12">
-                    <button
-                      onClick={handleUploadFiles}
-                      className="btn btn-primary btn-block"
-                    >
-                      Upload Documents
-                    </button>
-                  </div>
-                </div> */}
               </div>
               <div className="d-flex justify-content-between align-items-center mt-4 mb-4">
                 <h5>Selected Products</h5>

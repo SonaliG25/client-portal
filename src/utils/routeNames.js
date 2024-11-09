@@ -5,11 +5,11 @@ export const REGISTER = "/register";
 
 // Dashboard Routes
 export const ADMIN_DASHBOARD = "/admin-dashboard";
-export const USER_DASHBOARD = "/user-dashboard";
 
 // Admin Sub-Routes
 export const HOME = `${ADMIN_DASHBOARD}/home`;
 export const PROPOSALS = `${ADMIN_DASHBOARD}/proposal`;
+export const TICKETS = `${ADMIN_DASHBOARD}/tickets`;
 export const CATEGORYS = `${ADMIN_DASHBOARD}/categories`;
 export const NEW_PROPOSAL_TEMPLATE = `${ADMIN_DASHBOARD}/newproposaltemplete`;
 export const PROPOSAL_TEMPLATES = `${ADMIN_DASHBOARD}/proposaltempletes`;
@@ -45,3 +45,10 @@ export const CHATS = `/chats`
 
 // Fallback/NotFound Route
 export const NOT_FOUND = "*";
+
+export const USER_DASHBOARD = "/user-dashboard";
+export const USER_HOME = `${USER_DASHBOARD}/home`;
+
+export const SERVICE_DESK = `${USER_DASHBOARD}/serviceDesk`;
+export const NEW_TICKET = `${USER_DASHBOARD}/newTicket`;
+export const VIEW_TICKET = `${USER_DASHBOARD}/:id`;

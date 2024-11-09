@@ -19,16 +19,24 @@ import NewProduct from "./admin/product/NewProduct";
 // Import route names
 import * as RoutesNames from "./utils/routeNames";
 import UserLayout from "./client/UserLayout";
-import GetProposal from "./client/GetProposal";
-import ProposalInfo from "./client/ProposalInfo";
+import GetProposal from "./client/proposals/GetProposal";
+import ProposalInfo from "./client/proposals/ProposalInfo";
 import UpdateProduct from "./admin/product/updateProduct";
-import Home from "./admin/home/home";
+import AdminHome from "./admin/home/home.js";
 import Category from "./admin/Category/Category";
 import NewProposal from "./admin/proposal/NewProposal";
 import ViewOrder from "./admin/orders/ViewOrder";
 import UpdateOrder from "./admin/orders/UpdateOrder";
+
 // import AdminChat from "./chats/chat";
-import Chat from "./chats/Chat";
+import Chat from "./chats/Chat.js";
+
+import ServiceDesk from "./client/serviceDesk/ServiceDesk";
+import CreateTicket from "./client/serviceDesk/NewTicket";
+import ClientHome from "./client/clientHome/ClientHome.js";
+import ViewTicket from "./client/serviceDesk/ViewTicket.js";
+import Tickets from "./admin/Ticket/Tickets.js";
+
 
 function App() {
   const router = createBrowserRouter([
@@ -40,12 +48,29 @@ function App() {
       element: <UserLayout />,
       children: [
         {
+          path: RoutesNames.USER_HOME,
+          element: <ClientHome />,
+        },
+        {
           path: "proposal",
           element: <GetProposal />,
         },
         {
           path: "proposal-view",
           element: <ProposalInfo />,
+        },
+        //ServiceDesk
+        {
+          path: RoutesNames.SERVICE_DESK,
+          element: <ServiceDesk />,
+        },
+        {
+          path: RoutesNames.NEW_TICKET,
+          element: <CreateTicket />,
+        },
+        {
+          path: RoutesNames.VIEW_TICKET,
+          element: <ViewTicket />,
         },
       ],
     },
@@ -54,12 +79,13 @@ function App() {
       path: RoutesNames.ADMIN_DASHBOARD,
       element: <AdminLayout />,
       children: [
+        { path: RoutesNames.HOME, element: <AdminHome /> },
         { path: RoutesNames.VIEW_ORDER, element: <ViewOrder /> },
         { path: RoutesNames.UPDATE_ORDER, element: <UpdateOrder /> },
-        { path: RoutesNames.HOME, element: <Home /> },
         { path: RoutesNames.PROPOSALS, element: <Proposals /> },
         { path: RoutesNames.NEW_PROPOSAL, element: <NewProposal /> },
         { path: RoutesNames.CATEGORYS, element: <Category /> },
+        { path: RoutesNames.TICKETS, element: <Tickets /> },
         {
           path: RoutesNames.NEW_PROPOSAL_TEMPLATE,
           element: <NewProposalTemplete />,

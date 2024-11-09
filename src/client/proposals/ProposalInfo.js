@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useProposalView } from "../context/ProposalViewContext";
+import { useProposalView } from "../../context/ProposalViewContext";
 import {
   FaEnvelope,
   FaCalendarAlt,
