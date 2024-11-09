@@ -10,6 +10,7 @@ export const ADMIN_DASHBOARD = "/admin-dashboard";
 export const HOME = `${ADMIN_DASHBOARD}/home`;
 export const PROPOSALS = `${ADMIN_DASHBOARD}/proposal`;
 export const TICKETS = `${ADMIN_DASHBOARD}/tickets`;
+export const TICKETS_VIEW = `${ADMIN_DASHBOARD}/tickets/:id`;
 export const CATEGORYS = `${ADMIN_DASHBOARD}/categories`;
 export const NEW_PROPOSAL_TEMPLATE = `${ADMIN_DASHBOARD}/newproposaltemplete`;
 export const PROPOSAL_TEMPLATES = `${ADMIN_DASHBOARD}/proposaltempletes`;

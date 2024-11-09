@@ -6,12 +6,81 @@ import { BASE_URL } from "../../utils/endPointNames";
 
 const ViewTicket = () => {
   const [auth] = useAuth();
-  const { id } = useParams();
-  const [ticketData, setTicketData] = useState({ attachments: [] });
-  const [comment, setComment] = useState("");
   const messagesEndRef = useRef(null);
+  const [status, setStatus] = useState("");
+  const { id } = useParams();
+  const [ticketData, setTicketData] = useState(null); // Initially set to null
+  const [comment, setComment] = useState(""); //for comment
+  const [resolutionNotes, setResolutionNotes] = useState("");
   const navigate = useNavigate();
+  const fetchTicket = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/ticket/${id}`, {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
+      setTicketData(response.data);
+      setStatus(response.data.status); // Set initial status
+      console.log("Fetched ticket data:", response.data);
+    } catch (error) {
+      console.error("Error fetching ticket details:", error);
+    }
+  };
+  useEffect(() => {
+    if (auth?.token) {
+      fetchTicket();
+    }
+  }, [auth, id]);
 
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
+  };
+
+  const handleUpdateStatus = async () => {
+    try {
+      const updatedData = {
+        status: status,
+        // Empty attachments
+      };
+
+      // Send only the status update with empty fields for other fields
+      await axios.patch(
+        `${BASE_URL}/ticket/${id}`,
+        updatedData, // Send the updated data with other fields empty
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
+      );
+      navigate(-1);
+      console.log("Status updated successfully");
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+
+  const handleAddResolutionNotes = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/ticket/resolutionNotes/${id}`,
+        {
+          resolutionNotes: resolutionNotes,
+        },
+        {
+          headers: { Authorization: `Bearer ${auth?.token}` },
+        }
+      );
+      console.log("resolutionNotes", res.data);
+      setResolutionNotes("");
+      fetchTicket();
+      // Re-fetch ticket data to display the new comment
+    } catch (error) {
+      console.log("error in Comment", error);
+    }
+  };
   const handleAddComment = async (e) => {
     e.preventDefault();
     try {
@@ -35,27 +104,7 @@ const ViewTicket = () => {
       console.log("error in Comment", error);
     }
   };
-  const fetchTicket = async () => {
-    try {
-      const response = await axios.get(`${BASE_URL}/ticket/${id}`, {
-        headers: {
-          Authorization: `Bearer ${auth?.token}`,
-        },
-      });
-      setTicketData(response.data);
-      console.log("Fetched ticket data:", response.data);
-    } catch (error) {
-      console.error("Error fetching ticket details:", error);
-    }
-  };
-  useEffect(() => {
-    if (auth?.user?.role) {
-      console.log("role:", auth?.user?.role);
-    }
-    if (auth?.token) {
-      fetchTicket();
-    }
-  }, [auth, id]);
+
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -65,7 +114,6 @@ const ViewTicket = () => {
   if (!ticketData) {
     return <p>Loading ticket details...</p>;
   }
-
   return (
     <div className="content-wrapper">
       {/* Page Header */}
@@ -99,10 +147,23 @@ const ViewTicket = () => {
                   <dd className="col-sm-8">{ticketData?.priority}</dd>
 
                   <dt className="col-sm-4">Status:</dt>
-                  <dd className="col-sm-8">{ticketData?.status}</dd>
+                  <dd className="col-sm-8">
+                    <select
+                      value={status}
+                      onChange={handleStatusChange}
+                      className="form-control"
+                    >
+                      <option value="Open">Open</option>
+                      <option value="In Progress">In Progress</option>
+                      <option value="Closed">Closed</option>
+                    </select>
+                  </dd>
                 </dl>
               </div>
             </div>
+            <button className="btn btn-success" onClick={handleUpdateStatus}>
+              Update
+            </button>
           </div>
 
           <div className="col-md-6">
@@ -130,25 +191,25 @@ const ViewTicket = () => {
                 <div className="direct-chat-messages">
                   {ticketData?.comments?.map((comment, index) => {
                     // Check if the current user is admin
-                    const isAdmin = comment?.user?.name !== "client";
+                    const isAdmin = comment?.user?.name !== "admin";
                     return (
                       <div
                         key={index}
                         className={`direct-chat-msg ${
-                          isAdmin ? "left" : "right"
+                          isAdmin ? "left mr-auto" : "right ml-auto"
                         }`}
                       >
                         <div className="direct-chat-infos clearfix">
                           <span
                             className={`direct-chat-name float-${
-                              !isAdmin ? "right" : "left"
+                              isAdmin == "admin" ? "right" : "left"
                             }`}
                           >
                             {comment.user.name}
                           </span>
                           <span
                             className={`direct-chat-timestamp float-${
-                              !isAdmin ? "left" : "right"
+                              isAdmin == "admin" ? "left" : "right"
                             }`}
                           >
                             {new Date(comment.createdAt).toLocaleString()}
@@ -189,8 +250,36 @@ const ViewTicket = () => {
               </div>
             </div>
           </div>
-          
-
+          <div className="col-md-6">
+            <div className="card card-primary card-outline direct-chat direct-chat-primary">
+              <div className="card-header">
+                <h3 className="card-title">ResolutionNotes</h3>
+              </div>
+              <div className="card-body">
+                <div className="direct-chat-messages">
+                  <form onSubmit={handleAddResolutionNotes}>
+                    <div className="input-group">
+                      <input
+                        type="text"
+                        name="message"
+                        placeholder="Add ResolutionNotes ..."
+                        className="form-control"
+                        value={resolutionNotes}
+                        onChange={(e) => setResolutionNotes(e.target.value)}
+                      />
+                      <span className="input-group-append">
+                        <button type="submit" className="btn btn-primary">
+                          Send
+                        </button>
+                      </span>
+                    </div>
+                  </form>
+                  <div ref={messagesEndRef} />
+                </div>
+              </div>
+              <div className="card-footer"></div>
+            </div>
+          </div>
         </div>
 
         {/* Uploaded Documents Card */}
@@ -236,8 +325,6 @@ const ViewTicket = () => {
               </div>
             </div>
           )}
-
-        {/* Back Button */}
       </section>
     </div>
   );

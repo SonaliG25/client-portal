@@ -1,135 +1,3 @@
-// import { useAuth } from "../../context/AuthContext"; // Adjust the path according to where your useAuth hook is located
-// import { BASE_URL } from "../../utils/endPointNames";
-
-// // TicketsTable.js
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
-
-// const ServiceDesk = () => {
-//   const [auth] = useAuth(); // Get the logged-in user info (including clientId)
-//   const [tickets, setTickets] = useState([]);
-//   const [totalPages, setTotalPages] = useState(1);
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     console.log("auth", auth.user.userId, currentPage);
-
-//     const fetchTickets = async (page = 1) => {
-//       try {
-//         const clientId = auth.user.userId; // Retrieve clientId from auth
-//         const response = await axios.get(BASE_URL + "/ticket/ticketsByClient", {
-//           params: {
-//             clientId, // Assuming clientId is part of the logged-in user info
-//             page,
-//             limit: 10,
-//           },
-//           headers: {
-//             Authorization: `Bearer ${auth.token}`,
-//           },
-//         });
-
-//         const { tickets, totalPages, currentPage } = response.data;
-//         setTickets(tickets);
-//         setTotalPages(totalPages);
-//         setCurrentPage(currentPage);
-//       } catch (error) {
-//         console.error("Error fetching tickets:", error);
-//       }
-//     };
-
-//     fetchTickets();
-//   }, [auth.token, auth.userId, currentPage]);
-
-//   const handlePageChange = (pageNumber) => {
-//     setCurrentPage(pageNumber);
-//   };
-//   const handleAddUser = () => {
-//     navigate(`${USER_DASHBOARD}/newTicket`);
-//   };
-
-//   return (
-//     <div className="content-wrapper">
-//       <h3>My Tickets</h3>
-//       <button onClick={handleAddUser} className="btn btn-success mt-2 mt-md-0">
-//         <i className="fas fa-plus mr-1"></i> Add ticket
-//       </button>
-//       <table className="table">
-//         <thead>
-//           <tr>
-//             <th>Title</th>
-//             <th>Description</th>
-//             <th>Priority</th>
-//             <th>Status</th>
-//             <th>Assigned To</th>
-//             <th>Created At</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {tickets.length === 0 ? (
-//             <tr>
-//               <td colSpan="6">No tickets found</td>
-//             </tr>
-//           ) : (
-//             tickets.map((ticket) => (
-//               <tr key={ticket._id}>
-//                 <td>{ticket.title}</td>
-//                 <td>{ticket.description}</td>
-//                 <td>{ticket.priority}</td>
-//                 <td>{ticket.status}</td>
-//                 <td>{ticket.assignedTo ? ticket.assignedTo.name : "N/A"}</td>
-//                 <td>{new Date(ticket.createdAt).toLocaleString()}</td>
-//               </tr>
-//             ))
-//           )}
-//         </tbody>
-//       </table>
-
-//       <nav>
-//         <ul className="pagination">
-//           {currentPage > 1 && (
-//             <li className="page-item">
-//               <button
-//                 className="page-link"
-//                 onClick={() => handlePageChange(currentPage - 1)}
-//               >
-//                 Previous
-//               </button>
-//             </li>
-//           )}
-//           {[...Array(totalPages)].map((_, index) => (
-//             <li
-//               key={index}
-//               className={`page-item ${
-//                 currentPage === index + 1 ? "active" : ""
-//               }`}
-//             >
-//               <button
-//                 className="page-link"
-//                 onClick={() => handlePageChange(index + 1)}
-//               >
-//                 {index + 1}
-//               </button>
-//             </li>
-//           ))}
-//           {currentPage < totalPages && (
-//             <li className="page-item">
-//               <button
-//                 className="page-link"
-//                 onClick={() => handlePageChange(currentPage + 1)}
-//               >
-//                 Next
-//               </button>
-//             </li>
-//           )}
-//         </ul>
-//       </nav>
-//     </div>
-//   );
-// };
-
-// export default ServiceDesk;
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -138,38 +6,102 @@ import { USER_DASHBOARD } from "../../utils/routeNames";
 
 function ServiceDesk() {
   const [auth] = useAuth();
-  const [ticketdata, setTicketData] = useState([]);
+  const [ticketData, setTicketData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
-  const fetchTicketData = async () => {
+  const fetchTicketData = async (page = 1, search = "") => {
     try {
       const res = await axios.get(`http://localhost:3000/ticket/tickets`, {
         headers: {
           Authorization: `Bearer ${auth?.token}`,
         },
+        params: {
+          page,
+          limit: 5, // Adjust the limit as needed
+          search, // Passing search term to the API
+        },
       });
-      setTicketData(res.data);
-      console.log(res.data);
+
+      const { tickets, totalPages: fetchedTotalPages } = res.data;
+      setTicketData(tickets);
+      setTotalPages(fetchedTotalPages);
+      setCurrentPage(page);
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (auth?.token) {
+      fetchTicketData(currentPage, searchTerm);
+    }
+  }, [auth, currentPage, searchTerm]);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const handlePrevPage = () => {
+    handlePageChange(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    handlePageChange(currentPage + 1);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page on new search
+  };
+
   const handleAddUser = () => {
     navigate(`${USER_DASHBOARD}/newTicket`);
   };
-  const handleview = (data) => {
+
+  const handleView = (data) => {
     navigate(`${USER_DASHBOARD}/${data._id}`);
   };
-  useEffect(() => {
-    if (auth?.token) {
-      fetchTicketData();
-    }
-  }, [auth]);
+
   return (
     <div className="content-wrapper">
-      {/* Content Header */}
-
-      {/* Main Content */}
+      <section className="content-header">
+        <div className="container-fluid">
+          <div className="row align-items-center justify-content-between my-3">
+            <div className="col-12 col-md-4 mb-2 mb-md-0">
+              <h1 className="font-weight-bold">Tickets</h1>
+            </div>
+            <div className="col-12 col-md-8 d-flex flex-column flex-md-row justify-content-md-end">
+              <div className="form-group mb-2 mb-md-0 flex-grow-1 mr-md-3">
+                <div className="input-group">
+                  <input
+                    type="search"
+                    className="form-control"
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={handleSearch}
+                  />
+                  <div className="input-group-append">
+                    <button className="btn btn-outline-secondary" type="button">
+                      <i className="fa fa-search" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={handleAddUser}
+                className="btn btn-success mt-2 mt-md-0"
+              >
+                <i className="fas fa-plus mr-1"></i> Add Ticket
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
       <section className="content">
         <div className="container-fluid">
           <div className="row m-2">
@@ -177,13 +109,7 @@ function ServiceDesk() {
               <div className="card">
                 <div className="card-body">
                   <div className="table-responsive">
-                    <button
-                      className=" m-1 btn btn-success mt-2 mt-md-0"
-                      onClick={handleAddUser}
-                    >
-                      <i className="fas fa-plus mr-1"></i> Add ticket
-                    </button>
-                    <table className="table s">
+                    <table className="table">
                       <thead>
                         <tr>
                           <th>Title</th>
@@ -192,16 +118,16 @@ function ServiceDesk() {
                           <th>Status</th>
                           <th>Assigned To</th>
                           <th>Created At</th>
-                          <th> action</th>
+                          <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {ticketdata.length === 0 ? (
+                        {ticketData.length === 0 ? (
                           <tr>
-                            <td colSpan="6">No tickets found</td>
+                            <td colSpan="7">No tickets found</td>
                           </tr>
                         ) : (
-                          ticketdata.map((ticket) => (
+                          ticketData.map((ticket) => (
                             <tr key={ticket._id}>
                               <td>{ticket.title}</td>
                               <td>{ticket.description}</td>
@@ -216,10 +142,9 @@ function ServiceDesk() {
                                 {new Date(ticket.createdAt).toLocaleString()}
                               </td>
                               <td>
-                                {" "}
                                 <button
                                   className="btn btn-primary"
-                                  onClick={() => handleview(ticket)}
+                                  onClick={() => handleView(ticket)}
                                 >
                                   <i className="fas fa-file-alt"></i>
                                 </button>
@@ -229,37 +154,38 @@ function ServiceDesk() {
                         )}
                       </tbody>
                     </table>
+
+                    {/* Pagination Controls */}
+                    <div className="d-flex justify-content-center mt-3">
+                      <button
+                        className="btn btn-outline-primary mr-2"
+                        disabled={currentPage === 1}
+                        onClick={handlePrevPage}
+                      >
+                        Previous
+                      </button>
+                      {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                          key={index + 1}
+                          onClick={() => handlePageChange(index + 1)}
+                          className={`btn mr-2 ${
+                            currentPage === index + 1
+                              ? "btn-primary"
+                              : "btn-light"
+                          }`}
+                        >
+                          {index + 1}
+                        </button>
+                      ))}
+                      <button
+                        className="btn btn-outline-primary"
+                        disabled={currentPage === totalPages}
+                        onClick={handleNextPage}
+                      >
+                        Next
+                      </button>
+                    </div>
                   </div>
-                  {/* Pagination Controls */}
-                  {/* <div className="d-flex ">
-                  <button
-                    className="btn btn-outline-primary mr-2"
-                    disabled={currentPage === 1}
-                    onClick={handlePrevPage}
-                  >
-                    Previous
-                  </button>
-                  {Array.from({ length: totalPages }, (_, index) => (
-                    <button
-                      key={index + 1}
-                      onClick={() => setCurrentPage(index + 1)}
-                      className={`btn mr-2 ${
-                        currentPage === index + 1
-                          ? "btn-primary"
-                          : "btn-light"
-                      }`}
-                    >
-                      {index + 1}
-                    </button>
-                  ))}
-                  <button
-                    className="btn btn-outline-primary"
-                    disabled={currentPage === totalPages}
-                    onClick={handleNextPage}
-                  >
-                    Next
-                  </button>
-                </div> */}
                 </div>
               </div>
             </div>

@@ -32,6 +32,7 @@ import CreateTicket from "./client/serviceDesk/NewTicket";
 import ClientHome from "./client/clientHome/ClientHome.js";
 import ViewTicket from "./client/serviceDesk/ViewTicket.js";
 import Tickets from "./admin/Ticket/Tickets.js";
+import ViewTecket from "./admin/Ticket/ViewTecket.js";
 
 function App() {
   const router = createBrowserRouter([
@@ -80,6 +81,7 @@ function App() {
         { path: RoutesNames.NEW_PROPOSAL, element: <NewProposal /> },
         { path: RoutesNames.CATEGORYS, element: <Category /> },
         { path: RoutesNames.TICKETS, element: <Tickets /> },
+        { path: RoutesNames.TICKETS_VIEW, element: <ViewTecket /> },
         {
           path: RoutesNames.NEW_PROPOSAL_TEMPLATE,
           element: <NewProposalTemplete />,
