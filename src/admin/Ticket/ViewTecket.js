@@ -10,9 +10,10 @@ const ViewTicket = () => {
   const [status, setStatus] = useState("");
   const { id } = useParams();
   const [ticketData, setTicketData] = useState(null); // Initially set to null
-  const [comment, setComment] = useState(""); //for comment
-  const [resolutionNotes, setResolutionNotes] = useState("");
+  const [comment, setComment] = useState(""); // For comment
+  const [resolutionNotes, setResolutionNotes] = useState(""); // For resolution notes (string)
   const navigate = useNavigate();
+
   const fetchTicket = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/ticket/${id}`, {
@@ -22,11 +23,13 @@ const ViewTicket = () => {
       });
       setTicketData(response.data);
       setStatus(response.data.status); // Set initial status
+      setResolutionNotes(response.data.resolutionNotes || ""); // Set initial resolution notes, if any
       console.log("Fetched ticket data:", response.data);
     } catch (error) {
       console.error("Error fetching ticket details:", error);
     }
   };
+
   useEffect(() => {
     if (auth?.token) {
       fetchTicket();
@@ -73,14 +76,34 @@ const ViewTicket = () => {
           headers: { Authorization: `Bearer ${auth?.token}` },
         }
       );
-      console.log("resolutionNotes", res.data);
-      setResolutionNotes("");
-      fetchTicket();
-      // Re-fetch ticket data to display the new comment
+      console.log("Resolution Notes added:", res.data);
+      setResolutionNotes(""); // Clear the input field
+      fetchTicket(); // Re-fetch ticket data to display updated resolution notes
     } catch (error) {
-      console.log("error in Comment", error);
+      console.log("Error adding resolution notes:", error);
     }
   };
+
+  const handleUpdateResolutionNotes = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.patch(
+        `${BASE_URL}/ticket/resolutionNotes/${id}`,
+        {
+          resolutionNotes: resolutionNotes,
+        },
+        {
+          headers: { Authorization: `Bearer ${auth?.token}` },
+        }
+      );
+      console.log("Resolution Notes updated:", res.data);
+      setResolutionNotes(""); // Clear the input field
+      fetchTicket(); // Re-fetch ticket data to display updated resolution notes
+    } catch (error) {
+      console.log("Error updating resolution notes:", error);
+    }
+  };
+
   const handleAddComment = async (e) => {
     e.preventDefault();
     try {
@@ -96,12 +119,11 @@ const ViewTicket = () => {
           headers: { Authorization: `Bearer ${auth?.token}` },
         }
       );
-      console.log("comment", res.data);
-      setComment("");
-      fetchTicket();
-      // Re-fetch ticket data to display the new comment
+      console.log("Comment added:", res.data);
+      setComment(""); // Clear the comment field
+      fetchTicket(); // Re-fetch ticket data to display the new comment
     } catch (error) {
-      console.log("error in Comment", error);
+      console.log("Error adding comment:", error);
     }
   };
 
@@ -114,6 +136,7 @@ const ViewTicket = () => {
   if (!ticketData) {
     return <p>Loading ticket details...</p>;
   }
+
   return (
     <div className="content-wrapper">
       {/* Page Header */}
@@ -166,6 +189,7 @@ const ViewTicket = () => {
             </button>
           </div>
 
+          {/* Client Details */}
           <div className="col-md-6">
             <div className="card">
               <div className="card-header bg-info">
@@ -182,6 +206,8 @@ const ViewTicket = () => {
               </div>
             </div>
           </div>
+
+          {/* Comments Section */}
           <div className="col-md-6">
             <div className="card card-primary card-outline direct-chat direct-chat-primary">
               <div className="card-header">
@@ -190,7 +216,6 @@ const ViewTicket = () => {
               <div className="card-body">
                 <div className="direct-chat-messages">
                   {ticketData?.comments?.map((comment, index) => {
-                    // Check if the current user is admin
                     const isAdmin = comment?.user?.name !== "admin";
                     return (
                       <div
@@ -202,25 +227,25 @@ const ViewTicket = () => {
                         <div className="direct-chat-infos clearfix">
                           <span
                             className={`direct-chat-name float-${
-                              isAdmin == "admin" ? "right" : "left"
+                              isAdmin ? "left" : "right"
                             }`}
                           >
                             {comment.user.name}
                           </span>
                           <span
                             className={`direct-chat-timestamp float-${
-                              isAdmin == "admin" ? "left" : "right"
+                              isAdmin ? "right" : "left"
                             }`}
                           >
                             {new Date(comment.createdAt).toLocaleString()}
                           </span>
                         </div>
                         <img
-                          class="direct-chat-img"
+                          className="direct-chat-img"
                           src="/img/user1-128x128.jpg"
-                          alt="Message User Image"
-                        ></img>
-                        <div className={`direct-chat-text`}>
+                          alt="Message User"
+                        />
+                        <div className="direct-chat-text">
                           {comment.message}
                         </div>
                       </div>
@@ -250,81 +275,54 @@ const ViewTicket = () => {
               </div>
             </div>
           </div>
+
+          {/* Resolution Notes Section */}
           <div className="col-md-6">
             <div className="card card-primary card-outline direct-chat direct-chat-primary">
               <div className="card-header">
-                <h3 className="card-title">ResolutionNotes</h3>
+                <h3 className="card-title">Resolution Notes</h3>
               </div>
               <div className="card-body">
                 <div className="direct-chat-messages">
-                  <form onSubmit={handleAddResolutionNotes}>
-                    <div className="input-group">
-                      <input
-                        type="text"
-                        name="message"
-                        placeholder="Add ResolutionNotes ..."
-                        className="form-control"
-                        value={resolutionNotes}
-                        onChange={(e) => setResolutionNotes(e.target.value)}
-                      />
-                      <span className="input-group-append">
-                        <button type="submit" className="btn btn-primary">
-                          Send
-                        </button>
+                  <div className="direct-chat-msg right ml-auto">
+                    <div className="direct-chat-infos clearfix">
+                      <span className="direct-chat-name float-right">
+                        {/* Display resolution notes as a single string */}
+                        {ticketData?.resolutionNotes && (
+                          <p>{ticketData?.resolutionNotes}</p>
+                        )}
                       </span>
                     </div>
-                  </form>
-                  <div ref={messagesEndRef} />
+                  </div>
                 </div>
               </div>
-              <div className="card-footer"></div>
+              <div className="card-footer">
+                <form onSubmit={handleAddResolutionNotes}>
+                  <div className="input-group">
+                    <input
+                      name="resolutionNotes"
+                      placeholder="Add Resolution Notes ..."
+                      className="form-control"
+                      value={resolutionNotes}
+                      onChange={(e) => setResolutionNotes(e.target.value)}
+                    />
+                    <span className="input-group-append">
+                      <button type="submit" className="btn btn-primary">
+                        Add Note
+                      </button>
+                    </span>
+                  </div>
+                </form>
+                <button
+                  className="btn btn-warning mt-2"
+                  onClick={handleUpdateResolutionNotes}
+                >
+                  Update Resolution
+                </button>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Uploaded Documents Card */}
-        {Array.isArray(ticketData.attachments) &&
-          ticketData.attachments?.length > 0 && (
-            <div className="row mt-3">
-              <div className="col-md-12">
-                <div className="card">
-                  <div className="card-header bg-primary">
-                    <h3 className="card-title">Uploaded Documents</h3>
-                  </div>
-                  <div className="card-body table-responsive">
-                    <table className="table table-bordered table-striped">
-                      <tbody>
-                        {ticketData.attachments.map((attachment, index) => (
-                          <tr key={index}>
-                            <td>
-                              {/* Check if the filename suggests it's an image */}
-                              {attachment.filename.match(
-                                /\.(jpg|jpeg|png|gif)$/i
-                              ) ? (
-                                <img
-                                  src={attachment.path} // Use the correct path to access the image
-                                  alt={attachment.filename}
-                                  style={{ width: "100px", height: "auto" }}
-                                />
-                              ) : (
-                                <a
-                                  href={attachment.path}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  {attachment.filename}
-                                </a>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
       </section>
     </div>
   );

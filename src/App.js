@@ -25,8 +25,6 @@ import UpdateProduct from "./admin/product/updateProduct";
 import AdminHome from "./admin/home/home.js";
 import Category from "./admin/Category/Category";
 import NewProposal from "./admin/proposal/NewProposal";
-import ViewOrder from "./admin/orders/ViewOrder";
-import UpdateOrder from "./admin/orders/UpdateOrder";
 
 // import AdminChat from "./chats/chat";
 import Chat from "./chats/Chat.js";
@@ -37,7 +35,9 @@ import ClientHome from "./client/clientHome/ClientHome.js";
 import ViewTicket from "./client/serviceDesk/ViewTicket.js";
 import Tickets from "./admin/Ticket/Tickets.js";
 import ViewTecket from "./admin/Ticket/ViewTecket.js";
-
+import Subscriptions from "./admin/subscription/Subscriptions.js";
+import SubscriptionDetails from "./admin/subscription/SubscriptionsDetails.js";
+import ProposalDetails from "./admin/proposal/ProposalDetails.js"
 function App() {
   const router = createBrowserRouter([
     { path: RoutesNames.LOGIN, element: <Login /> },
