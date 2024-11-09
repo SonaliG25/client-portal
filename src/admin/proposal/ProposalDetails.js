@@ -4,15 +4,19 @@ import {
   Card,
   CardBody,
   CardHeader,
-  CardTitle,
   Table,
   Button,
   ListGroup,
   ListGroupItem,
   Badge,
-  Dropdown,
-  DropdownMenu,
   Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  FormGroup,
+  Label,
+  Input,
+  Form,
 } from "reactstrap";
 import {
   FaFileAlt,
@@ -24,29 +28,64 @@ import {
 } from "react-icons/fa";
 import { BASE_URL } from "../../utils/endPointNames";
 import { useAuth } from "../../context/AuthContext";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const ProposalDetails = () => {
   const { id } = useParams();
   const [auth] = useAuth();
+  const navigate = useNavigate();
   const [proposal, setProposal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updateStatus, setUpdateStatus] = useState(null);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const toggleModal = () => setModalOpen(!isModalOpen);
+
+  const [isFirstModalOpen, setFirstModalOpen] = useState(false);
+
+  const toggleFirstModal = () => setFirstModalOpen(!isFirstModalOpen);
 
   const handleUpdateStatusVar = () => {
-    toggleModal(true);
+    toggleFirstModal(true);
   };
 
   const handleConfirmUpdate = async () => {
     await handleUpdateStatus(updateStatus);
   };
+  const handleSubscriptionData = async (subscriptionData, onConfirm) => {
+    // e.preventDefault();
 
-  const createSubscription = async () => {};
+    // // Construct the subscription data from form state
+    // const subscriptionData = subscriptionData;
+    // console.log("subscriptionData", subscriptionData, auth?.token);
+    onConfirm();
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/subscription/new`,
+        subscriptionData, // The body data should be passed as the second argument
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
+      );
+
+      if (response.data) {
+        toast.success("Subscription created successfully");
+
+        navigate(-1);
+      }
+    } catch (error) {
+      console.error("Error creating subscription:", error);
+      toast.error("Error creating subscription");
+    }
+    // toggle();
+  };
+  const createSubscriptionInStrip = async () => {};
 
   const handleUpdateStatus = async (status) => {
+    const subscriptionOn = status === "Accepted" ? true : false;
+    console.log("subscriptionOn", subscriptionOn, status);
+
     try {
       const response = await fetch(`${BASE_URL}/proposal/${id}/status`, {
         method: "PATCH",
@@ -54,16 +93,17 @@ const ProposalDetails = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${auth?.token}`,
         },
-        body: JSON.stringify({ status: status }),
+        body: JSON.stringify({
+          status: status,
+          subscriptionOn: subscriptionOn,
+        }),
       });
 
       const data = await response.json();
-      if (response.ok) {
+      console.log("data", data.status);
+
+      if (data) {
         toast.success(`Staus Updated to ${status}`);
-        if (status === "Accepted") {
-          // create Subscription doc in table subsciptions And start stripe subscription
-          createSubscription();
-        }
       } else {
         console.error(data.message);
       }
@@ -82,7 +122,7 @@ const ProposalDetails = () => {
       });
       setProposal(response.data);
       setUpdateStatus(response.data.status);
-      console.log("status", updateStatus);
+      console.log("status", response.data.subscriptionOn);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching proposal:", error);
@@ -117,22 +157,31 @@ const ProposalDetails = () => {
           </div>
         </div>
       </section>
-      <div className="content">
+      <div className="content ">
         <div className="row p-3">
-          <div className="card card-primary">
+          <div className="card card-primary w-100">
             <div className="card-header">
               <div className="d-flex justify-content-between align-items-center">
                 <h3 className="card-title">Proposal Information</h3>
-                <Button color="warning">
+                {/* <Button color="warning">
                   <FaEdit /> Edit Proposal
-                </Button>
+                </Button> */}
               </div>
             </div>{" "}
             <CardBody>
               <div className="card">
-                <div className="card-header">
+                <div className="card-header d-flex justify-content-between">
                   <h5 className="card-title">Proposal Details</h5>
+                  <p className="d-flex align-items-center">
+                    Subscription Status:{" "}
+                    {proposal.subscriptionOn ? (
+                      <span className="text-success">Active</span>
+                    ) : (
+                      <span className="text-danger">Inactive</span>
+                    )}
+                  </p>
                 </div>
+
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-center">
                     <p>
@@ -140,7 +189,14 @@ const ProposalDetails = () => {
                     </p>
                     <p>
                       <strong>Sent On:</strong>{" "}
-                      {new Date(proposal.createdAt).toLocaleString()}
+                      {new Date(proposal.createdAt).toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
                     </p>
                   </div>
                   <p>
@@ -155,8 +211,6 @@ const ProposalDetails = () => {
                 </div>
                 <div className="card-body">
                   <div className="d-flex justify-content-evenly align-items-center">
-                    {/* <div className="d-flex align-items-center gap-2"> */}
-                    {/* <strong>Status:</strong> */}
                     <select
                       className="form-control"
                       id="status"
@@ -168,25 +222,32 @@ const ProposalDetails = () => {
                       <option value="Sent">Sent</option>
                       <option value="Accepted">Accepted</option>
                       <option value="Rejected">Rejected</option>
-                      {/* <option value="ReSent">ReSent</option> */}
                     </select>
-                    <Button
-                      color="primary"
-                      className="ml-2"
-                      onClick={handleUpdateStatusVar}
-                    >
-                      Update Status
-                    </Button>
+
+                    {!proposal.subscriptionOn ? (
+                      <Button
+                        color="primary"
+                        className="ml-2"
+                        onClick={handleUpdateStatusVar}
+                      >
+                        Update Status
+                      </Button>
+                    ) : (
+                      <p className="text-success">{""}</p>
+                    )}
+
                     <StatusConfirmationModal
+                      proposalId={id}
+                      customer={proposal.recipient}
+                      handleSubscriptionData={handleSubscriptionData}
                       finalAmount={proposal.finalAmount}
                       grandTotalCurrency={proposal.grandTotalCurrency}
                       products={proposal.products}
-                      isOpen={isModalOpen}
-                      toggle={toggleModal}
+                      isOpen={isFirstModalOpen}
+                      toggle={toggleFirstModal}
                       proposalStatus={updateStatus}
                       onConfirm={handleConfirmUpdate}
                     />
-                    {/* </div> */}
                   </div>
                 </div>
               </div>
@@ -215,7 +276,7 @@ const ProposalDetails = () => {
                     </th>
                     <th>Discount</th>
                     <th>Total</th>
-                    <th>Currency</th>
+                    {/* <th>Currency</th> */}
                   </tr>
                 </thead>
                 <tbody>
@@ -231,8 +292,10 @@ const ProposalDetails = () => {
                           {product.discountType}
                         </span>
                       </td>
-                      <td>{product.total.toFixed(2)}</td>
-                      <td>{product.currency}</td>
+                      <td>
+                        {proposal.grandTotalCurrency}
+                        {product.total}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -247,26 +310,29 @@ const ProposalDetails = () => {
                   <p className="mb-2">
                     <strong>Product Total:</strong>
                     <span className="float-right">
-                      {proposal.productTotal} {proposal.grandTotalCurrency}
+                      {proposal.grandTotalCurrency}
+                      {proposal.productTotal}
                     </span>
                   </p>
                   <p className="mb-2">
                     <strong>Discount on Grand Total:</strong>
                     <span className="float-right">
-                      {proposal.discountOnGrandTotal}{" "}
                       {proposal.grandTotalCurrency}
+                      {proposal.discountOnGrandTotal}
                     </span>
                   </p>
                   <p className="mb-2">
                     <strong>Grand Total:</strong>
                     <span className="float-right">
-                      {proposal.grandTotal} {proposal.grandTotalCurrency}
+                      {proposal.grandTotalCurrency}
+                      {proposal.grandTotal}
                     </span>
                   </p>
                   <p className="mb-2">
                     <strong>Final Amount:</strong>
                     <span className="float-right">
-                      {proposal.finalAmount} {proposal.grandTotalCurrency}
+                      {proposal.grandTotalCurrency}
+                      {proposal.finalAmount}
                     </span>
                   </p>
                 </CardBody>
@@ -318,7 +384,27 @@ const StatusConfirmationModal = ({
   products,
   grandTotalCurrency,
   finalAmount,
+  proposalId,
+  customer,
+  handleSubscriptionData,
 }) => {
+  const [formData, setFormData] = useState({
+    customer: customer,
+    proposalId: proposalId,
+    isActive: true,
+    products: products,
+    subscriptionStatus: "processing",
+    totalAmountCurrency: grandTotalCurrency,
+    finalAmount: finalAmount,
+    // subscriptionDate: new Date(),
+    subscriptionDurationInMonths: 1,
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
   return proposalStatus === "Accepted" ? (
     <Modal
       isOpen={isOpen}
@@ -377,6 +463,27 @@ const StatusConfirmationModal = ({
           </tbody>
         </Table>
         <br />
+        <Form>
+          <p>
+            <Label className="mr-2" for="subscriptionDate">
+              Subscription Starts from Date :{" "}
+            </Label>
+            {new Date().toLocaleDateString()}
+          </p>
+          <FormGroup className="d-flex justify-content-between align-items-center">
+            <Label for="subscriptionDurationInMonths">
+              Subscription Duration (Months)
+            </Label>
+            <Input
+              type="number"
+              name="subscriptionDurationInMonths"
+              id="subscriptionDurationInMonths"
+              value={formData.subscriptionDurationInMonths}
+              onChange={handleInputChange}
+              required
+            />
+          </FormGroup>
+        </Form>
       </div>
       <div className="modal-footer">
         <Button color="secondary" onClick={toggle}>
@@ -385,7 +492,7 @@ const StatusConfirmationModal = ({
         <Button
           color="primary"
           onClick={() => {
-            onConfirm();
+            handleSubscriptionData(formData, onConfirm, toggle);
             toggle();
           }}
         >
@@ -423,4 +530,5 @@ const StatusConfirmationModal = ({
     </Modal>
   );
 };
+
 export default ProposalDetails;

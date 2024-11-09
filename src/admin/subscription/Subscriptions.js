@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
-const Orders = () => {
+const Subscriptions = () => {
   const [loader, setLoader] = useState(true);
   const [orders, setOrders] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,7 +68,7 @@ const Orders = () => {
         <div className="container-fluid">
           <div className="row align-items-center justify-content-between my-3">
             <div className="col-12 col-md-4 mb-2 mb-md-0">
-              <h1 className="font-weight-bold">Orders</h1>
+              <h1 className="font-weight-bold">Subscriptions</h1>
             </div>
             <div className="col-12 col-md-8 d-flex flex-column flex-md-row justify-content-md-end">
               <div className="form-group mb-2 mb-md-0 flex-grow-1 mr-md-3">
@@ -213,4 +213,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default Subscriptions;

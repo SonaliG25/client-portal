@@ -2,7 +2,7 @@ import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Login } from "./auth/login";
 import AdminLayout from "./admin/particals/AdminLayout";
-import Orders from "./admin/orders/Orders";
+
 import Proposals from "./admin/proposal/Proposals";
 import ClientDashboard from "./client/ClientDashboard";
 import Register from "./admin/user/NewUser";
@@ -25,12 +25,13 @@ import UpdateProduct from "./admin/product/updateProduct";
 import AdminHome from "./admin/home/home.js";
 import Category from "./admin/Category/Category";
 import NewProposal from "./admin/proposal/NewProposal";
-import ViewOrder from "./admin/orders/ViewOrder";
-import UpdateOrder from "./admin/orders/UpdateOrder";
+
 import ServiceDesk from "./client/serviceDesk/ServiceDesk";
 import CreateTicket from "./client/serviceDesk/NewTicket";
 import ClientHome from "./client/clientHome/ClientHome.js";
 import ProposalDetails from "./admin/proposal/ProposalDetails.js";
+import SubscriptionDetails from "./admin/subscription/SubscriptionsDetails.js";
+import Subscriptions from "./admin/subscription/Subscriptions.js";
 
 function App() {
   const router = createBrowserRouter([
@@ -71,10 +72,13 @@ function App() {
         //home
         { path: RoutesNames.HOME, element: <AdminHome /> },
 
-        //orders
-        { path: RoutesNames.ALL_ORDERS, element: <Orders /> },
-        { path: RoutesNames.VIEW_ORDER, element: <ViewOrder /> },
-        { path: RoutesNames.UPDATE_ORDER, element: <UpdateOrder /> },
+        //Subscriptions
+        { path: RoutesNames.ALL_SUBCRIPTIONS, element: <Subscriptions /> },
+        {
+          path: RoutesNames.VIEW_SUBCRIPTION,
+          element: <SubscriptionDetails />,
+        },
+        // { path: RoutesNames.UPDATE_ORDER, element: <UpdateOrder /> },
 
         //Proposals
         { path: RoutesNames.PROPOSALS, element: <Proposals /> },

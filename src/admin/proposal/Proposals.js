@@ -138,22 +138,33 @@ function Proposals() {
                           <td>{proposal.emailTo}</td>
                           <td>{proposal.title}</td>
                           <td>
-                            {new Date(proposal.createdAt).toLocaleString()}
+                            {new Date(proposal.createdAt).toLocaleString(
+                              "en-GB",
+                              {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              }
+                            )}
                           </td>
                           <td>{proposal.status}</td>
                           <td>
-                            <div className="d-flex justify-content-center m-2">
-                              <button
-                                onClick={() => HandleView(proposal)}
-                                className="btn btn-primary btn-sm m-1"
-                              >
-                                <i className="fas fa-file-alt"></i>
-                              </button>
+                            <button
+                              onClick={() => HandleView(proposal)}
+                              className="btn btn-primary btn-sm m-1"
+                            >
+                              <i className="fas fa-file-alt"></i>
+                            </button>
+                            {/* <div className="d-flex justify-content-center m-2">
+                              
 
-                              <button className="btn btn-warning btn-sm m-1">
+                              {/* <button className="btn btn-warning btn-sm m-1">
                                 <i className="fas fa-edit"></i>
-                              </button>
-                            </div>
+                              </button> 
+                            </div> */}
                           </td>
                         </tr>
                       ))
