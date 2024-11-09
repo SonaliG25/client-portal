@@ -188,7 +188,7 @@ const AdminSidebar = () => {
         {/* Brand Logo */}
         <a href="index3.html" className="brand-link">
           <img
-            src="img/AdminLTELogo.png"
+            src="/img/AdminLTELogo.png"
             alt="AdminLTE Logo"
             className="brand-image img-circle elevation-3"
             style={{ opacity: ".8" }}
@@ -276,13 +276,13 @@ const AdminSidebar = () => {
               </li>
               <li className="nav-item">
                 <NavLink
-                  to="orders"
+                  to="subscriptions"
                   className={({ isActive }) =>
                     isActive ? "nav-link active" : "nav-link"
                   }
                 >
                   <i className="nav-icon fas fa-shopping-cart"></i>
-                  <p>Orders</p>
+                  <p>Subscriptions</p>
                 </NavLink>
               </li>
               <li className="nav-item">

@@ -1,5 +1,4 @@
-// ViewTicket.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
@@ -7,28 +6,61 @@ import { BASE_URL } from "../../utils/endPointNames";
 
 const ViewTicket = () => {
   const [auth] = useAuth();
-  const { id } = useParams(); // Retrieve ticket ID from the URL
-  const [ticketData, setTicketData] = useState(null);
+  const { id } = useParams();
+  const [ticketData, setTicketData] = useState({ attachments: [] });
+  const [comment, setComment] = useState("");
+  const messagesEndRef = useRef(null);
   const navigate = useNavigate();
 
+  const handleAddComment = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/ticket/comment/${id}`,
+        {
+          userId: auth?.user.userId,
+          name: auth?.user.role,
+          email: auth?.user?.email,
+          message: comment,
+        },
+        {
+          headers: { Authorization: `Bearer ${auth?.token}` },
+        }
+      );
+      console.log("comment", res.data);
+      setComment("");
+      fetchTicket();
+      // Re-fetch ticket data to display the new comment
+    } catch (error) {
+      console.log("error in Comment", error);
+    }
+  };
+  const fetchTicket = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/ticket/${id}`, {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
+      setTicketData(response.data);
+      console.log("Fetched ticket data:", response.data);
+    } catch (error) {
+      console.error("Error fetching ticket details:", error);
+    }
+  };
   useEffect(() => {
-    const fetchTicket = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/ticket/${id}`, {
-          headers: {
-            Authorization: `Bearer ${auth?.token}`,
-          },
-        });
-        setTicketData(response.data);
-      } catch (error) {
-        console.error("Error fetching ticket details:", error);
-      }
-    };
-
+    if (auth?.user?.role) {
+      console.log("role:", auth?.user?.role);
+    }
     if (auth?.token) {
       fetchTicket();
     }
   }, [auth, id]);
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [ticketData?.comments]);
 
   if (!ticketData) {
     return <p>Loading ticket details...</p>;
@@ -49,115 +81,163 @@ const ViewTicket = () => {
 
       {/* Ticket Details Section */}
       <section className="content">
-        <div className="container-fluid">
-          <div className="card card-primary">
-            <div className="card-header">
-              <h3 className="card-title">Ticket Details</h3>
-            </div>
+        <div className="row">
+          <div className="col-md-6">
+            <div className="card">
+              <div className="card-header bg-primary">
+                <h3 className="card-title">Ticket Information</h3>
+              </div>
+              <div className="card-body">
+                <dl className="row">
+                  <dt className="col-sm-4">Title:</dt>
+                  <dd className="col-sm-8">{ticketData?.title}</dd>
 
-            <div className="card-body">
-              {/* Title */}
-              <div className="form-group">
-                <label>Title</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="title"
-                  value={ticketData.title}
-                  readOnly
-                />
-              </div>
+                  <dt className="col-sm-4">Description:</dt>
+                  <dd className="col-sm-8">{ticketData?.description}</dd>
 
-              {/* Description */}
-              <div className="form-group">
-                <label>Description</label>
-                <textarea
-                  className="form-control"
-                  name="description"
-                  value={ticketData.description}
-                  readOnly
-                />
-              </div>
+                  <dt className="col-sm-4">Priority:</dt>
+                  <dd className="col-sm-8">{ticketData?.priority}</dd>
 
-              {/* Priority */}
-              <div className="form-group">
-                <label>Priority</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="priority"
-                  value={ticketData.priority}
-                  readOnly
-                />
+                  <dt className="col-sm-4">Status:</dt>
+                  <dd className="col-sm-8">{ticketData?.status}</dd>
+                </dl>
               </div>
-              <div className="form-group">
-                <label>Status</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="priority"
-                  value={ticketData.status}
-                  readOnly
-                />
-              </div>
-              <div className="form-group">
-                <label>Client name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="priority"
-                  value={ticketData.client?.name}
-                  readOnly
-                />
-              </div>
-
-              <div className="form-group">
-                <label> Email</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="priority"
-                  value={ticketData.client?.email}
-                  readOnly
-                />
-              </div>
-              {/* Uploaded Documents Section */}
-              <div className="card">
-                <div className="card-header bg-primary">
-                  <h3 className="card-title">Uploaded Documents</h3>
-                </div>
-                <div className="card-body table-responsive">
-                  <table className="table table-bordered table-striped">
-                    <tbody>
-                      {ticketData.attachments.map((attachment, index) => (
-                        <tr key={index}>
-                          <td>
-                            <div className="d-flex align-items-center"></div>
-                          </td>
-                          {attachment.type.startsWith("image/") && (
-                            <td>
-                              <img
-                                src={URL.createObjectURL(attachment)}
-                                alt={attachment.name}
-                                style={{ width: "100px", height: "auto" }}
-                              />
-                            </td>
-                          )}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            <div className="card-footer">
-              <button className="btn btn-primary" onClick={() => navigate(-1)}>
-                Back to Tickets
-              </button>
             </div>
           </div>
+
+          <div className="col-md-6">
+            <div className="card">
+              <div className="card-header bg-info">
+                <h3 className="card-title">Client Details</h3>
+              </div>
+              <div className="card-body">
+                <dl className="row">
+                  <dt className="col-sm-4">Client Name:</dt>
+                  <dd className="col-sm-8">{ticketData?.client?.name}</dd>
+
+                  <dt className="col-sm-4">Email:</dt>
+                  <dd className="col-sm-8">{ticketData?.client?.email}</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="card card-primary card-outline direct-chat direct-chat-primary">
+              <div className="card-header">
+                <h3 className="card-title">Comments</h3>
+              </div>
+              <div className="card-body">
+                <div className="direct-chat-messages">
+                  {ticketData?.comments?.map((comment, index) => {
+                    // Check if the current user is admin
+                    const isAdmin = comment?.user?.name !== "client";
+                    return (
+                      <div
+                        key={index}
+                        className={`direct-chat-msg ${
+                          isAdmin ? "left" : "right"
+                        }`}
+                      >
+                        <div className="direct-chat-infos clearfix">
+                          <span
+                            className={`direct-chat-name float-${
+                              !isAdmin ? "right" : "left"
+                            }`}
+                          >
+                            {comment.user.name}
+                          </span>
+                          <span
+                            className={`direct-chat-timestamp float-${
+                              !isAdmin ? "left" : "right"
+                            }`}
+                          >
+                            {new Date(comment.createdAt).toLocaleString()}
+                          </span>
+                        </div>
+                        <img
+                          class="direct-chat-img"
+                          src="/img/user1-128x128.jpg"
+                          alt="Message User Image"
+                        ></img>
+                        <div className={`direct-chat-text`}>
+                          {comment.message}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <div ref={messagesEndRef} />
+                </div>
+              </div>
+              <div className="card-footer">
+                <form onSubmit={handleAddComment}>
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      name="message"
+                      placeholder="Type Comment ..."
+                      className="form-control"
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                    />
+                    <span className="input-group-append">
+                      <button type="submit" className="btn btn-primary">
+                        Send
+                      </button>
+                    </span>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          
+
         </div>
+
+        {/* Uploaded Documents Card */}
+        {Array.isArray(ticketData.attachments) &&
+          ticketData.attachments?.length > 0 && (
+            <div className="row mt-3">
+              <div className="col-md-12">
+                <div className="card">
+                  <div className="card-header bg-primary">
+                    <h3 className="card-title">Uploaded Documents</h3>
+                  </div>
+                  <div className="card-body table-responsive">
+                    <table className="table table-bordered table-striped">
+                      <tbody>
+                        {ticketData.attachments.map((attachment, index) => (
+                          <tr key={index}>
+                            <td>
+                              {/* Check if the filename suggests it's an image */}
+                              {attachment.filename.match(
+                                /\.(jpg|jpeg|png|gif)$/i
+                              ) ? (
+                                <img
+                                  src={attachment.path} // Use the correct path to access the image
+                                  alt={attachment.filename}
+                                  style={{ width: "100px", height: "auto" }}
+                                />
+                              ) : (
+                                <a
+                                  href={attachment.path}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {attachment.filename}
+                                </a>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+        {/* Back Button */}
       </section>
     </div>
   );
