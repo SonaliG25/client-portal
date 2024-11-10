@@ -155,6 +155,7 @@ function Chat() {
   }, [auth]);
 
   return (
+    <div className="content-wrapper">
     <Container fluid className="vh-100 d-flex flex-column">
       <Row className="flex-grow-1">
         <Col md={3} className="sidebar bg-light p-3">
@@ -263,6 +264,7 @@ function Chat() {
         </Col>
       </Row>
     </Container>
+    </div>
   );
 }
 
