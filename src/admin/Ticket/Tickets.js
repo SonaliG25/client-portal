@@ -229,7 +229,7 @@ function Tickets() {
               <div className="card">
                 <div className="card-body">
                   <div className="table-responsive">
-                    <table className="table">
+                    <table className="table table-bordered table-hover ">
                       <thead>
                         <tr>
                           <th>Title</th>

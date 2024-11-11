@@ -109,7 +109,7 @@ function ServiceDesk() {
               <div className="card">
                 <div className="card-body">
                   <div className="table-responsive">
-                    <table className="table">
+                    <table className="table table-bordered table-hover">
                       <thead>
                         <tr>
                           <th>Title</th>
@@ -156,7 +156,7 @@ function ServiceDesk() {
                     </table>
 
                     {/* Pagination Controls */}
-                    <div className="d-flex justify-content-center mt-3">
+                    <div className=" mt-3">
                       <button
                         className="btn btn-outline-primary mr-2"
                         disabled={currentPage === 1}

@@ -183,10 +183,15 @@ const ViewTicket = () => {
                   </dd>
                 </dl>
               </div>
+              <div className="card-footer">
+                <button
+                  className="btn btn-success"
+                  onClick={handleUpdateStatus}
+                >
+                  Update
+                </button>
+              </div>
             </div>
-            <button className="btn btn-success" onClick={handleUpdateStatus}>
-              Update
-            </button>
           </div>
 
           {/* Client Details */}
