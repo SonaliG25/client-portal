@@ -76,6 +76,18 @@ function UserSidebar() {
                 <p>Service Desk</p>
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink
+                to={RouteNames.SUBSCRIPTIONS}
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                <i className="nav-icon fas fa-tachometer-alt"></i>
+                <p>subscriptions</p>
+              </NavLink>
+            </li>
+
             {/* <li className="nav-item">
               <NavLink
                 to="userlist"
