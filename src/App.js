@@ -42,7 +42,7 @@ import SubscriptionsbyUser from "./client/Subscription/SubscriptionsbyUser.js";
 function App() {
   const router = createBrowserRouter([
     { path: RoutesNames.LOGIN, element: <Login /> },
-    { path: "/chats", element: <Chat /> },
+   
 
     {
       path: "user-dashboard",
@@ -132,6 +132,9 @@ function App() {
         { path: RoutesNames.ALL_PRODUCTS, element: <Products /> },
         { path: RoutesNames.VIEW_PRODUCT, element: <ViewProduct /> },
         { path: RoutesNames.UPDATE_PRODUCT, element: <UpdateProduct /> },
+
+        //Chat
+        { path: RoutesNames.CHATS, element: <Chat /> },
       ],
     },
     { path: RoutesNames.NOT_FOUND, element: <Login /> }, // Fallback for unmatched routesNamesRoutesNames
