@@ -34,14 +34,15 @@ import CreateTicket from "./client/serviceDesk/NewTicket";
 import ClientHome from "./client/clientHome/ClientHome.js";
 import ViewTicket from "./client/serviceDesk/ViewTicket.js";
 import Tickets from "./admin/Ticket/Tickets.js";
-import ViewTecket from "./admin/Ticket/ViewTecket.js";
+import ViewTecket from "./admin/Ticket/ViewTicket.js";
 import Subscriptions from "./admin/subscription/Subscriptions.js";
 import SubscriptionDetails from "./admin/subscription/SubscriptionsDetails.js";
-import ProposalDetails from "./admin/proposal/ProposalDetails.js"
+import ProposalDetails from "./admin/proposal/ProposalDetails.js";
+import SubscriptionsbyUser from "./client/Subscription/SubscriptionsbyUser.js";
 function App() {
   const router = createBrowserRouter([
     { path: RoutesNames.LOGIN, element: <Login /> },
-    { path: "/chats", element: <Chat /> },
+   
 
     {
       path: "user-dashboard",
@@ -63,6 +64,10 @@ function App() {
         {
           path: RoutesNames.SERVICE_DESK,
           element: <ServiceDesk />,
+        },
+        {
+          path: RoutesNames.SUBSCRIPTIONS,
+          element: <SubscriptionsbyUser />,
         },
         {
           path: RoutesNames.NEW_TICKET,
@@ -127,6 +132,9 @@ function App() {
         { path: RoutesNames.ALL_PRODUCTS, element: <Products /> },
         { path: RoutesNames.VIEW_PRODUCT, element: <ViewProduct /> },
         { path: RoutesNames.UPDATE_PRODUCT, element: <UpdateProduct /> },
+
+        //Chat
+        { path: RoutesNames.CHATS, element: <Chat /> },
       ],
     },
     { path: RoutesNames.NOT_FOUND, element: <Login /> }, // Fallback for unmatched routesNamesRoutesNames

@@ -45,7 +45,7 @@ export const UPDATE_PROPOSAL = `${ADMIN_DASHBOARD}/updateProposal/:id`;
 export const PROPOSALS = `${ADMIN_DASHBOARD}/proposal`;
 
 // Chat Routes
-export const CHATS = `/chats`;
+export const CHATS = `${ADMIN_DASHBOARD}/chats`;
 // Client Routes (if any other than dashboard can be added here)
 // e.g. export const CLIENT_PROFILE = '/user-dashboard/profile';
 
@@ -56,5 +56,6 @@ export const USER_DASHBOARD = "/user-dashboard";
 export const USER_HOME = `${USER_DASHBOARD}/home`;
 
 export const SERVICE_DESK = `${USER_DASHBOARD}/serviceDesk`;
+export const SUBSCRIPTIONS = `${USER_DASHBOARD}/subscriptions`;
 export const NEW_TICKET = `${USER_DASHBOARD}/newTicket`;
 export const VIEW_TICKET = `${USER_DASHBOARD}/:id`;

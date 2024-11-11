@@ -284,35 +284,26 @@ const ViewTicket = () => {
               </div>
               <div className="card-body">
                 <div className="direct-chat-messages">
-                  <div className="direct-chat-msg right ml-auto">
-                    <div className="direct-chat-infos clearfix">
-                      <span className="direct-chat-name float-right">
-                        {/* Display resolution notes as a single string */}
-                        {ticketData?.resolutionNotes && (
-                          <p>{ticketData?.resolutionNotes}</p>
-                        )}
-                      </span>
+                  <form onSubmit={handleAddResolutionNotes}>
+                    <div className="input-group">
+                      <textarea
+                        name="resolutionNotes"
+                        placeholder="Add Resolution Notes ..."
+                        className="form-control"
+                        value={resolutionNotes}
+                        onChange={(e) => setResolutionNotes(e.target.value)}
+                        rows="7 "
+                      />
                     </div>
-                  </div>
-                </div>
-              </div>
-              <div className="card-footer">
-                <form onSubmit={handleAddResolutionNotes}>
-                  <div className="input-group">
-                    <input
-                      name="resolutionNotes"
-                      placeholder="Add Resolution Notes ..."
-                      className="form-control"
-                      value={resolutionNotes}
-                      onChange={(e) => setResolutionNotes(e.target.value)}
-                    />
-                    <span className="input-group-append">
-                      <button type="submit" className="btn btn-primary">
+                    <span>
+                      <button type="submit" className=" m-2 btn btn-primary">
                         Add Note
                       </button>
                     </span>
-                  </div>
-                </form>
+                  </form>
+                </div>
+              </div>
+              <div className="card-footer">
                 <button
                   className="btn btn-warning mt-2"
                   onClick={handleUpdateResolutionNotes}

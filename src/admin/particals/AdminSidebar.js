@@ -296,6 +296,17 @@ const AdminSidebar = () => {
                   <p>Tickets</p>
                 </NavLink>
               </li>
+              <li className="nav-item">
+                <NavLink
+                  to="chats"
+                  className={({ isActive }) =>
+                    isActive ? "nav-link active" : "nav-link"
+                  }
+                >
+                  <i className="fas fa-comments"></i>
+                  <p>Chats</p>
+                </NavLink>
+              </li>
             </ul>
           </nav>
         </div>
