@@ -51,7 +51,7 @@ function Chat() {
   useEffect(() => {
     if (socket) {
       socket.on('receiveMessage', (message) => {
-        setMessages((prevMessages) => [...prevMessages, message]); // Add new message at the end
+        // setMessages((prevMessages) => [...prevMessages, message]); // Add new message at the end
         console.log(message);
       });
       return () => {
@@ -63,13 +63,13 @@ function Chat() {
   const handleSendMessage = async (event) => {
     event.preventDefault();
     const messageText = event.target.elements.messageInput.value;
-    
+  
     let fileData = null;
   
     if (file) {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      
+  
       reader.onload = () => {
         fileData = {
           name: file.name,
@@ -82,12 +82,17 @@ function Chat() {
           receiver: selectedUser._id,
           message: messageText,
           file: fileData,
+          createdAt: new Date(), // Add timestamp for immediate display
         };
   
         if (socket && socket.connected) {
           socket.emit('sendMessage', messageData);
         }
-        
+  
+        // Update the UI immediately with the new message
+        setMessages((prevMessages) => [...prevMessages, messageData]);
+  
+        // Clear input fields
         event.target.elements.messageInput.value = '';
         setFile(null);
       };
@@ -100,15 +105,20 @@ function Chat() {
         sender: auth.user.userId,
         receiver: selectedUser._id,
         message: messageText,
+        createdAt: new Date(), // Add timestamp for immediate display
       };
   
       if (socket && socket.connected) {
         socket.emit('sendMessage', messageData);
       }
   
+      // Update the UI immediately with the new message
+      setMessages((prevMessages) => [...prevMessages, messageData]);
+  
+      // Clear input field
       event.target.elements.messageInput.value = '';
     }
-  };
+  }
 
   const getUser = async () => {
     try {
