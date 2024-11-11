@@ -123,21 +123,34 @@ function Proposals() {
                 >
                   <thead className="bg-secondary text-white">
                     <tr>
-                      <th>Sent To</th>
-                      <th>Title</th>
-                      <th>Sent On</th>
-                      <th>Status</th>
-                      <th></th>
+                      <th> Sent To</th>
+                      <th> Title</th>
+                      <th> Sent On</th>
+                      <th> Status</th>
+                      {/* <th>
+                        Subscription {"\n"}
+                        Status
+                      </th> */}
                     </tr>
                   </thead>
                   <tbody>
-                    {/* Dynamic data or fallback message */}
                     {proposals.length > 0 ? (
                       proposals.map((proposal) => (
-                        <tr key={proposal.id}>
-                          <td>{proposal.emailTo}</td>
-                          <td>{proposal.title}</td>
+                        <tr
+                          key={proposal._id}
+                          onClick={() => HandleView(proposal)}
+                        >
                           <td>
+                            <i className="fas fa-envelope text-primary mr-2"></i>
+                            {proposal.emailTo}
+                          </td>
+                          <td>
+                            {" "}
+                            <i className="fas fa-book-open text-secondary mr-2"></i>
+                            {proposal.title}
+                          </td>
+                          <td>
+                            <i className="fas fa-clock text-info mr-2"></i>
                             {new Date(proposal.createdAt).toLocaleString(
                               "en-GB",
                               {
@@ -150,22 +163,54 @@ function Proposals() {
                               }
                             )}
                           </td>
-                          <td>{proposal.status}</td>
                           <td>
-                            <button
+                            <span
+                              className={`badge ${
+                                proposal.status === "Sent"
+                                  ? "badge-warning"
+                                  : proposal.status === "Accepted"
+                                  ? "badge-success"
+                                  : "badge-danger"
+                              }`}
+                            >
+                              {proposal.status}
+                            </span>
+
+                            <div>
+                              {proposal.paymentLink &&
+                                proposal.paymentLink.trim() !== "" &&
+                                `With ${proposal.paymentLink}`}
+                            </div>
+                          </td>
+                          {/* <td>
+                            <p
+                            // className={`badge ${
+                            //   proposal.subscriptionOn ?? false
+                            //     ? "badge-success"
+                            //     : "badge-danger"
+                            // }`}
+                            // style={{ color: "black" }}
+                            >
+                              {proposal.subscriptionOn ??
+                                "No subscription status available"}
+                            </p>
+                          </td> */}
+
+                          {/* <td> */}
+                          {/* <button
                               onClick={() => HandleView(proposal)}
                               className="btn btn-primary btn-sm m-1"
                             >
                               <i className="fas fa-file-alt"></i>
-                            </button>
-                            {/* <div className="d-flex justify-content-center m-2">
+                            </button> */}
+                          {/* <div className="d-flex justify-content-center m-2">
                               
 
                               {/* <button className="btn btn-warning btn-sm m-1">
                                 <i className="fas fa-edit"></i>
-                              </button> 
+                              // </button> 
                             </div> */}
-                          </td>
+                          {/* </td> */}
                         </tr>
                       ))
                     ) : (
@@ -177,6 +222,104 @@ function Proposals() {
                     )}
                   </tbody>
                 </table>
+                {/* <div className="table-responsive">
+                  <table
+                    id="example2"
+                    className="table table-bordered table-hover"
+                    style={{ width: "100%", tableLayout: "fixed" }}
+                  >
+                    <thead className="bg-secondary text-white">
+                      <tr>
+                        <th className="text-nowrap" style={{ width: "20%" }}>
+                          <i className="fas fa-user"></i> Sent To
+                        </th>
+                        <th className="text-nowrap" style={{ width: "25%" }}>
+                          <i className="fas fa-heading"></i> Title
+                        </th>
+                        <th className="text-nowrap" style={{ width: "25%" }}>
+                          <i className="fas fa-calendar-alt"></i> Sent On
+                        </th>
+                        <th className="text-nowrap" style={{ width: "15%" }}>
+                          <i className="fas fa-info-circle"></i> Status
+                        </th>
+                        <th
+                          className="text-center text-nowrap"
+                          style={{ width: "15%" }}
+                        >
+                          <i className="fas fa-cog"></i> Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {proposals.length > 0 ? (
+                        proposals.map((proposal) => (
+                          <tr key={proposal.id} className="align-middle">
+                            <td
+                              className="text-truncate"
+                              style={{ maxWidth: "150px" }}
+                            >
+                              <i className="fas fa-envelope text-primary mr-2"></i>
+                              {proposal.emailTo}
+                            </td>
+                            <td
+                              className="text-truncate"
+                              style={{ maxWidth: "180px" }}
+                            >
+                              <i className="fas fa-book-open text-secondary mr-2"></i>
+                              {proposal.title}
+                            </td>
+                            <td
+                              className="text-truncate"
+                              style={{ maxWidth: "160px" }}
+                            >
+                              <i className="fas fa-clock text-info mr-2"></i>
+                              {new Date(proposal.createdAt).toLocaleString(
+                                "en-GB",
+                                {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: true,
+                                }
+                              )}
+                            </td>
+                            <td>
+                              <span
+                                className={`badge ${
+                                  proposal.status === "Sent"
+                                    ? "badge-warning"
+                                    : proposal.status === "Accepted"
+                                    ? "badge-success"
+                                    : "badge-danger"
+                                }`}
+                              >
+                                {proposal.status}
+                              </span>
+                            </td>
+                            <td className="text-center">
+                              <button
+                                onClick={() => HandleView(proposal)}
+                                className="btn btn-primary btn-sm m-1"
+                                title="View Proposal"
+                              >
+                                <i className="fas fa-file-alt"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="5" className="text-center text-muted">
+                            <i className="fas fa-info-circle"></i> No matching
+                            Proposal found
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div> */}
 
                 {/* Pagination Controls */}
                 <div className="d-flex mt-3 flex-column flex-md-row">

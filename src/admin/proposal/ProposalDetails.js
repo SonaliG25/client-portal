@@ -170,14 +170,14 @@ const ProposalDetails = () => {
             </div>{" "}
             <CardBody>
               <div className="card">
-                <div className="card-header d-flex justify-content-between">
+                <div className="card-header d-flex justify-content-between ">
                   <h5 className="card-title">Proposal Details</h5>
                   <p className="d-flex align-items-center">
-                    Subscription Status:{" "}
+                    Subscription Created ? :
                     {proposal.subscriptionOn ? (
-                      <span className="text-success">Active</span>
+                      <span className="text-success"> Yes</span>
                     ) : (
-                      <span className="text-danger">Inactive</span>
+                      <span className="text-danger"> No</span>
                     )}
                   </p>
                 </div>

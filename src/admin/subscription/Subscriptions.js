@@ -11,7 +11,7 @@ const Subscriptions = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 10;
   const navigate = useNavigate();
   const [auth] = useAuth();
 
@@ -61,8 +61,9 @@ const Subscriptions = () => {
   const handleViewOrder = (data) => {
     navigate(`/admin-dashboard/subscription/${data._id}`);
   };
+
   const handleUpdateOrder = (data) => {
-    navigate(`/admin-dashboard/orders/update/${data._id}`);
+    navigate(`/admin-dashboard/subscription/${data._id}`);
   };
 
   return (
@@ -152,14 +153,14 @@ const Subscriptions = () => {
                                 >
                                   <i className="fas fa-file-alt"></i>
                                 </button>
-                                <button
+                                {/* <button
                                   className="btn btn-success m-1"
                                   onClick={() =>
                                     handleUpdateOrder(subscription)
                                   }
                                 >
                                   <i className="fas fa-edit"></i>
-                                </button>
+                                </button> */}
                               </div>
                             </td>
                           </tr>
@@ -178,6 +179,7 @@ const Subscriptions = () => {
                   >
                     Previous
                   </button>
+
                   {Array.from({ length: totalPages }, (_, index) => (
                     <button
                       key={index + 1}
@@ -189,6 +191,7 @@ const Subscriptions = () => {
                       {index + 1}
                     </button>
                   ))}
+
                   <button
                     className="btn btn-outline-primary mt-2 mt-md-0"
                     disabled={currentPage === totalPages}
