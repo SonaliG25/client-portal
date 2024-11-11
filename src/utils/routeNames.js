@@ -56,5 +56,6 @@ export const USER_DASHBOARD = "/user-dashboard";
 export const USER_HOME = `${USER_DASHBOARD}/home`;
 
 export const SERVICE_DESK = `${USER_DASHBOARD}/serviceDesk`;
+export const SUBSCRIPTIONS = `${USER_DASHBOARD}/subscriptions`;
 export const NEW_TICKET = `${USER_DASHBOARD}/newTicket`;
 export const VIEW_TICKET = `${USER_DASHBOARD}/:id`;
