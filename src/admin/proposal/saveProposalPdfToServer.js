@@ -107,6 +107,8 @@ export const savePdfToServer = async (proposalData, authToken) => {
     -0.11
   );
 
+  doc.text(`Payment Link: ${proposalData.paymentLink || ""}`, 20, finalY + 40);
+
   // Convert to Blob and prepare FormData
   const pdfBlob = doc.output("blob");
   const formData = new FormData();

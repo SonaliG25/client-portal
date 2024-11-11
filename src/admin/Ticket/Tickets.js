@@ -288,7 +288,7 @@ function Tickets() {
                       <button
                         key={index + 1}
                         onClick={() =>
-                          fetchTicketData(index + 1, 5, searchTerm)
+                          fetchTicketData(index + 1, 15, searchTerm)
                         }
                         className={`btn mr-2 ${
                           currentPage === index + 1
