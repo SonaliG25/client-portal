@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode"; // Add this package to decode JWT tokens
 import toast from "react-hot-toast";
+import { HOME, USER_HOME } from "../utils/routeNames.js";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -78,8 +79,8 @@ export const Login = () => {
         toast.success("login Suceessfully");
         // Redirect to appropriate dashboard
         response.data.userInfo.role === "admin"
-          ? navigate("/admin-dashboard")
-          : navigate("/user-dashboard");
+          ? navigate(HOME)
+          : navigate(USER_HOME);
       } else {
         setError("Invalid email or password");
       }

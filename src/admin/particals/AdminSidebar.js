@@ -165,7 +165,7 @@ const AdminSidebar = () => {
 
   return (
     <>
-      {/* Mobile Toggle Button */}
+      {/* Mobile Toggle Button
       <button
         className="btn btn-primary d-md-none"
         onClick={toggleSidebar}
@@ -177,7 +177,7 @@ const AdminSidebar = () => {
         }}
       >
         <i className="fas fa-bars"></i>
-      </button>
+      </button> */}
 
       <aside
         className={`main-sidebar sidebar-dark-primary elevation-4 d-flex flex-column ${

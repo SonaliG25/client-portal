@@ -12,12 +12,14 @@ import {
   Button,
   Card,
   CardBody,
+  CardHeader,
   Form,
   FormGroup,
   FormFeedback,
   Input,
   Label,
   Table,
+  CardTitle,
 } from "reactstrap";
 import { savePdfToServer } from "./saveProposalPdfToServer.js";
 
@@ -127,6 +129,30 @@ const NewProposal = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
+  const [addPaymentLinkChecked, setAddPaymentLinkChecked] = useState(false);
+  const [paymentLink, setPaymentLink] = useState("");
+
+  // Generate the payment link when the checkbox is checked
+  const handlePaymentLinkCheckboxChange = (isChecked) => {
+    setAddPaymentLinkChecked(isChecked);
+    let paymentLink = "";
+    // Generate the link only if checkbox is checked
+    if (isChecked) {
+      const generatedLink = "https://example.com/payment-link";
+
+      setProposalData((prevData) => ({
+        ...prevData,
+        paymentLink: generatedLink,
+      }));
+      console.log("paymentLink", proposalData.paymentLink);
+    } else {
+      setProposalData((prevData) => ({
+        ...prevData,
+        paymentLink: paymentLink,
+      }));
+    }
+  };
+
   const [moreAttachmentsToUpload, setMoreAttachmentsToUpload] = useState([]);
   const [proposalData, setProposalData] = useState({
     recipient: "",
@@ -141,6 +167,7 @@ const NewProposal = () => {
     finalAmount: 0,
     attachments: [],
     status: "",
+    paymentLink: "",
   });
 
   const [productTotal, setProductTotal] = useState(0);
@@ -409,6 +436,7 @@ const NewProposal = () => {
 
   const sendProposal = async (e) => {
     e.preventDefault();
+    console.log("ProposalData", proposalData);
 
     // First, save the PDF (if needed) and check if it's successful
     const status = await handleSavePdf();
@@ -465,8 +493,11 @@ const NewProposal = () => {
     <div className="content-wrapper">
       <div className="container-fluid">
         <Card className="card card-primary card-outline">
+          <CardHeader className="bg-primary text-white text-center">
+            <h5 className="mb-0">New Proposal</h5>
+          </CardHeader>
           <CardBody>
-            <h5 className="card-header bg-primary text-white">New Proposal</h5>
+            {/* <h5 className="card-header bg-primary text-white"></h5> */}
             <Form>
               <FormGroup>
                 <Label>Email To</Label>
@@ -493,70 +524,86 @@ const NewProposal = () => {
                 />
               </FormGroup>
               {/* Proposal Template Selection */}
-              <div className="d-flex justify-content-between align-items-center mt-4 mb-4">
-                <Label>Content</Label>
-                <Button onClick={() => setShowModal(true)}>
-                  Select Proposal Template
-                </Button>
-              </div>
-              <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton className="bg-dark">
-                  <Modal.Title className="text-white">
-                    Select a Proposal Template
-                  </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <ul className="list-unstyled">
-                    {proposalTemplates.map((template) => (
-                      <li key={template._id} className="mb-2">
-                        <button
-                          className="btn btn-secondary btn-block text-left"
-                          onClick={() =>
-                            handleTemplateSelect(template.description)
-                          }
-                        >
-                          <i className="fas fa-file-alt mr-2"></i>
-                          {template.title}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </Modal.Body>
-                <Modal.Footer>
-                  <button
-                    className="btn btn-dark"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Close
-                  </button>
-                </Modal.Footer>
-              </Modal>
+              {/* <div className="col-12 col-md-8"> */}
+              <Card className="shadow-sm w-100">
+                <CardHeader className="bg-primary text-white text-center">
+                  <h5 className="mb-0">Proposal Content Editor</h5>
+                </CardHeader>
+                <CardBody>
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <Label>Content</Label>
+                    <Button onClick={() => setShowModal(true)}>
+                      Select Proposal Template
+                    </Button>
+                  </div>
 
-              <FormGroup>
-                <JoditEditor
-                  ref={editor}
-                  config={editorConfig}
-                  value={proposalData.content}
-                  onBlur={(newContent) => handleEditorChange(newContent)}
-                />
-              </FormGroup>
-              <div className="d-flex justify-content-start align-items-center mt-4 mb-4">
-                <h5>Choose Currency</h5>
-                <div className="col-3">
-                  <Input
-                    type="select"
-                    name="currency"
-                    value={proposalData.grandTotalCurrency}
-                    onChange={handleCurrencyChange}
-                    className="form-control"
-                  >
-                    <option value="$">$</option>
-                    <option value="€">€</option>
-                    <option value="Rs">₹</option>
-                    <option value="£">£</option>
-                  </Input>
+                  <FormGroup>
+                    <JoditEditor
+                      ref={editor}
+                      config={editorConfig}
+                      value={proposalData.content}
+                      onBlur={(newContent) => handleEditorChange(newContent)}
+                    />
+                  </FormGroup>
+                </CardBody>
+              </Card>
+              {/* </div> */}
+
+              <div className="d-flex flex-wrap justify-content-evenly align-items-start gap-4 mt-4 mb-4">
+                {/* Currency Selector Card */}
+                <div className="col-12 col-md-5">
+                  <Card className="shadow-sm">
+                    <CardHeader className="text-center bg-primary text-white">
+                      <h3 className="card-title mb-0">Choose Currency</h3>
+                    </CardHeader>
+                    <CardBody className="d-flex justify-content-center">
+                      <Input
+                        type="select"
+                        name="currency"
+                        value={proposalData.grandTotalCurrency}
+                        onChange={handleCurrencyChange}
+                        className="form-control w-50"
+                      >
+                        <option value="$">$</option>
+                        <option value="€">€</option>
+                        <option value="Rs">₹</option>
+                        <option value="£">£</option>
+                      </Input>
+                    </CardBody>
+                  </Card>
                 </div>
+
+                {/* Proposal Options Card
+                <div className="col-12 col-md-6">
+                  <Card className="shadow-sm">
+                    <CardHeader className="text-center bg-primary text-white">
+                      <h5 className="card-title mb-0">Add Payment Link</h5>
+                    </CardHeader>
+                    <CardBody>
+                      <div>
+                        
+
+                        {/* Display the generated link 
+                        {addPaymentLinkChecked && paymentLink && (
+                          <div className="mt-3">
+                            <p>
+                              Payment Link:{" "}
+                              <a
+                                href={paymentLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {paymentLink}
+                              </a>
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </CardBody>
+                  </Card>
+                </div> */}
               </div>
+
               <div className="container-fluid">
                 {/* File Upload Section */}
 
@@ -983,13 +1030,52 @@ const NewProposal = () => {
               </div>
             </Form>
           </CardBody>
-          <CardFooter className="d-flex justify-content-end">
+          <CardFooter className="d-flex justify-content-end align-items-center gap-3">
+            <FormGroup check className="mr-3">
+              <Label check>
+                <Input
+                  type="checkbox"
+                  checked={addPaymentLinkChecked}
+                  onChange={(e) =>
+                    handlePaymentLinkCheckboxChange(e.target.checked)
+                  }
+                />
+                Add payment link in the proposal
+              </Label>
+            </FormGroup>
             <Button color="primary" onClick={sendProposal} type="submit">
               Send Proposal
             </Button>
           </CardFooter>
         </Card>
       </div>
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton className="bg-dark">
+          <Modal.Title className="text-white">
+            Select a Proposal Template
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ul className="list-unstyled">
+            {proposalTemplates.map((template) => (
+              <li key={template._id} className="mb-2">
+                <button
+                  className="btn btn-secondary btn-block text-left"
+                  onClick={() => handleTemplateSelect(template.description)}
+                >
+                  <i className="fas fa-file-alt mr-2"></i>
+                  {template.title}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-dark" onClick={() => setShowModal(false)}>
+            Close
+          </button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

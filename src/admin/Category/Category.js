@@ -191,9 +191,9 @@ function Category() {
                                 <tr key={category._id}>
                                   <td>{category.name}</td>
                                   <td>
-                                    <div>
-                                      <span
-                                        className="m-1 btn btn-primary"
+                                    <div className="d-flex justify-content-center">
+                                      <button
+                                        className="m-1 btn btn-primary btn-sm "
                                         data-toggle="modal"
                                         data-target="#viewCategoryModal"
                                         onClick={() =>
@@ -201,9 +201,9 @@ function Category() {
                                         }
                                       >
                                         <i className="fas fa-file-alt p-2"></i>
-                                      </span>
-                                      <span
-                                        className="m-1 btn btn-danger"
+                                      </button>
+                                      <button
+                                        className="m-1 btn btn-danger btn-sm"
                                         data-toggle="modal"
                                         data-target="#deleteCategoryModal"
                                         onClick={() =>
@@ -211,9 +211,9 @@ function Category() {
                                         }
                                       >
                                         <i className="fas fa-trash-alt p-2"></i>
-                                      </span>
-                                      <span
-                                        className="m-1 btn btn-dark"
+                                      </button>
+                                      <button
+                                        className="m-1 btn btn-dark btn-sm"
                                         data-toggle="modal"
                                         data-target="#editCategoryModal"
                                         onClick={() =>
@@ -224,7 +224,7 @@ function Category() {
                                         }
                                       >
                                         <i className="fas fa-edit p-2"></i>
-                                      </span>
+                                      </button>
                                     </div>
                                   </td>
                                 </tr>

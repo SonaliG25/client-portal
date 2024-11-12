@@ -6,65 +6,90 @@ import axios from "axios";
 function SubscriptionDetails() {
   const [auth] = useAuth();
   const { id } = useParams();
-  const [orderInfo, setOrderInfo] = useState(null);
+  const [subscriptionInfo, setSubscriptionInfo] = useState(null);
 
   useEffect(() => {
     if (auth?.token && id) {
       axios
-        .get(`http://localhost:3000/order/${id}`, {
+        .get(`http://localhost:3000/subscription/${id}`, {
           headers: { Authorization: `Bearer ${auth.token}` },
         })
-        .then((res) => setOrderInfo(res.data))
+        .then((res) => {
+          setSubscriptionInfo(res.data);
+          console.log("res", res.data);
+        })
         .catch((error) => console.error("Error fetching order:", error));
     }
   }, [auth, id]);
-
+  const calculateSubscriptionEndDate = (
+    subscriptionStartDate,
+    subscriptionDurationInMonths
+  ) => {
+    const startDate = new Date(subscriptionStartDate);
+    startDate.setMonth(startDate.getMonth() + subscriptionDurationInMonths);
+    return startDate;
+  };
   return (
-    <div className="content-wrapper mt-5">
-      <h1 className="text-center mb-4">Order Details</h1>
-      {orderInfo ? (
+    <div className="content-wrapper ">
+      <h1 className="text-center mb-4">Subscription Details</h1>
+      {subscriptionInfo ? (
         <div className="invoice p-3 mb-3">
-          {/* Order Information */}
+          {/* Subscription Information */}
           <div className="card">
             <div className="card-header">
-              <h3 className="card-title">Order Information</h3>
+              <h3 className="card-title">Subscription Details</h3>
             </div>
             <div className="card-body">
               <div className="row">
                 <div className="col-md-6">
                   <p>
-                    <strong>Customer Name:</strong> {orderInfo.customer.name}
+                    <strong>Subscription Status:</strong>{" "}
+                    <span
+                      className={`badge ${
+                        subscriptionInfo.subscriptionStatus === "Sent"
+                          ? "badge-warning"
+                          : subscriptionInfo.subscriptionStatus === "active"
+                          ? "badge-success"
+                          : subscriptionInfo.subscriptionStatus === "inactive"
+                          ? "badge-dark"
+                          : "badge-danger"
+                      }`}
+                    >
+                      {subscriptionInfo.subscriptionStatus}
+                    </span>
                   </p>
-                  <p>
+                  {/* <p>
                     <strong>Shipping Address:</strong>{" "}
-                    {`${orderInfo.shippingAddress.addressLine1}, ${orderInfo.shippingAddress.city}, ${orderInfo.shippingAddress.state}, ${orderInfo.shippingAddress.country}`}
+                    {`${subscriptionInfo.address.street1}, ${subscriptionInfo.shippingAddress.city}, ${subscriptionInfo.shippingAddress.state}, ${subscriptionInfo.shippingAddress.country}`}
+                  </p> */}
+                  <p>
+                    <strong>Subscription Duration (In Months):</strong>{" "}
+                    {subscriptionInfo.subscriptionDurationInMonths}
                   </p>
                   <p>
-                    <strong>Payment Method:</strong> {orderInfo.paymentMethod}
+                    <strong>subscription Start Date:</strong>{" "}
+                    {new Date(
+                      subscriptionInfo.subscriptionStartDate
+                    ).toLocaleDateString()}
                   </p>
                   <p>
-                    <strong>Order Date:</strong>{" "}
-                    {new Date(orderInfo.orderDate).toLocaleDateString()}
+                    <strong>subscription End Date:</strong>{" "}
+                    {new Date(
+                      calculateSubscriptionEndDate(
+                        subscriptionInfo.subscriptionStartDate,
+                        subscriptionInfo.subscriptionDurationInMonths
+                      )
+                    ).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="col-md-6">
                   <p>
-                    <strong>Payment Status:</strong> {orderInfo.paymentStatus}
-                  </p>
-                  <p>
-                    <strong>Order Status:</strong> {orderInfo.orderStatus}
-                  </p>
-                  <p>
-                    <strong>Shipping Cost:</strong>{" "}
-                    {`${orderInfo.shippingCost} ${orderInfo.totalAmountCurrency}`}
-                  </p>
-                  <p>
                     <strong>Total Amount:</strong>{" "}
-                    {`${orderInfo.totalAmount} ${orderInfo.totalAmountCurrency}`}
+                    {`${subscriptionInfo.finalAmount} ${subscriptionInfo.totalAmountCurrency}`}
                   </p>
                   <p>
-                    <strong>Grand Total:</strong>{" "}
-                    {`${orderInfo.grandTotal} ${orderInfo.grandTotalCurrency}`}
+                    <strong> Total no of products:</strong>{" "}
+                    {`${subscriptionInfo.products.length} `}
                   </p>
                 </div>
               </div>
@@ -82,31 +107,39 @@ function SubscriptionDetails() {
                   <tr>
                     <th>Product Name</th>
                     <th>SKU</th>
-                    <th>Sale Price</th>
+                    <th>Total With Tax</th>
                     <th>Quantity</th>
                     <th>Total</th>
-                    <th>Purchase Type</th>
+                    {/* <th>Purchase Type</th> */}
                   </tr>
                 </thead>
                 <tbody>
-                  {orderInfo.products.map((product, index) => (
+                  {subscriptionInfo.products.map((product, index) => (
                     <tr key={index}>
-                      <td>{product.name}</td>
-                      <td>{product.sku}</td>
-                      <td>{`${product.currency} ${product.salePrice}`}</td>
+                      <td>{product.productId.name}</td>
+                      <td>{product.productId.sku}</td>
+                      <td>{`${subscriptionInfo.totalAmountCurrency} ${product.total}`}</td>
                       <td>{product.quantity}</td>
-                      <td>{`${product.currency} ${product.total}`}</td>
-                      <td>{product.purchaseType}</td>
+                      <td>{`${subscriptionInfo.totalAmountCurrency} ${product.total}`}</td>
+                      {/* <td>{product.purchaseType}</td> */}
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
+          <div className="card mt-4">
+            <div className="card-header">
+              <h3 className="card-title">Payment Details</h3>
+            </div>
+            <div className="card-body">
+              <p>We can show once strip integration is done</p>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="text-center">
-          <p>Loading order details...</p>
+          <p>Loading Subscription details...</p>
         </div>
       )}
     </div>

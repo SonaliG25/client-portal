@@ -229,7 +229,7 @@ function Tickets() {
               <div className="card">
                 <div className="card-body">
                   <div className="table-responsive">
-                    <table className="table">
+                    <table className="table table-bordered table-hover ">
                       <thead>
                         <tr>
                           <th>Title</th>
@@ -288,7 +288,7 @@ function Tickets() {
                       <button
                         key={index + 1}
                         onClick={() =>
-                          fetchTicketData(index + 1, 5, searchTerm)
+                          fetchTicketData(index + 1, 15, searchTerm)
                         }
                         className={`btn mr-2 ${
                           currentPage === index + 1

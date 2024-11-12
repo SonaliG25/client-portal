@@ -27,7 +27,7 @@ function UserLayout() {
       }`}
     >
       <div className={`wrapper`}>
-        <UserNavbar />
+        {/* <UserNavbar /> */}
         <UserSidebar />
         {/* Content section where child routes/components will be displayed */}
         <div className="content">
