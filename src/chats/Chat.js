@@ -18,10 +18,11 @@ function Chat() {
   const [file, setFile] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const chatEndRef = useRef(null);
-
+  console.log("Auth",auth);
+  
   useEffect(() => {
     const newSocket = io("http://localhost:3000", {
-      extraHeaders: { "token": auth.token },
+      extraHeaders: { "token": auth?.token },
     });
     
     newSocket.on("connect", () => {
@@ -50,15 +51,43 @@ function Chat() {
 
   useEffect(() => {
     if (socket) {
+      // Handle incoming messages
       socket.on('receiveMessage', (message) => {
-        // setMessages((prevMessages) => [...prevMessages, message]); // Add new message at the end
-        console.log(message);
+        //setMessages((prevMessages) => [...prevMessages, message]);
+        
+        // Send a messageRead event if this user is the receiver
+        if (message.receiver === auth?.user.userId) {
+          socket.emit("messageRead", { messageId: message._id, userId: auth?.user.userId });
+          if (message.sender !== selectedUser?._id) {
+            setUserChat((prevUserChat) =>
+              prevUserChat.map((user) =>
+                user._id === message.sender
+                  ? { ...user, unreadCount: (user.unreadCount || 0) + 1 }
+                  : user
+              )
+            );
+          }
+        }
       });
+  
+      // Update messages when message is marked as read
+      socket.on("messageRead", ({ messageId, userId }) => {
+        setMessages((prevMessages) =>
+          prevMessages.map((msg) =>
+            msg._id === messageId
+              ? { ...msg, readBy: [...msg.readBy, userId] }
+              : msg
+          )
+        );
+      });
+  
       return () => {
-        socket.off('receiveMessage');
+        socket.off("receiveMessage");
+        socket.off("messageRead");
       };
     }
   }, [socket]);
+  
 
   const handleSendMessage = async (event) => {
     event.preventDefault();
@@ -78,7 +107,7 @@ function Chat() {
         };
   
         const messageData = {
-          sender: auth.user.userId,
+          sender: auth?.user.userId,
           receiver: selectedUser._id,
           message: messageText,
           file: fileData,
@@ -91,7 +120,7 @@ function Chat() {
   
         // Update the UI immediately with the new message
         setMessages((prevMessages) => [...prevMessages, messageData]);
-  
+        getUser()
         // Clear input fields
         event.target.elements.messageInput.value = '';
         setFile(null);
@@ -102,7 +131,7 @@ function Chat() {
       };
     } else {
       const messageData = {
-        sender: auth.user.userId,
+        sender: auth?.user.userId,
         receiver: selectedUser._id,
         message: messageText,
         createdAt: new Date(), // Add timestamp for immediate display
@@ -127,36 +156,70 @@ function Chat() {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
-      
+  
       const sortedUsers = res.data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-      
-      setUserChat(sortedUsers);
-      setFilteredUsers(sortedUsers);
-      console.log("Userrr", res.data.data);
+  
+      // Update each user with unread count
+      const updatedUsers = await Promise.all(
+        sortedUsers.map(async (user) => {
+          const messagesRes = await axios.get(`${BASE_URL}/chat/${user._id}/${auth?.user.userId}`, {
+            headers: {
+              Authorization: `Bearer ${auth?.token}`,
+            },
+          });
+  
+          // Count unread messages where user is the receiver and current user hasn't read them
+          const unreadCount = messagesRes.data.filter(
+            (msg) => msg.receiver === auth?.user.userId && !msg.readBy.includes(auth?.user.userId)
+          ).length;
+  
+          return { ...user, unreadCount };
+        })
+      );
+  
+      setUserChat(updatedUsers);
+      setFilteredUsers(updatedUsers);
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   const handleUserSelect = async (userName, userId) => {
     setSelectedUser({ name: userName, _id: userId });
-
+  
     if (socket) {
       socket.emit('leaveRoom');
-      socket.emit('joinRoom', { userId: auth.user.userId, receiverId: userId });
+      socket.emit('joinRoom', { userId: auth?.user.userId, receiverId: userId });
     }
-
+  
     try {
-      const res = await axios.get(`${BASE_URL}/chat/${userId}/${auth.user.userId}`, {
+      const res = await axios.get(`${BASE_URL}/chat/${userId}/${auth?.user.userId}`, {
         headers: {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
+  
       setMessages(res.data);
+  
+      // Mark messages as read
+      res.data.forEach((message) => {
+        if (!message.readBy.includes(auth?.user.userId) && message.receiver === auth?.user.userId) {
+          socket.emit("messageRead", { messageId: message._id, userId: auth?.user.userId });
+        }
+      });
+  
+      // Reset unread count for selected user
+      setUserChat((prevUserChat) =>
+        prevUserChat.map((user) =>
+          user._id === userId ? { ...user, unreadCount: 0 } : user
+        )
+      );
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -198,21 +261,27 @@ function Chat() {
               onChange={handleSearchChange}
               className="mb-3"
             />
-            <ListGroup>
-              {filteredUsers.map((user) => (
-                <ListGroup.Item
-                  key={user._id}
-                  action
-                  active={selectedUser?.name === user.name}
-                  onClick={() => handleUserSelect(user.name, user._id)}
-                >
-                  {user.name}
-                  <div className="small text-muted">
-                    {user.lastMessage} - {moment(user.updatedAt).format('hh:mm')}
-                  </div>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
+           <ListGroup>
+  {filteredUsers.map((user) => (
+    <ListGroup.Item
+      key={user._id}
+      action
+      active={selectedUser?.name === user.name}
+      onClick={() => handleUserSelect(user.name, user._id)}
+    >
+      {user.name}
+      <div className="small text-muted">
+        {user.lastMessage} - {moment(user.updatedAt).format('hh:mm')}
+      </div>
+      {user.unreadCount > 0 && (
+        <span className="badge bg-danger rounded-pill ms-2">
+          {user.unreadCount}
+        </span>
+      )}
+    </ListGroup.Item>
+  ))}
+</ListGroup>
+
           </Col>
 
           <Col md={9} className="d-flex flex-column">
@@ -223,36 +292,45 @@ function Chat() {
             <div className="chat-body flex-grow-1 overflow-auto mb-3" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
               {messages.map((message, index) => (
                 <div
-                  key={index}
-                  className={`message p-2 mb-2 rounded d-flex ${message.sender === auth.user.userId ? 'justify-content-end' : 'justify-content-start'}`}
-                  style={{
-                    maxWidth: '70%',
-                    marginLeft: message.sender === auth.user.userId ? 'auto' : '0',
-                  }}
+                key={index}
+                className={`message p-2 mb-2 rounded d-flex ${
+                  message.sender === auth?.user.userId ? 'justify-content-end' : 'justify-content-start'
+                }`}
+                style={{
+                  maxWidth: '70%',
+                  marginLeft: message.sender === auth?.user.userId ? 'auto' : '0',
+                }}
+              >
+                <div
+                  className={`message-content ${
+                    message.sender === auth?.user.userId ? 'bg-primary text-white' : 'bg-light text-dark'
+                  } p-2 rounded`}
                 >
-                  <div
-                    className={`message-content ${message.sender === auth.user.userId ? 'bg-primary text-white' : 'bg-light text-dark'} p-2 rounded`}
-                  >
-                    <div>
-                      <strong>{message.sender === auth.user.userId ? "You" : selectedUser?.name}</strong>
-                      <span className="small ms-2 text-muted">
-                        {moment(message.createdAt).format('hh:mm')}
-                      </span>
+                  <div>
+                    <strong>{message.sender === auth?.user.userId ? 'You' : selectedUser?.name}</strong>
+                    <span className="small ms-2 text-muted">
+                      {moment(message.createdAt).format('hh:mm')}
+                    </span>
+                  </div>
+                  <div>{message.message}</div>
+                  {message.file && (
+                    <div className="attachment">
+                      {message.file.type === 'image' ? (
+                        <img src={message.file.url} alt="attachment" style={{ maxWidth: '100px' }} />
+                      ) : (
+                        <a href={message.file.url} download>
+                          {message.file.name}
+                        </a>
+                      )}
                     </div>
-                    <div>{message.message}</div>
-                    {message.file && (
-                      <div className="attachment">
-                        {message.file.type === 'image' ? (
-                          <img src={message.file.url} alt="attachment" style={{ maxWidth: '100px' }} />
-                        ) : (
-                          <a href={message.file.url} download>
-                            {message.file.name}
-                          </a>
-                        )}
-                      </div>
-                    )}
+                  )}
+                  <div className="text-end small text-muted">
+                    {message.isRead || message.readBy?.includes(selectedUser?._id)
+                      ? "Read"
+                      : "Unread"}
                   </div>
                 </div>
+              </div>
               ))}
               <div ref={chatEndRef} />
             </div>

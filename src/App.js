@@ -39,6 +39,7 @@ import Subscriptions from "./admin/subscription/Subscriptions.js";
 import SubscriptionDetails from "./admin/subscription/SubscriptionsDetails.js";
 import ProposalDetails from "./admin/proposal/ProposalDetails.js";
 import SubscriptionsbyUser from "./client/Subscription/SubscriptionsbyUser.js";
+import ChatSidebar from "./chats/ChatSidebar.js";
 function App() {
   const router = createBrowserRouter([
     { path: RoutesNames.LOGIN, element: <Login /> },
@@ -76,6 +77,10 @@ function App() {
         {
           path: RoutesNames.VIEW_TICKET,
           element: <ViewTicket />,
+        },
+        {
+          path: 'userchat',
+          element: <ChatSidebar/>,
         },
       ],
     },

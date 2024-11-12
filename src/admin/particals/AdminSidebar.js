@@ -303,7 +303,7 @@ const AdminSidebar = () => {
                     isActive ? "nav-link active" : "nav-link"
                   }
                 >
-                  <i className="fas fa-comments"></i>
+                  <i className="nav-icon fas fa-comments"></i>
                   <p>Chats</p>
                 </NavLink>
               </li>
