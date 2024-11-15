@@ -50,41 +50,10 @@ const ProposalDetails = () => {
   const handleConfirmUpdate = async () => {
     await handleUpdateStatus(updateStatus);
   };
-  const handleSubscriptionData = async (subscriptionData, onConfirm) => {
-    // e.preventDefault();
-
-    // // Construct the subscription data from form state
-    // const subscriptionData = subscriptionData;
-    // console.log("subscriptionData", subscriptionData, auth?.token);
-    onConfirm();
-    try {
-      const response = await axios.post(
-        `${BASE_URL}/subscription/new`,
-        subscriptionData, // The body data should be passed as the second argument
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${auth?.token}`,
-          },
-        }
-      );
-
-      if (response.data) {
-        toast.success("Subscription created successfully");
-
-        navigate(-1);
-      }
-    } catch (error) {
-      console.error("Error creating subscription:", error);
-      toast.error("Error creating subscription");
-    }
-    // toggle();
-  };
-  const createSubscriptionInStrip = async () => {};
 
   const handleUpdateStatus = async (status) => {
-    const subscriptionOn = status === "Accepted" ? true : false;
-    console.log("subscriptionOn", subscriptionOn, status);
+    // const subscriptionOn = status === "Accepted" ? true : false;
+    // console.log("subscriptionOn", subscriptionOn, status);
 
     try {
       const response = await fetch(`${BASE_URL}/proposal/${id}/status`, {
@@ -95,7 +64,7 @@ const ProposalDetails = () => {
         },
         body: JSON.stringify({
           status: status,
-          subscriptionOn: subscriptionOn,
+          // subscriptionOn: subscriptionOn,
         }),
       });
 
@@ -172,14 +141,14 @@ const ProposalDetails = () => {
               <div className="card">
                 <div className="card-header d-flex justify-content-between ">
                   <h5 className="card-title">Proposal Details</h5>
-                  <p className="d-flex align-items-center">
+                  {/* <p className="d-flex align-items-center">
                     Subscription Created ? :
                     {proposal.subscriptionOn ? (
                       <span className="text-success"> Yes</span>
                     ) : (
                       <span className="text-danger"> No</span>
                     )}
-                  </p>
+                  </p> */}
                 </div>
 
                 <div className="card-body">
@@ -210,45 +179,35 @@ const ProposalDetails = () => {
                   <h5 className="card-title">Proposal Status</h5>
                 </div>
                 <div className="card-body">
-                  <div className="d-flex justify-content-evenly align-items-center">
-                    <select
-                      className="form-control"
-                      id="status"
-                      name="status"
-                      value={updateStatus}
-                      style={{ width: "auto" }}
-                      onChange={(e) => setUpdateStatus(e.target.value)}
-                    >
-                      <option value="Sent">Sent</option>
-                      <option value="Accepted">Accepted</option>
-                      <option value="Rejected">Rejected</option>
-                    </select>
-
-                    {!proposal.subscriptionOn ? (
+                  {!proposal.status === "Accepted" ? (
+                    <div className="d-flex justify-content-evenly align-items-center">
+                      <select
+                        className="form-control"
+                        id="status"
+                        name="status"
+                        value={updateStatus}
+                        style={{ width: "auto" }}
+                        onChange={(e) => setUpdateStatus(e.target.value)}
+                      >
+                        <option value="Sent">Sent</option>
+                        <option value="Accepted">Accepted</option>
+                        <option value="Rejected">Rejected</option>
+                      </select>{" "}
                       <Button
                         color="primary"
                         className="ml-2"
                         onClick={handleUpdateStatusVar}
                       >
                         Update Status
-                      </Button>
-                    ) : (
-                      <p className="text-success">{""}</p>
-                    )}
-
-                    <StatusConfirmationModal
-                      proposalId={id}
-                      customer={proposal.recipient}
-                      handleSubscriptionData={handleSubscriptionData}
-                      finalAmount={proposal.finalAmount}
-                      grandTotalCurrency={proposal.grandTotalCurrency}
-                      products={proposal.products}
-                      isOpen={isFirstModalOpen}
-                      toggle={toggleFirstModal}
-                      proposalStatus={updateStatus}
-                      onConfirm={handleConfirmUpdate}
-                    />
-                  </div>
+                      </Button>{" "}
+                    </div>
+                  ) : (
+                    <>
+                      {" "}
+                      <p className="badge badge-success text-md">Accepted</p>
+                      {/* <p>This proposal is ready for creating subscription</p> */}
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -381,29 +340,29 @@ const StatusConfirmationModal = ({
   toggle,
   proposalStatus,
   onConfirm,
-  products,
-  grandTotalCurrency,
-  finalAmount,
-  proposalId,
-  customer,
-  handleSubscriptionData,
+  // products,
+  // grandTotalCurrency,
+  // finalAmount,
+  // proposalId,
+  // customer,
+  // handleSubscriptionData,
 }) => {
-  const [formData, setFormData] = useState({
-    customer: customer,
-    proposalId: proposalId,
-    isActive: true,
-    products: products,
-    subscriptionStatus: "processing",
-    totalAmountCurrency: grandTotalCurrency,
-    finalAmount: finalAmount,
-    // subscriptionDate: new Date(),
-    subscriptionDurationInMonths: 1,
-  });
+  // const [formData, setFormData] = useState({
+  //   customer: customer,
+  //   proposalId: proposalId,
+  //   isActive: true,
+  //   products: products,
+  //   subscriptionStatus: "processing",
+  //   totalAmountCurrency: grandTotalCurrency,
+  //   finalAmount: finalAmount,
+  //   // subscriptionDate: new Date(),
+  //   subscriptionDurationInMonths: 1,
+  // });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData({ ...formData, [name]: value });
+  // };
 
   return proposalStatus === "Accepted" ? (
     <Modal
@@ -422,14 +381,14 @@ const StatusConfirmationModal = ({
         <p>
           Are you sure you want to change the status to{" "}
           <strong>{proposalStatus}</strong>
-          <br /> And <strong>Create Subscription</strong> with below products
+          {/* <br /> And <strong>Create Subscription</strong> with below products
           with <strong> Final Amount : </strong>
           <span>
             {grandTotalCurrency} {finalAmount}
           </span>{" "}
-          ?
+          ? */}
         </p>
-        <Table className="table text-center">
+        {/* <Table className="table text-center">
           <thead className="bg-gradient-primary text-white">
             <tr>
               <th>
@@ -483,7 +442,7 @@ const StatusConfirmationModal = ({
               required
             />
           </FormGroup>
-        </Form>
+        </Form> */}
       </div>
       <div className="modal-footer">
         <Button color="secondary" onClick={toggle}>
@@ -492,7 +451,8 @@ const StatusConfirmationModal = ({
         <Button
           color="primary"
           onClick={() => {
-            handleSubscriptionData(formData, onConfirm, toggle);
+            onConfirm();
+            // handleSubscriptionData(formData, , toggle);
             toggle();
           }}
         >

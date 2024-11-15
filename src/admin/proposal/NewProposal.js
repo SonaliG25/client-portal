@@ -129,29 +129,29 @@ const NewProposal = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
-  const [addPaymentLinkChecked, setAddPaymentLinkChecked] = useState(false);
-  const [paymentLink, setPaymentLink] = useState("");
+  // const [addPaymentLinkChecked, setAddPaymentLinkChecked] = useState(false);
+  // const [paymentLink, setPaymentLink] = useState("");
 
   // Generate the payment link when the checkbox is checked
-  const handlePaymentLinkCheckboxChange = (isChecked) => {
-    setAddPaymentLinkChecked(isChecked);
-    let paymentLink = "";
-    // Generate the link only if checkbox is checked
-    if (isChecked) {
-      const generatedLink = "https://example.com/payment-link";
+  // const handlePaymentLinkCheckboxChange = (isChecked) => {
+  //   setAddPaymentLinkChecked(isChecked);
+  //   let paymentLink = "";
+  //   // Generate the link only if checkbox is checked
+  //   if (isChecked) {
+  //     const generatedLink = "https://example.com/payment-link";
 
-      setProposalData((prevData) => ({
-        ...prevData,
-        paymentLink: generatedLink,
-      }));
-      console.log("paymentLink", proposalData.paymentLink);
-    } else {
-      setProposalData((prevData) => ({
-        ...prevData,
-        paymentLink: paymentLink,
-      }));
-    }
-  };
+  //     setProposalData((prevData) => ({
+  //       ...prevData,
+  //       paymentLink: generatedLink,
+  //     }));
+  //     console.log("paymentLink", proposalData.paymentLink);
+  //   } else {
+  //     setProposalData((prevData) => ({
+  //       ...prevData,
+  //       paymentLink: paymentLink,
+  //     }));
+  //   }
+  // };
 
   const [moreAttachmentsToUpload, setMoreAttachmentsToUpload] = useState([]);
   const [proposalData, setProposalData] = useState({
@@ -167,7 +167,7 @@ const NewProposal = () => {
     finalAmount: 0,
     attachments: [],
     status: "",
-    paymentLink: "",
+    // paymentLink: "",
   });
 
   const [productTotal, setProductTotal] = useState(0);
@@ -1030,19 +1030,7 @@ const NewProposal = () => {
               </div>
             </Form>
           </CardBody>
-          <CardFooter className="d-flex justify-content-end align-items-center gap-3">
-            <FormGroup check className="mr-3">
-              <Label check>
-                <Input
-                  type="checkbox"
-                  checked={addPaymentLinkChecked}
-                  onChange={(e) =>
-                    handlePaymentLinkCheckboxChange(e.target.checked)
-                  }
-                />
-                Add payment link in the proposal
-              </Label>
-            </FormGroup>
+          <CardFooter>
             <Button color="primary" onClick={sendProposal} type="submit">
               Send Proposal
             </Button>

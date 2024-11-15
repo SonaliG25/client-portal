@@ -8,6 +8,7 @@
     "axios": "^1.7.7",
     "cra-template": "1.2.0",
     "formik": "^2.4.6",
+    "helmet": "^8.0.0",
     "intl-tel-input": "^24.6.1",
     "jodit-react": "^4.1.2",
     "jspdf": "^2.5.2",

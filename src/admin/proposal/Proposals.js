@@ -35,7 +35,7 @@ function Proposals() {
   const getProposals = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/proposal/proposal/getAllProposals?page=${currentPage}&limit=${proposalsPerPage}&search=${searchQuery}`,
+        `${BASE_URL}/proposal/proposals?page=${currentPage}&limit=${proposalsPerPage}&search=${searchQuery}`,
         {
           headers: {
             Authorization: `Bearer ${auth?.token}`,
@@ -175,12 +175,6 @@ function Proposals() {
                             >
                               {proposal.status}
                             </span>
-
-                            <div>
-                              {proposal.paymentLink &&
-                                proposal.paymentLink.trim() !== "" &&
-                                `With ${proposal.paymentLink}`}
-                            </div>
                           </td>
                           {/* <td>
                             <p
