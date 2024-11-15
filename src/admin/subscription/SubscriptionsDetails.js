@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
+import { BASE_URL } from "../../utils/endPointNames";
 
 function SubscriptionDetails() {
   const [auth] = useAuth();
@@ -11,7 +12,7 @@ function SubscriptionDetails() {
   useEffect(() => {
     if (auth?.token && id) {
       axios
-        .get(`http://localhost:3000/subscription/${id}`, {
+        .get(`${BASE_URL}/subscription/${id}`, {
           headers: { Authorization: `Bearer ${auth.token}` },
         })
         .then((res) => {

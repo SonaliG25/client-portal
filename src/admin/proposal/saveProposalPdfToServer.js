@@ -1,6 +1,7 @@
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import axios from "axios";
+import { BASE_URL } from "../../utils/endPointNames";
 function addLetterSpacing(doc, text, x, y, spacing = 1) {
   let currentX = x; // Track the current X position
   for (let char of text) {
@@ -116,16 +117,12 @@ export const savePdfToServer = async (proposalData, authToken) => {
 
   try {
     // Send to server and receive the URL
-    const response = await axios.post(
-      "http://localhost:3000/upload/doc",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
-    );
+    const response = await axios.post(`${BASE_URL}/upload/doc`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
 
     if (response.data) {
       // console.log(

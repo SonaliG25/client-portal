@@ -1,108 +1,10 @@
-// import axios from "axios";
-// import React, { useEffect, useState } from "react";
-// import { useAuth } from "../../context/AuthContext";
-
-// function GetProposal() {
-//   const [proposal, setProposal] = useState(); // Initialize as an empty object
-//   const [auth] = useAuth();
-
-//   const fetchProposal = async () => {
-//     try {
-//       const res = await axios.get(
-//         `http://localhost:3000/proposal/getAllProposals`,
-//         {
-//           headers: {
-//             Authorization: `Bearer ${auth?.token}`,
-//           },
-//         }
-//       );
-//       console.log(res.data);
-//       setProposal(res.data); // Set fetched proposal data
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     console.log("auth:", auth);
-//     fetchProposal();
-//   }, [auth]);
-
-//   return (
-//     <div className="content-wrapper">
-//       <section className="content-header">
-//         <div className="container-fluid">
-//           <div className="row mb-2">
-//             <div className="col-sm-6">
-//               <h1>Proposal</h1>
-//             </div>
-//             <div className="col-sm-6">
-//               <ol className="breadcrumb float-sm-right">
-//                 <li className="breadcrumb-item">
-//                   <a href="#">Home</a>
-//                 </li>
-//                 <li className="breadcrumb-item active">Proposal</li>
-//               </ol>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-//       <section className="content">
-//         <div className="container-fluid">
-//           <div className="row">
-//             <div className="col-12">
-//               <div className="card">
-//                 <div className="card-body">
-//                   <table
-//                     id="example2"
-//                     className="table table-bordered table-hover"
-//                   >
-//                     <thead>
-//                       <tr>
-//                         <th>Title</th>
-//                         <th>Content</th>
-//                         <th>Created At</th>
-//                         <th>Email To</th>
-//                         <th>Grand Total</th>
-//                         <th>Discount</th>
-//                         <th>Final Amount</th>
-//                       </tr>
-//                     </thead>
-//                     <tbody>
-//                       <tr>
-//                         <td>{proposal?.title || "N/A"}</td>
-//                         <td>{proposal?.content || "N/A"}</td>
-//                         <td>
-//                           {new Date(proposal?.createdAt).toLocaleDateString() ||
-//                             "N/A"}
-//                         </td>
-//                         <td>{proposal?.emailTo || "N/A"}</td>
-//                         <td>{`${proposal?.grandTotalCurrency || ""} ${
-//                           proposal?.grandTotal || "N/A"
-//                         }`}</td>
-//                         <td>{`${proposal?.discountType || "N/A"} - ${
-//                           proposal?.discountOnGrandTotal || "N/A"
-//                         }`}</td>
-//                         <td>{`${proposal?.finalAmount || "N/A"}`}</td>
-//                       </tr>
-//                     </tbody>
-//                   </table>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-//     </div>
-//   );
-// }
-
 // export default GetProposal;
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { useProposalView } from "../../context/ProposalViewContext";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../utils/endPointNames";
 function GetProposal() {
   const [proposals, setProposals] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -114,14 +16,11 @@ function GetProposal() {
 
   const fetchProposals = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:3000/proposal/getAllProposals`,
-        {
-          headers: {
-            Authorization: `Bearer ${auth?.token}`,
-          },
-        }
-      );
+      const res = await axios.get(`${BASE_URL}/proposal/getAllProposals`, {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
       setProposals(res.data);
     } catch (error) {
       console.log(error);

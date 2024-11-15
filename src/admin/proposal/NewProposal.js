@@ -75,10 +75,7 @@ const NewProposal = () => {
     };
 
     try {
-      const res = await axios.post(
-        "http://localhost:3000/user/register",
-        userData
-      );
+      const res = await axios.post(`${BASE_URL}/user/register`, userData);
       // console.log(res);
       if (res.data) {
         setReceipientId(res.data._id);
@@ -210,16 +207,12 @@ const NewProposal = () => {
     });
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/upload/docs",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${auth.token}`,
-          },
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/upload/docs`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${auth.token}`,
+        },
+      });
       response.data.files.map((file) => {
         const newAttachment = {
           filename: file.filename,
@@ -291,7 +284,7 @@ const NewProposal = () => {
     if (!auth?.token) return;
     try {
       const res = await axios.get(
-        `http://localhost:3000/product/getProducts?page=${currentPage}&limit=${productsPerPage}&search=${searchQuery}`,
+        `${BASE_URL}/product/getProducts?page=${currentPage}&limit=${productsPerPage}&search=${searchQuery}`,
         {
           headers: { Authorization: `Bearer ${auth.token}` },
         }
@@ -320,7 +313,7 @@ const NewProposal = () => {
   const fetchUsers = async () => {
     if (!auth?.token) return;
     try {
-      const response = await axios.get("http://localhost:3000/user/clients", {
+      const response = await axios.get(`${BASE_URL}/user/clients`, {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       setUsers(response.data);
@@ -333,12 +326,9 @@ const NewProposal = () => {
   const fetchProposalTemplates = async () => {
     if (!auth?.token) return;
     try {
-      const res = await axios.get(
-        `http://localhost:3000/proposalTemplate/templates`,
-        {
-          headers: { Authorization: `Bearer ${auth.token}` },
-        }
-      );
+      const res = await axios.get(`${BASE_URL}/proposalTemplate/templates`, {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      });
       setProposalTemplates(res.data.templates);
     } catch (err) {
       console.error("Error fetching templates:", err);
@@ -462,7 +452,7 @@ const NewProposal = () => {
           }
         }
         const res = await axios.post(
-          `http://localhost:3000/proposal/new`,
+          `${BASE_URL}/proposal/new`,
           {
             proposalData,
           },

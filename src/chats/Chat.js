@@ -1,11 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Container, Row, Col, Form, Button, ListGroup, InputGroup } from 'react-bootstrap';
-import { FaPaperclip } from 'react-icons/fa';
-import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
-import moment from 'moment';
-import { io } from 'socket.io-client';
-import { BASE_URL } from '../utils/endPointNames';
+import React, { useEffect, useState, useRef } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  ListGroup,
+  InputGroup,
+} from "react-bootstrap";
+import { FaPaperclip } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
+import moment from "moment";
+import { io } from "socket.io-client";
+import { BASE_URL } from "../utils/endPointNames";
 
 function Chat() {
   const [messages, setMessages] = useState([]);
@@ -16,25 +24,25 @@ function Chat() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [socket, setSocket] = useState(null);
   const [file, setFile] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const chatEndRef = useRef(null);
-  console.log("Auth",auth);
-  
+  console.log("Auth", auth);
+
   useEffect(() => {
-    const newSocket = io("http://localhost:3000", {
-      extraHeaders: { "token": auth?.token },
+    const newSocket = io(`${BASE_URL}`, {
+      extraHeaders: { token: auth?.token },
     });
-    
+
     newSocket.on("connect", () => {
       console.log("Socket connected with id:", newSocket.id);
     });
-    
+
     newSocket.on("connect_error", (error) => {
       console.error("Socket connection error:", error);
     });
-    
+
     setSocket(newSocket);
-    
+
     return () => {
       newSocket.disconnect();
     };
@@ -43,7 +51,9 @@ function Chat() {
   useEffect(() => {
     if (socket) {
       socket.on("newMessageNotification", (notification) => {
-        alert(`New message from ${notification.sender}: ${notification.message}`);
+        alert(
+          `New message from ${notification.sender}: ${notification.message}`
+        );
       });
       return () => socket.off("newMessageNotification");
     }
@@ -52,12 +62,15 @@ function Chat() {
   useEffect(() => {
     if (socket) {
       // Handle incoming messages
-      socket.on('receiveMessage', (message) => {
+      socket.on("receiveMessage", (message) => {
         //setMessages((prevMessages) => [...prevMessages, message]);
-        
+
         // Send a messageRead event if this user is the receiver
         if (message.receiver === auth?.user.userId) {
-          socket.emit("messageRead", { messageId: message._id, userId: auth?.user.userId });
+          socket.emit("messageRead", {
+            messageId: message._id,
+            userId: auth?.user.userId,
+          });
           if (message.sender !== selectedUser?._id) {
             setUserChat((prevUserChat) =>
               prevUserChat.map((user) =>
@@ -69,7 +82,7 @@ function Chat() {
           }
         }
       });
-  
+
       // Update messages when message is marked as read
       socket.on("messageRead", ({ messageId, userId }) => {
         setMessages((prevMessages) =>
@@ -80,32 +93,31 @@ function Chat() {
           )
         );
       });
-  
+
       return () => {
         socket.off("receiveMessage");
         socket.off("messageRead");
       };
     }
   }, [socket]);
-  
 
   const handleSendMessage = async (event) => {
     event.preventDefault();
     const messageText = event.target.elements.messageInput.value;
-  
+
     let fileData = null;
-  
+
     if (file) {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-  
+
       reader.onload = () => {
         fileData = {
           name: file.name,
           type: file.type,
           content: reader.result,
         };
-  
+
         const messageData = {
           sender: auth?.user.userId,
           receiver: selectedUser._id,
@@ -113,19 +125,19 @@ function Chat() {
           file: fileData,
           createdAt: new Date(), // Add timestamp for immediate display
         };
-  
+
         if (socket && socket.connected) {
-          socket.emit('sendMessage', messageData);
+          socket.emit("sendMessage", messageData);
         }
-  
+
         // Update the UI immediately with the new message
         setMessages((prevMessages) => [...prevMessages, messageData]);
-        getUser()
+        getUser();
         // Clear input fields
-        event.target.elements.messageInput.value = '';
+        event.target.elements.messageInput.value = "";
         setFile(null);
       };
-  
+
       reader.onerror = (error) => {
         console.error("Error converting file to base64:", error);
       };
@@ -136,18 +148,18 @@ function Chat() {
         message: messageText,
         createdAt: new Date(), // Add timestamp for immediate display
       };
-  
+
       if (socket && socket.connected) {
-        socket.emit('sendMessage', messageData);
+        socket.emit("sendMessage", messageData);
       }
-  
+
       // Update the UI immediately with the new message
       setMessages((prevMessages) => [...prevMessages, messageData]);
-  
+
       // Clear input field
-      event.target.elements.messageInput.value = '';
+      event.target.elements.messageInput.value = "";
     }
-  }
+  };
 
   const getUser = async () => {
     try {
@@ -156,59 +168,77 @@ function Chat() {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
-  
-      const sortedUsers = res.data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-  
+
+      const sortedUsers = res.data.data.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+      );
+
       // Update each user with unread count
       const updatedUsers = await Promise.all(
         sortedUsers.map(async (user) => {
-          const messagesRes = await axios.get(`${BASE_URL}/chat/${user._id}/${auth?.user.userId}`, {
-            headers: {
-              Authorization: `Bearer ${auth?.token}`,
-            },
-          });
-  
+          const messagesRes = await axios.get(
+            `${BASE_URL}/chat/${user._id}/${auth?.user.userId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${auth?.token}`,
+              },
+            }
+          );
+
           // Count unread messages where user is the receiver and current user hasn't read them
           const unreadCount = messagesRes.data.filter(
-            (msg) => msg.receiver === auth?.user.userId && !msg.readBy.includes(auth?.user.userId)
+            (msg) =>
+              msg.receiver === auth?.user.userId &&
+              !msg.readBy.includes(auth?.user.userId)
           ).length;
-  
+
           return { ...user, unreadCount };
         })
       );
-  
+
       setUserChat(updatedUsers);
       setFilteredUsers(updatedUsers);
     } catch (error) {
       console.error(error);
     }
   };
-  
 
   const handleUserSelect = async (userName, userId) => {
     setSelectedUser({ name: userName, _id: userId });
-  
+
     if (socket) {
-      socket.emit('leaveRoom');
-      socket.emit('joinRoom', { userId: auth?.user.userId, receiverId: userId });
-    }
-  
-    try {
-      const res = await axios.get(`${BASE_URL}/chat/${userId}/${auth?.user.userId}`, {
-        headers: {
-          Authorization: `Bearer ${auth?.token}`,
-        },
+      socket.emit("leaveRoom");
+      socket.emit("joinRoom", {
+        userId: auth?.user.userId,
+        receiverId: userId,
       });
-  
+    }
+
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/chat/${userId}/${auth?.user.userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
+      );
+
       setMessages(res.data);
-  
+
       // Mark messages as read
       res.data.forEach((message) => {
-        if (!message.readBy.includes(auth?.user.userId) && message.receiver === auth?.user.userId) {
-          socket.emit("messageRead", { messageId: message._id, userId: auth?.user.userId });
+        if (
+          !message.readBy.includes(auth?.user.userId) &&
+          message.receiver === auth?.user.userId
+        ) {
+          socket.emit("messageRead", {
+            messageId: message._id,
+            userId: auth?.user.userId,
+          });
         }
       });
-  
+
       // Reset unread count for selected user
       setUserChat((prevUserChat) =>
         prevUserChat.map((user) =>
@@ -219,7 +249,6 @@ function Chat() {
       console.error(error);
     }
   };
-  
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -261,27 +290,27 @@ function Chat() {
               onChange={handleSearchChange}
               className="mb-3"
             />
-           <ListGroup>
-  {filteredUsers.map((user) => (
-    <ListGroup.Item
-      key={user._id}
-      action
-      active={selectedUser?.name === user.name}
-      onClick={() => handleUserSelect(user.name, user._id)}
-    >
-      {user.name}
-      <div className="small text-muted">
-        {user.lastMessage} - {moment(user.updatedAt).format('hh:mm')}
-      </div>
-      {user.unreadCount > 0 && (
-        <span className="badge bg-danger rounded-pill ms-2">
-          {user.unreadCount}
-        </span>
-      )}
-    </ListGroup.Item>
-  ))}
-</ListGroup>
-
+            <ListGroup>
+              {filteredUsers.map((user) => (
+                <ListGroup.Item
+                  key={user._id}
+                  action
+                  active={selectedUser?.name === user.name}
+                  onClick={() => handleUserSelect(user.name, user._id)}
+                >
+                  {user.name}
+                  <div className="small text-muted">
+                    {user.lastMessage} -{" "}
+                    {moment(user.updatedAt).format("hh:mm")}
+                  </div>
+                  {user.unreadCount > 0 && (
+                    <span className="badge bg-danger rounded-pill ms-2">
+                      {user.unreadCount}
+                    </span>
+                  )}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
           </Col>
 
           <Col md={9} className="d-flex flex-column">
@@ -289,48 +318,65 @@ function Chat() {
               <h3>Chat with {selectedUser?.name}</h3>
             </div>
 
-            <div className="chat-body flex-grow-1 overflow-auto mb-3" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+            <div
+              className="chat-body flex-grow-1 overflow-auto mb-3"
+              style={{ maxHeight: "70vh", overflowY: "auto" }}
+            >
               {messages.map((message, index) => (
                 <div
-                key={index}
-                className={`message p-2 mb-2 rounded d-flex ${
-                  message.sender === auth?.user.userId ? 'justify-content-end' : 'justify-content-start'
-                }`}
-                style={{
-                  maxWidth: '70%',
-                  marginLeft: message.sender === auth?.user.userId ? 'auto' : '0',
-                }}
-              >
-                <div
-                  className={`message-content ${
-                    message.sender === auth?.user.userId ? 'bg-primary text-white' : 'bg-light text-dark'
-                  } p-2 rounded`}
+                  key={index}
+                  className={`message p-2 mb-2 rounded d-flex ${
+                    message.sender === auth?.user.userId
+                      ? "justify-content-end"
+                      : "justify-content-start"
+                  }`}
+                  style={{
+                    maxWidth: "70%",
+                    marginLeft:
+                      message.sender === auth?.user.userId ? "auto" : "0",
+                  }}
                 >
-                  <div>
-                    <strong>{message.sender === auth?.user.userId ? 'You' : selectedUser?.name}</strong>
-                    <span className="small ms-2 text-muted">
-                      {moment(message.createdAt).format('hh:mm')}
-                    </span>
-                  </div>
-                  <div>{message.message}</div>
-                  {message.file && (
-                    <div className="attachment">
-                      {message.file.type === 'image' ? (
-                        <img src={message.file.url} alt="attachment" style={{ maxWidth: '100px' }} />
-                      ) : (
-                        <a href={message.file.url} download>
-                          {message.file.name}
-                        </a>
-                      )}
+                  <div
+                    className={`message-content ${
+                      message.sender === auth?.user.userId
+                        ? "bg-primary text-white"
+                        : "bg-light text-dark"
+                    } p-2 rounded`}
+                  >
+                    <div>
+                      <strong>
+                        {message.sender === auth?.user.userId
+                          ? "You"
+                          : selectedUser?.name}
+                      </strong>
+                      <span className="small ms-2 text-muted">
+                        {moment(message.createdAt).format("hh:mm")}
+                      </span>
                     </div>
-                  )}
-                  <div className="text-end small text-muted">
-                    {message.isRead || message.readBy?.includes(selectedUser?._id)
-                      ? "Read"
-                      : "Unread"}
+                    <div>{message.message}</div>
+                    {message.file && (
+                      <div className="attachment">
+                        {message.file.type === "image" ? (
+                          <img
+                            src={message.file.url}
+                            alt="attachment"
+                            style={{ maxWidth: "100px" }}
+                          />
+                        ) : (
+                          <a href={message.file.url} download>
+                            {message.file.name}
+                          </a>
+                        )}
+                      </div>
+                    )}
+                    <div className="text-end small text-muted">
+                      {message.isRead ||
+                      message.readBy?.includes(selectedUser?._id)
+                        ? "Read"
+                        : "Unread"}
+                    </div>
                   </div>
                 </div>
-              </div>
               ))}
               <div ref={chatEndRef} />
             </div>
@@ -351,17 +397,17 @@ function Chat() {
                       type="file"
                       id="fileInput"
                       onChange={handleFileChange}
-                      style={{ display: 'none' }}
+                      style={{ display: "none" }}
                     />
                   </InputGroup>
                   {file && (
                     <div className="file-preview mt-2">
                       <strong>Selected File:</strong> {file.name}
-                      {file.type.startsWith('image') && (
+                      {file.type.startsWith("image") && (
                         <img
                           src={URL.createObjectURL(file)}
                           alt="preview"
-                          style={{ maxWidth: '50px', marginLeft: '10px' }}
+                          style={{ maxWidth: "50px", marginLeft: "10px" }}
                         />
                       )}
                     </div>

@@ -5,6 +5,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode"; // Add this package to decode JWT tokens
 import toast from "react-hot-toast";
 import { HOME, USER_HOME } from "../utils/routeNames.js";
+import { BASE_URL } from "../utils/endPointNames.js";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -62,7 +63,7 @@ export const Login = () => {
     setError(""); // Clear previous errors
 
     try {
-      const response = await axios.post("http://localhost:3000/user/login", {
+      const response = await axios.post(`${BASE_URL}/user/login`, {
         email,
         password,
       });

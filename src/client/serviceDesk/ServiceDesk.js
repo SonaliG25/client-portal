@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { USER_DASHBOARD } from "../../utils/routeNames";
+import { BASE_URL } from "../../utils/endPointNames";
 
 function ServiceDesk() {
   const [auth] = useAuth();
@@ -14,7 +15,7 @@ function ServiceDesk() {
 
   const fetchTicketData = async (page = 1, search = "") => {
     try {
-      const res = await axios.get(`http://localhost:3000/ticket/tickets`, {
+      const res = await axios.get(`${BASE_URL}/ticket/tickets`, {
         headers: {
           Authorization: `Bearer ${auth?.token}`,
         },

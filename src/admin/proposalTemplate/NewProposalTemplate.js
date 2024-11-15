@@ -17,6 +17,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import { BASE_URL } from "../../utils/endPointNames";
 
 function NewProposalTemplate() {
   const [title, setTitle] = useState("");
@@ -83,7 +84,7 @@ function NewProposalTemplate() {
 
     try {
       const res = await axios.post(
-        `http://localhost:3000/proposalTemplate/new`,
+        `${BASE_URL}/proposalTemplate/new`,
         {
           title,
           description,

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
 import toast from "react-hot-toast";
+import { BASE_URL } from "../../utils/endPointNames.js";
 
 const Proposaltemplete = () => {
   const [proposalTemplateDetails, setProposalTempleteDetails] =
@@ -23,7 +24,7 @@ const Proposaltemplete = () => {
     setLoader(true); // Show loader while fetching
     try {
       const res = await axios.get(
-        `http://localhost:3000/proposalTemplate/templates?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`,
+        `${BASE_URL}/proposalTemplate/templates?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`,
         {
           headers: {
             Authorization: `Bearer ${auth?.token}`,
@@ -59,16 +60,13 @@ const Proposaltemplete = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `http://localhost:3000/proposalTemplate/templates/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${auth?.token}`,
-          },
-        }
-      );
+      await axios.delete(`${BASE_URL}/proposalTemplate/templates/${id}`, {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
       getProposalTemplete(); // Re-fetch templates after delete
-      toast.success("Templete Deleted Successfully")
+      toast.success("Templete Deleted Successfully");
     } catch (error) {
       console.log(error);
     }
@@ -93,7 +91,7 @@ const Proposaltemplete = () => {
 
   return (
     <div className="content-wrapper">
-       <section className="content-header">
+      <section className="content-header">
         <div className="container-fluid">
           <div className="row align-items-center justify-content-between my-3">
             {/* Title */}
@@ -171,7 +169,10 @@ const Proposaltemplete = () => {
                                 <td>
                                   <div
                                     dangerouslySetInnerHTML={{
-                                      __html: `${data.description.slice(0, 200)}`,
+                                      __html: `${data.description.slice(
+                                        0,
+                                        200
+                                      )}`,
                                     }}
                                   />
                                 </td>
@@ -209,34 +210,34 @@ const Proposaltemplete = () => {
 
                     {/* Pagination Controls */}
                     <div className="d-flex ">
-                          <button
-                            className="btn btn-outline-primary mr-2"
-                            disabled={currentPage === 1}
-                            onClick={() => setCurrentPage(currentPage - 1)}
-                          >
-                            Previous
-                          </button>
-                          {Array.from({ length: totalPages }, (_, index) => (
-                            <button
-                              key={index + 1}
-                              onClick={() => setCurrentPage(index + 1)}
-                              className={`btn mr-2 ${
-                                currentPage === index + 1
-                                  ? "btn-primary"
-                                  : "btn-light"
-                              }`}
-                            >
-                              {index + 1}
-                            </button>
-                          ))}
-                          <button
-                            className="btn btn-outline-primary"
-                            disabled={currentPage === totalPages}
-                            onClick={() => setCurrentPage(currentPage + 1)}
-                          >
-                            Next
-                          </button>
-                        </div>
+                      <button
+                        className="btn btn-outline-primary mr-2"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                      >
+                        Previous
+                      </button>
+                      {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                          key={index + 1}
+                          onClick={() => setCurrentPage(index + 1)}
+                          className={`btn mr-2 ${
+                            currentPage === index + 1
+                              ? "btn-primary"
+                              : "btn-light"
+                          }`}
+                        >
+                          {index + 1}
+                        </button>
+                      ))}
+                      <button
+                        className="btn btn-outline-primary"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                      >
+                        Next
+                      </button>
+                    </div>
                   </>
                 )}
               </div>

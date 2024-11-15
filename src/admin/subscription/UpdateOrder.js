@@ -3,6 +3,8 @@ import { useAuth } from "../../context/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { BASE_URL } from "../../utils/endPointNames";
+
 function UpdateOrder() {
   const [auth] = useAuth();
   const { id } = useParams();
@@ -12,7 +14,7 @@ function UpdateOrder() {
   useEffect(() => {
     if (auth?.token && id) {
       axios
-        .get(`http://localhost:3000/order/${id}`, {
+        .get(`${BASE_URL}/order/${id}`, {
           headers: { Authorization: `Bearer ${auth.token}` },
         })
         .then((res) => setOrderUpdate(res.data))
@@ -29,7 +31,7 @@ function UpdateOrder() {
   const handleSave = () => {
     if (auth?.token && id) {
       axios
-        .patch(`http://localhost:3000/order/${id}`, orderUpdate, {
+        .patch(`${BASE_URL}/order/${id}`, orderUpdate, {
           headers: { Authorization: `Bearer ${auth.token}` },
         })
         .then(() => {

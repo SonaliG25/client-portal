@@ -1,141 +1,9 @@
-// import axios from "axios";
-// import React, { useEffect, useState } from "react";
-
-// import { useAuth } from "../../context/AuthContext";
-// import { useNavigate } from "react-router-dom";
-// import { ADMIN_DASHBOARD } from "../../utils/routeNames";
-
-// function Tickets() {
-//   const [auth] = useAuth();
-//   const [ticketdata, setTicketData] = useState([]);
-//   const navigate = useNavigate();
-
-//   const fetchTicketData = async () => {
-//     try {
-//       const res = await axios.get(`http://localhost:3000/ticket/tickets`, {
-//         headers: {
-//           Authorization: `Bearer ${auth?.token}`,
-//         },
-//       });
-//       setTicketData(res.data);
-//       console.log(res.data);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-//   const handleView = (data) => {
-//     navigate(`${ADMIN_DASHBOARD}/tickets/${data._id}`);
-//   };
-//   useEffect(() => {
-//     if (auth?.token) {
-//       fetchTicketData();
-//     }
-//   }, [auth]);
-//   return (
-//     <div className="content-wrapper">
-//       {/* Content Header */}
-
-//       {/* Main Content */}
-//       <section className="content">
-//         <div className="container-fluid">
-//           <div className="row m-2">
-//             <div className="col-12">
-//               <div className="card">
-//                 <div className="card-body">
-//                   <div className="table-responsive">
-//                     <table className="table s">
-//                       <thead>
-//                         <tr>
-//                           <th>Title</th>
-//                           <th>Description</th>
-//                           <th>Priority</th>
-//                           <th>Status</th>
-//                           <th>Assigned To</th>
-//                           <th>Created At</th>
-//                           <th> action</th>
-//                         </tr>
-//                       </thead>
-//                       <tbody>
-//                         {ticketdata.length === 0 ? (
-//                           <tr>
-//                             <td colSpan="6">No tickets found</td>
-//                           </tr>
-//                         ) : (
-//                           ticketdata.map((ticket) => (
-//                             <tr key={ticket._id}>
-//                               <td>{ticket.title}</td>
-//                               <td>{ticket.description}</td>
-//                               <td>{ticket.priority}</td>
-//                               <td>{ticket.status}</td>
-//                               <td>
-//                                 {ticket.assignedTo
-//                                   ? ticket.assignedTo.name
-//                                   : "N/A"}
-//                               </td>
-//                               <td>
-//                                 {new Date(ticket.createdAt).toLocaleString()}
-//                               </td>
-//                               <td>
-//                                 {" "}
-//                                 <button
-//                                   className="btn btn-primary"
-//                                   onClick={() => handleView(ticket)}
-//                                 >
-//                                   <i className="fas fa-file-alt"></i>
-//                                 </button>
-//                               </td>
-//                             </tr>
-//                           ))
-//                         )}
-//                       </tbody>
-//                     </table>
-//                   </div>
-//                   {/* Pagination Controls */}
-//                   {/* <div className="d-flex ">
-//                   <button
-//                     className="btn btn-outline-primary mr-2"
-//                     disabled={currentPage === 1}
-//                     onClick={handlePrevPage}
-//                   >
-//                     Previous
-//                   </button>
-//                   {Array.from({ length: totalPages }, (_, index) => (
-//                     <button
-//                       key={index + 1}
-//                       onClick={() => setCurrentPage(index + 1)}
-//                       className={`btn mr-2 ${
-//                         currentPage === index + 1
-//                           ? "btn-primary"
-//                           : "btn-light"
-//                       }`}
-//                     >
-//                       {index + 1}
-//                     </button>
-//                   ))}
-//                   <button
-//                     className="btn btn-outline-primary"
-//                     disabled={currentPage === totalPages}
-//                     onClick={handleNextPage}
-//                   >
-//                     Next
-//                   </button>
-//                 </div> */}
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-//     </div>
-//   );
-// }
-
-// export default Tickets;
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { ADMIN_DASHBOARD } from "../../utils/routeNames";
+import { BASE_URL } from "../../utils/endPointNames";
 
 function Tickets() {
   const [auth] = useAuth();
@@ -147,7 +15,7 @@ function Tickets() {
 
   const fetchTicketData = async (page = 1, limit = 10, search = "") => {
     try {
-      const res = await axios.get(`http://localhost:3000/ticket/tickets`, {
+      const res = await axios.get(`${BASE_URL}/ticket/tickets`, {
         headers: {
           Authorization: `Bearer ${auth?.token}`,
         },
