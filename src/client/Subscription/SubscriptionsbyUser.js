@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
+import { BASE_URL } from "../../utils/endPointNames";
 
 function SubscriptionsbyUser() {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -17,7 +18,7 @@ function SubscriptionsbyUser() {
   const fetchSubscriptions = async (page = 1) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/subscription/${auth.user.userId}?page=${page}&search=${searchQuery}`,
+        `${BASE_URL}/subscription/${auth.user.userId}?page=${page}&search=${searchQuery}`,
         {
           headers: {
             Authorization: `Bearer ${auth?.token}`,

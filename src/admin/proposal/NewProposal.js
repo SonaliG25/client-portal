@@ -75,10 +75,7 @@ const NewProposal = () => {
     };
 
     try {
-      const res = await axios.post(
-        "http://localhost:3000/user/register",
-        userData
-      );
+      const res = await axios.post(`${BASE_URL}/user/register`, userData);
       // console.log(res);
       if (res.data) {
         setReceipientId(res.data._id);
@@ -129,29 +126,29 @@ const NewProposal = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
-  const [addPaymentLinkChecked, setAddPaymentLinkChecked] = useState(false);
-  const [paymentLink, setPaymentLink] = useState("");
+  // const [addPaymentLinkChecked, setAddPaymentLinkChecked] = useState(false);
+  // const [paymentLink, setPaymentLink] = useState("");
 
   // Generate the payment link when the checkbox is checked
-  const handlePaymentLinkCheckboxChange = (isChecked) => {
-    setAddPaymentLinkChecked(isChecked);
-    let paymentLink = "";
-    // Generate the link only if checkbox is checked
-    if (isChecked) {
-      const generatedLink = "https://example.com/payment-link";
+  // const handlePaymentLinkCheckboxChange = (isChecked) => {
+  //   setAddPaymentLinkChecked(isChecked);
+  //   let paymentLink = "";
+  //   // Generate the link only if checkbox is checked
+  //   if (isChecked) {
+  //     const generatedLink = "https://example.com/payment-link";
 
-      setProposalData((prevData) => ({
-        ...prevData,
-        paymentLink: generatedLink,
-      }));
-      console.log("paymentLink", proposalData.paymentLink);
-    } else {
-      setProposalData((prevData) => ({
-        ...prevData,
-        paymentLink: paymentLink,
-      }));
-    }
-  };
+  //     setProposalData((prevData) => ({
+  //       ...prevData,
+  //       paymentLink: generatedLink,
+  //     }));
+  //     console.log("paymentLink", proposalData.paymentLink);
+  //   } else {
+  //     setProposalData((prevData) => ({
+  //       ...prevData,
+  //       paymentLink: paymentLink,
+  //     }));
+  //   }
+  // };
 
   const [moreAttachmentsToUpload, setMoreAttachmentsToUpload] = useState([]);
   const [proposalData, setProposalData] = useState({
@@ -167,7 +164,7 @@ const NewProposal = () => {
     finalAmount: 0,
     attachments: [],
     status: "",
-    paymentLink: "",
+    // paymentLink: "",
   });
 
   const [productTotal, setProductTotal] = useState(0);
@@ -210,16 +207,12 @@ const NewProposal = () => {
     });
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/upload/docs",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${auth.token}`,
-          },
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/upload/docs`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${auth.token}`,
+        },
+      });
       response.data.files.map((file) => {
         const newAttachment = {
           filename: file.filename,
@@ -291,7 +284,7 @@ const NewProposal = () => {
     if (!auth?.token) return;
     try {
       const res = await axios.get(
-        `http://localhost:3000/product/getProducts?page=${currentPage}&limit=${productsPerPage}&search=${searchQuery}`,
+        `${BASE_URL}/product/getProducts?page=${currentPage}&limit=${productsPerPage}&search=${searchQuery}`,
         {
           headers: { Authorization: `Bearer ${auth.token}` },
         }
@@ -320,7 +313,7 @@ const NewProposal = () => {
   const fetchUsers = async () => {
     if (!auth?.token) return;
     try {
-      const response = await axios.get("http://localhost:3000/user/clients", {
+      const response = await axios.get(`${BASE_URL}/user/clients`, {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       setUsers(response.data);
@@ -333,12 +326,9 @@ const NewProposal = () => {
   const fetchProposalTemplates = async () => {
     if (!auth?.token) return;
     try {
-      const res = await axios.get(
-        `http://localhost:3000/proposalTemplate/templates`,
-        {
-          headers: { Authorization: `Bearer ${auth.token}` },
-        }
-      );
+      const res = await axios.get(`${BASE_URL}/proposalTemplate/templates`, {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      });
       setProposalTemplates(res.data.templates);
     } catch (err) {
       console.error("Error fetching templates:", err);
@@ -462,7 +452,7 @@ const NewProposal = () => {
           }
         }
         const res = await axios.post(
-          `http://localhost:3000/proposal/new`,
+          `${BASE_URL}/proposal/new`,
           {
             proposalData,
           },
@@ -1030,19 +1020,7 @@ const NewProposal = () => {
               </div>
             </Form>
           </CardBody>
-          <CardFooter className="d-flex justify-content-end align-items-center gap-3">
-            <FormGroup check className="mr-3">
-              <Label check>
-                <Input
-                  type="checkbox"
-                  checked={addPaymentLinkChecked}
-                  onChange={(e) =>
-                    handlePaymentLinkCheckboxChange(e.target.checked)
-                  }
-                />
-                Add payment link in the proposal
-              </Label>
-            </FormGroup>
+          <CardFooter>
             <Button color="primary" onClick={sendProposal} type="submit">
               Send Proposal
             </Button>

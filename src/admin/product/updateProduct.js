@@ -36,7 +36,7 @@ function UpdateProduct() {
   const fetchUsers = async () => {
     if (!auth?.token) return;
     try {
-      const response = await axios.get("http://localhost:3000/user/clients", {
+      const response = await axios.get(`${BASE_URL}/user/clients`, {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       setUsers(response.data);
@@ -135,7 +135,7 @@ function UpdateProduct() {
       console.log("file", file, uploadData);
 
       const uploadResponse = await axios.post(
-        `http://localhost:3000/upload/productImage`,
+        `${BASE_URL}/upload/productImage`,
         uploadData,
         {
           headers: {

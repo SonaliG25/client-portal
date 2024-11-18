@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import { BASE_URL } from "../../utils/endPointNames";
 
 function Category() {
   const [auth] = useAuth();
@@ -24,7 +25,7 @@ function Category() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `http://localhost:3000/category/allCategory?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`,
+        `${BASE_URL}/category/allCategory?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`,
         {
           headers: {
             Authorization: `Bearer ${auth?.token}`,
@@ -53,7 +54,7 @@ function Category() {
 
     try {
       await axios.post(
-        `http://localhost:3000/category/new`,
+        `${BASE_URL}/category/new`,
         { name: newCategory },
         {
           headers: {
@@ -75,7 +76,7 @@ function Category() {
   const handleUpdate = async () => {
     try {
       await axios.patch(
-        `http://localhost:3000/category/${updateCategory.Updateid}`,
+        `${BASE_URL}/category/${updateCategory.Updateid}`,
         { name: updateCategory.name },
         {
           headers: {
@@ -94,7 +95,7 @@ function Category() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:3000/category/${deleteCategoryId}`, {
+      await axios.delete(`${BASE_URL}/category/${deleteCategoryId}`, {
         headers: {
           Authorization: `Bearer ${auth?.token}`,
         },

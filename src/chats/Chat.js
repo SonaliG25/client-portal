@@ -19,6 +19,7 @@ function Chat() {
   const [searchQuery, setSearchQuery] = useState('');
   const chatEndRef = useRef(null);
   const [notifications, setNotifications] = useState([]);
+  
   console.log("Auth",auth);
   
   useEffect(() => {

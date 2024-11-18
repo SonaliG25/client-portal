@@ -1,11 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Container, Row, Col, Form, Button, ListGroup, InputGroup } from 'react-bootstrap';
-import { FaPaperclip } from 'react-icons/fa';
-import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
-import moment from 'moment';
-import { io } from 'socket.io-client';
-import { BASE_URL } from '../utils/endPointNames';
+import React, { useEffect, useState, useRef } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  ListGroup,
+  InputGroup,
+} from "react-bootstrap";
+import { FaPaperclip } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
+import moment from "moment";
+import { io } from "socket.io-client";
+import { BASE_URL } from "../utils/endPointNames";
 
 function ChatSidebar() {
   const [messages, setMessages] = useState([]);
@@ -16,17 +24,17 @@ function ChatSidebar() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [socket, setSocket] = useState(null);
   const [file, setFile] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const chatEndRef = useRef(null);
   const STATIC_ID = "671899b0d1be4a27acbff714";
   
   console.log("Auth", auth);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:3000", {
-      extraHeaders: { "token": auth?.token },
+    const newSocket = io(`${BASE_URL}`, {
+      extraHeaders: { token: auth?.token },
     });
-    
+
     newSocket.on("connect", () => {
       console.log("Socket connected with id:", newSocket.id);
     });
@@ -36,7 +44,7 @@ function ChatSidebar() {
     });
 
     setSocket(newSocket);
-    
+
     return () => {
       newSocket.disconnect();
     };
@@ -45,7 +53,9 @@ function ChatSidebar() {
   useEffect(() => {
     if (socket) {
       socket.on("newMessageNotification", (notification) => {
-        alert(`New message from ${notification.sender}: ${notification.message}`);
+        alert(
+          `New message from ${notification.sender}: ${notification.message}`
+        );
       });
       return () => socket.off("newMessageNotification");
     }
@@ -53,15 +63,18 @@ function ChatSidebar() {
 
   useEffect(() => {
     if (socket) {
-      socket.on('receiveMessage', (message) => {
-        console.log('message', message);
-        
+      socket.on("receiveMessage", (message) => {
+        console.log("message", message);
+
         // Update messages if the message is for this user
         setMessages((prevMessages) => [...prevMessages, message]);
 
         // Send a messageRead event if this user is the receiver
         if (message.receiver === auth?.user.userId) {
-          socket.emit("messageRead", { messageId: message._id, userId: auth?.user.userId });
+          socket.emit("messageRead", {
+            messageId: message._id,
+            userId: auth?.user.userId,
+          });
           if (message.sender !== selectedUser?._id) {
             setUserChat((prevUserChat) =>
               prevUserChat.map((user) =>
@@ -182,27 +195,39 @@ function ChatSidebar() {
   };
   const handleUserSelect = async (userName, userId) => {
     setSelectedUser({ name: userName, _id: userId });
-  
+
     if (socket) {
-      socket.emit('leaveRoom');
-      socket.emit('joinRoom', { userId: auth?.user.userId, receiverId: userId });
-    }
-  
-    try {
-      const res = await axios.get(`${BASE_URL}/chat/${userId}/${auth?.user.userId}`, {
-        headers: {
-          Authorization: `Bearer ${auth?.token}`,
-        },
+      socket.emit("leaveRoom");
+      socket.emit("joinRoom", {
+        userId: auth?.user.userId,
+        receiverId: userId,
       });
-  
+    }
+
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/chat/${userId}/${auth?.user.userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
+      );
+
       setMessages(res.data);
-  
+
       res.data.forEach((message) => {
-        if (!message.readBy.includes(auth?.user.userId) && message.receiver === auth?.user.userId) {
-          socket.emit("messageRead", { messageId: message._id, userId: auth?.user.userId });
+        if (
+          !message.readBy.includes(auth?.user.userId) &&
+          message.receiver === auth?.user.userId
+        ) {
+          socket.emit("messageRead", {
+            messageId: message._id,
+            userId: auth?.user.userId,
+          });
         }
       });
-  
+
       setUserChat((prevUserChat) =>
         prevUserChat.map((user) =>
           user._id === userId ? { ...user, unreadCount: 0 } : user

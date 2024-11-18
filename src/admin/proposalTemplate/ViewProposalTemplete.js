@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import JoditEditor from "jodit-react";
+import { BASE_URL } from "../../utils/endPointNames";
 
 function ViewProposalTemplate() {
   const [viewTemplate, setViewTemplate] = useState(null);
@@ -15,7 +16,7 @@ function ViewProposalTemplate() {
     // setLoader(true); // Show loader while fetching
     try {
       const res = await axios.get(
-        `http://localhost:3000/proposalTemplate/templates/${id}`,
+        `${BASE_URL}/proposalTemplate/templates/${id}`,
         {
           headers: {
             Authorization: `Bearer ${auth?.token}`,
