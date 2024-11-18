@@ -18,6 +18,7 @@ function ChatSidebar() {
   const [file, setFile] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const chatEndRef = useRef(null);
+  const STATIC_ID = "671899b0d1be4a27acbff714";
   
   console.log("Auth", auth);
 
@@ -92,108 +93,93 @@ function ChatSidebar() {
   }, [socket]);
 
   useEffect(() => {
-    if (auth?.user.role === 'client') {
-      // If user is a client, get messages for that client
-      if (socket) {
-        socket.on("getMessages",  (messages) => {
-          console.log("getnessages",messages);
-          
-          setMessages(messages); // Update messages
-        });
-      }
-    } else {
-      getUser(); // Fetch user chats for non-client users
+    if (auth?.token) {
+      getUser();
     }
-  }, [auth, socket]);
+  }, [auth]);
 
   const handleSendMessage = async (event) => {
     event.preventDefault();
     const messageText = event.target.elements.messageInput.value;
   
-    let fileData = null;
+    const receiverId = auth?.user.role === "client" ? STATIC_ID : selectedUser?._id;
   
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
+    const messageData = {
+      sender: auth?.user.userId,
+      receiver: receiverId,
+      message: messageText,
+      createdAt: new Date(),
+    };
   
-      reader.onload = () => {
-        fileData = {
-          name: file.name,
-          type: file.type,
-          content: reader.result,
-        };
-  
-        const messageData = {
-          sender: auth?.user.userId,
-          receiver: selectedUser._id,
-          message: messageText,
-          file: fileData,
-          createdAt: new Date(),
-        };
-  
-        if (socket && socket.connected) {
-          socket.emit('sendMessage', messageData);
-        }
-  
-        // Update the UI immediately with the new message
-        setMessages((prevMessages) => [...prevMessages, messageData]);
-        event.target.elements.messageInput.value = '';
-        setFile(null);
-      };
-  
-      reader.onerror = (error) => {
-        console.error("Error converting file to base64:", error);
-      };
-    } else {
-      const messageData = {
-        sender: auth?.user.userId,
-        receiver: selectedUser._id,
-        message: messageText,
-        createdAt: new Date(),
-      };
-  
-      if (socket && socket.connected) {
-        socket.emit('sendMessage', messageData);
-      }
-  
-      setMessages((prevMessages) => [...prevMessages, messageData]);
-      event.target.elements.messageInput.value = '';
+    if (socket && socket.connected) {
+      socket.emit("sendMessage", messageData);
     }
-  }
+  
+    setMessages((prevMessages) => [...prevMessages, messageData]);
+  
+    // Clear input field
+    event.target.elements.messageInput.value = '';
+  };
+  
 
   const getUser = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/user/users`, {
-        headers: {
-          Authorization: `Bearer ${auth?.token}`,
-        },
-      });
+    if (auth?.user.role === "client") {
+      // Fetch messages between the client (auth.user.userId) and the static ID
+      try {
+        const res = await axios.get(`${BASE_URL}/chat/${auth?.user.userId}/${STATIC_ID}`, {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        });
   
-      const sortedUsers = res.data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        setMessages(res.data);
   
-      const updatedUsers = await Promise.all(
-        sortedUsers.map(async (user) => {
-          const messagesRes = await axios.get(`${BASE_URL}/chat/${user._id}/${auth?.user.userId}`, {
-            headers: {
-              Authorization: `Bearer ${auth?.token}`,
-            },
-          });
+        // Mark messages as read
+        res.data.forEach((message) => {
+          if (!message.readBy.includes(auth?.user.userId) && message.receiver === auth?.user.userId) {
+            socket.emit("messageRead", { messageId: message._id, userId: auth?.user.userId });
+          }
+        });
   
-          const unreadCount = messagesRes.data.filter(
-            (msg) => msg.receiver === auth?.user.userId && !msg.readBy.includes(auth?.user.userId)
-          ).length;
+        // Set the static user as the selected user
+        setSelectedUser({ name: "Support", _id: STATIC_ID });
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      // Original logic for non-client users
+      try {
+        const res = await axios.get(`${BASE_URL}/user/users`, {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        });
   
-          return { ...user, unreadCount };
-        })
-      );
+        const sortedUsers = res.data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
   
-      setUserChat(updatedUsers);
-      setFilteredUsers(updatedUsers);
-    } catch (error) {
-      console.error(error);
+        const updatedUsers = await Promise.all(
+          sortedUsers.map(async (user) => {
+            const messagesRes = await axios.get(`${BASE_URL}/chat/${user._id}/${auth?.user.userId}`, {
+              headers: {
+                Authorization: `Bearer ${auth?.token}`,
+              },
+            });
+  
+            const unreadCount = messagesRes.data.filter(
+              (msg) => msg.receiver === auth?.user.userId && !msg.readBy.includes(auth?.user.userId)
+            ).length;
+  
+            return { ...user, unreadCount };
+          })
+        );
+  
+        setUserChat(updatedUsers);
+        setFilteredUsers(updatedUsers);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
-
   const handleUserSelect = async (userName, userId) => {
     setSelectedUser({ name: userName, _id: userId });
   
@@ -242,72 +228,98 @@ function ChatSidebar() {
 
   return (
     <div className="content-wrapper">
-      <Container fluid className="vh-100 d-flex flex-column">
-        <Row className="flex-grow-1">
-          <Col md={3} className="sidebar bg-light p-3">
-            <h4>Users</h4>
-            <Form.Control
-              type="text"
-              placeholder="Search Users"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="mb-3"
-            />
-           <ListGroup>
-             {filteredUsers.map((user) => (
-               <ListGroup.Item
-                 key={user._id}
-                 action
-                 active={selectedUser?.name === user.name}
-                 onClick={() => handleUserSelect(user.name, user._id)}
-               >
-                 {user.name}
-                 <div className="small text-muted">
-                   {user.lastMessage} - {moment(user.updatedAt).format('hh:mm')}
-                 </div>
-                 {user.unreadCount > 0 && (
-                   <span className="badge bg-danger rounded-pill ms-2">
-                     {user.unreadCount}
-                   </span>
-                 )}
-               </ListGroup.Item>
-             ))}
-           </ListGroup>
-          </Col>
-
-          <Col md={9} className="d-flex flex-column">
-            <div className="chat-header mb-3">
-              <h3>Chat with {selectedUser?.name}</h3>
+  <Container fluid className="vh-100 d-flex flex-column">
+    <Row className="flex-grow-1">
+      {/* Sidebar - Only visible if user is admin */}
+      {auth?.user.role === "admin" && (
+        <Col md={3} className="sidebar bg-light p-3">
+          <div className="card card-primary card-outline">
+            <div className="card-header">
+              <h4 className="card-title">Users</h4>
             </div>
+            <div className="card-body">
+              <Form.Control
+                type="text"
+                placeholder="Search Users"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="mb-3"
+              />
+              <ListGroup>
+                {filteredUsers.map((user) => (
+                  <ListGroup.Item
+                    key={user._id}
+                    action
+                    active={selectedUser?.name === user.name}
+                    onClick={() => handleUserSelect(user.name, user._id)}
+                    className="d-flex justify-content-between align-items-center"
+                  >
+                    <div>
+                      <strong>{user.name}</strong>
+                      <div className="small text-muted">
+                        {user.lastMessage} - {moment(user.updatedAt).format("hh:mm A")}
+                      </div>
+                    </div>
+                    {user.unreadCount > 0 && (
+                      <span className="badge bg-danger rounded-pill">
+                        {user.unreadCount}
+                      </span>
+                    )}
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </div>
+          </div>
+        </Col>
+      )}
 
-            <div className="chat-body flex-grow-1 overflow-auto mb-3" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
-              {messages.map((message, index) => (
-                <div
+      {/* Chat Section */}
+      <Col md={auth?.user.role === "admin" ? 9 : 12} className="d-flex flex-column">
+        {/* Chat Header */}
+        <div className="card card-primary card-outline mb-3">
+          <div className="card-header">
+            <h3 className="card-title">Chat with {selectedUser?.name || "Support"}</h3>
+          </div>
+        </div>
+
+        {/* Chat Body */}
+        <div
+          className="card flex-grow-1 overflow-auto"
+          style={{ maxHeight: "70vh", overflowY: "auto" }}
+        >
+          <div className="card-body">
+            {messages.map((message, index) => (
+              <div
                 key={index}
-                className={`message p-2 mb-2 rounded d-flex ${
-                  message.sender === auth?.user.userId ? 'justify-content-end' : 'justify-content-start'
-                }`}
-                style={{
-                  maxWidth: '70%',
-                  marginLeft: message.sender === auth?.user.userId ? 'auto' : '0',
-                }}
+                className={`d-flex ${
+                  message.sender === auth?.user.userId ? "justify-content-end" : "justify-content-start"
+                } mb-3`}
               >
                 <div
-                  className={`message-content ${
-                    message.sender === auth?.user.userId ? 'bg-primary text-white' : 'bg-light text-dark'
-                  } p-2 rounded`}
+                  className={`p-3 rounded shadow-sm ${
+                    message.sender === auth?.user.userId
+                      ? "bg-primary text-white"
+                      : "bg-light text-dark"
+                  }`}
+                  style={{ maxWidth: "70%" }}
                 >
-                  <div>
-                    <strong>{message.sender === auth?.user.userId ? 'You' : selectedUser?.name}</strong>
+                  <div className="mb-1">
+                    <strong>
+                      {message.sender === auth?.user.userId ? "You" : selectedUser?.name}
+                    </strong>
                     <span className="small ms-2 text-muted">
-                      {moment(message.createdAt).format('hh:mm')}
+                      {moment(message.createdAt).format("hh:mm A")}
                     </span>
                   </div>
                   <div>{message.message}</div>
                   {message.file && (
-                    <div className="attachment">
-                      {message.file.type === 'image' ? (
-                        <img src={message.file.url} alt="attachment" style={{ maxWidth: '100px' }} />
+                    <div className="attachment mt-2">
+                      {message.file.type.startsWith("image") ? (
+                        <img
+                          src={message.file.url}
+                          alt="attachment"
+                          style={{ maxWidth: "100px", display: "block" }}
+                        />
                       ) : (
                         <a href={message.file.url} download>
                           {message.file.name}
@@ -322,53 +334,53 @@ function ChatSidebar() {
                   </div>
                 </div>
               </div>
-              ))}
-              <div ref={chatEndRef} />
-            </div>
+            ))}
+            <div ref={chatEndRef} />
+          </div>
+        </div>
 
-            <Form onSubmit={handleSendMessage} className="mt-auto">
-              <Row>
-                <Col xs={9}>
-                  <InputGroup>
-                    <InputGroup.Text as="label" htmlFor="fileInput">
-                      <FaPaperclip />
-                    </InputGroup.Text>
-                    <Form.Control
-                      type="text"
-                      placeholder="Type your message..."
-                      name="messageInput"
-                    />
-                    {/* <Form.Control
-                      type="file"
-                      id="fileInput"
-                      onChange={handleFileChange}
-                      style={{ display: 'none' }}
-                    /> */}
-                  </InputGroup>
-                  {file && (
-                    <div className="file-preview mt-2">
-                      <strong>Selected File:</strong> {file.name}
-                      {file.type.startsWith('image') && (
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt="preview"
-                          style={{ maxWidth: '50px', marginLeft: '10px' }}
-                        />
-                      )}
-                    </div>
-                  )}
-                </Col>
-                <Col xs={3}>
-                  <Button type="submit" className="w-100">
-                    Send
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Col>
-        </Row>
-      </Container>
-    </div>
+        {/* Message Input */}
+        <div className="card card-footer">
+          <Form onSubmit={handleSendMessage} className="d-flex align-items-center">
+            <InputGroup>
+              <InputGroup.Text as="label" htmlFor="fileInput">
+                <FaPaperclip />
+              </InputGroup.Text>
+              <Form.Control
+                type="text"
+                placeholder="Type your message..."
+                name="messageInput"
+                className="flex-grow-1"
+              />
+              <Form.Control
+                type="file"
+                id="fileInput"
+                style={{ display: "none" }}
+              />
+            </InputGroup>
+            <Button type="submit" className="btn btn-primary ms-2">
+              Send
+            </Button>
+          </Form>
+          {file && (
+            <div className="file-preview mt-2">
+              <strong>Selected File:</strong> {file.name}
+              {file.type.startsWith("image") && (
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt="preview"
+                  style={{ maxWidth: "50px", marginLeft: "10px" }}
+                />
+              )}
+            </div>
+          )}
+        </div>
+      </Col>
+    </Row>
+  </Container>
+</div>
+
+  
   );
 }
 

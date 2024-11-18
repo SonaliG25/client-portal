@@ -16,6 +16,7 @@ import {
   Label,
   Table,
 } from "reactstrap";
+import { BASE_URL } from "../../utils/endPointNames";
 const NewProduct = () => {
   const navigate = useNavigate();
   const [auth] = useAuth();
@@ -48,7 +49,7 @@ const NewProduct = () => {
   const fetchUsers = async () => {
     if (!auth?.token) return;
     try {
-      const response = await axios.get("http://localhost:3000/user/clients", {
+      const response = await axios.get(`${BASE_URL}/user/clients`, {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       setUsers(response.data);
@@ -94,14 +95,11 @@ const NewProduct = () => {
     fetchUsers();
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3000/category/allCategory",
-          {
-            headers: {
-              Authorization: `Bearer ${auth?.token}`,
-            },
-          }
-        );
+        const response = await axios.get(`${BASE_URL}/category/allCategory`, {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        });
         setCategories(response.data.categories);
         console.log(response.data.categories);
       } catch (error) {
@@ -157,7 +155,7 @@ const NewProduct = () => {
       uploadData.append("image", file);
 
       const uploadResponse = await axios.post(
-        "http://localhost:3000/upload/productImage",
+        `${BASE_URL}/upload/productImage`,
         uploadData,
         {
           headers: {
@@ -186,16 +184,12 @@ const NewProduct = () => {
       console.log("DataProd", productData);
 
       // Send the product data to the backend
-      await axios.post(
-        "http://localhost:3000/product/newProduct",
-        productData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${auth?.token}`,
-          },
-        }
-      );
+      await axios.post(`${BASE_URL}/product/newProduct`, productData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
 
       navigate(-1); // Navigate back after successful submission
     } catch (error) {

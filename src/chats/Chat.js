@@ -18,6 +18,7 @@ function Chat() {
   const [file, setFile] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const chatEndRef = useRef(null);
+  const [notifications, setNotifications] = useState([]);
   console.log("Auth",auth);
   
   useEffect(() => {
@@ -40,14 +41,6 @@ function Chat() {
     };
   }, [auth]);
 
-  useEffect(() => {
-    if (socket) {
-      socket.on("newMessageNotification", (notification) => {
-        alert(`New message from ${notification.sender}: ${notification.message}`);
-      });
-      return () => socket.off("newMessageNotification");
-    }
-  }, [socket]);
 
   useEffect(() => {
     if (socket) {
@@ -250,10 +243,15 @@ function Chat() {
 
   return (
     <div className="content-wrapper">
-      <Container fluid className="vh-100 d-flex flex-column">
-        <Row className="flex-grow-1">
-          <Col md={3} className="sidebar bg-light p-3">
-            <h4>Users</h4>
+  <Container fluid className="vh-100 d-flex flex-column">
+    {/* Sidebar */}
+    <Row className="flex-grow-1">
+      <Col md={3} className="bg-light p-3 border-right">
+        <div className="card card-primary card-outline">
+          <div className="card-header">
+            <h4 className="card-title">Users</h4>
+          </div>
+          <div className="card-body p-2">
             <Form.Control
               type="text"
               placeholder="Search Users"
@@ -261,62 +259,79 @@ function Chat() {
               onChange={handleSearchChange}
               className="mb-3"
             />
-           <ListGroup>
-  {filteredUsers.map((user) => (
-    <ListGroup.Item
-      key={user._id}
-      action
-      active={selectedUser?.name === user.name}
-      onClick={() => handleUserSelect(user.name, user._id)}
-    >
-      {user.name}
-      <div className="small text-muted">
-        {user.lastMessage} - {moment(user.updatedAt).format('hh:mm')}
-      </div>
-      {user.unreadCount > 0 && (
-        <span className="badge bg-danger rounded-pill ms-2">
-          {user.unreadCount}
-        </span>
-      )}
-    </ListGroup.Item>
-  ))}
-</ListGroup>
-
-          </Col>
-
-          <Col md={9} className="d-flex flex-column">
-            <div className="chat-header mb-3">
-              <h3>Chat with {selectedUser?.name}</h3>
-            </div>
-
-            <div className="chat-body flex-grow-1 overflow-auto mb-3" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
-              {messages.map((message, index) => (
-                <div
-                key={index}
-                className={`message p-2 mb-2 rounded d-flex ${
-                  message.sender === auth?.user.userId ? 'justify-content-end' : 'justify-content-start'
-                }`}
-                style={{
-                  maxWidth: '70%',
-                  marginLeft: message.sender === auth?.user.userId ? 'auto' : '0',
-                }}
-              >
-                <div
-                  className={`message-content ${
-                    message.sender === auth?.user.userId ? 'bg-primary text-white' : 'bg-light text-dark'
-                  } p-2 rounded`}
+            <ListGroup>
+              {filteredUsers.map((user) => (
+                <ListGroup.Item
+                  key={user._id}
+                  action
+                  className={`d-flex justify-content-between align-items-center ${
+                    selectedUser?.name === user.name ? "active" : ""
+                  }`}
+                  onClick={() => handleUserSelect(user.name, user._id)}
                 >
                   <div>
-                    <strong>{message.sender === auth?.user.userId ? 'You' : selectedUser?.name}</strong>
+                    <strong>{user.name}</strong>
+                    <div className="small text-muted">
+                      {user.lastMessage} - {moment(user.updatedAt).format("hh:mm A")}
+                    </div>
+                  </div>
+                  {user.unreadCount > 0 && (
+                    <span className="badge bg-danger rounded-pill">
+                      {user.unreadCount}
+                    </span>
+                  )}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </div>
+        </div>
+      </Col>
+
+      {/* Chat Section */}
+      <Col md={9} className="d-flex flex-column">
+        {/* Chat Header */}
+        <div className="card card-primary card-outline mb-3">
+          <div className="card-header">
+            <h3 className="card-title">Chat with {selectedUser?.name}</h3>
+          </div>
+        </div>
+
+        {/* Chat Body */}
+        <div
+          className="card flex-grow-1 overflow-auto"
+          style={{ maxHeight: "70vh", overflowY: "auto" }}
+        >
+          <div className="card-body">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`d-flex mb-3 ${
+                  message.sender === auth?.user.userId ? "justify-content-end" : "justify-content-start"
+                }`}
+              >
+                <div
+                  className={`p-2 rounded shadow-sm ${
+                    message.sender === auth?.user.userId ? "bg-primary text-white" : "bg-light"
+                  }`}
+                  style={{ maxWidth: "70%" }}
+                >
+                  <div className="mb-1">
+                    <strong>
+                      {message.sender === auth?.user.userId ? "You" : selectedUser?.name}
+                    </strong>
                     <span className="small ms-2 text-muted">
-                      {moment(message.createdAt).format('hh:mm')}
+                      {moment(message.createdAt).format("hh:mm A")}
                     </span>
                   </div>
                   <div>{message.message}</div>
                   {message.file && (
-                    <div className="attachment">
-                      {message.file.type === 'image' ? (
-                        <img src={message.file.url} alt="attachment" style={{ maxWidth: '100px' }} />
+                    <div className="attachment mt-2">
+                      {message.file.type.startsWith("image") ? (
+                        <img
+                          src={message.file.url}
+                          alt="attachment"
+                          style={{ maxWidth: "100px", display: "block" }}
+                        />
                       ) : (
                         <a href={message.file.url} download>
                           {message.file.name}
@@ -331,53 +346,53 @@ function Chat() {
                   </div>
                 </div>
               </div>
-              ))}
-              <div ref={chatEndRef} />
-            </div>
+            ))}
+            <div ref={chatEndRef} />
+          </div>
+        </div>
 
-            <Form onSubmit={handleSendMessage} className="mt-auto">
-              <Row>
-                <Col xs={9}>
-                  <InputGroup>
-                    <InputGroup.Text as="label" htmlFor="fileInput">
-                      <FaPaperclip />
-                    </InputGroup.Text>
-                    <Form.Control
-                      type="text"
-                      placeholder="Type your message..."
-                      name="messageInput"
-                    />
-                    <Form.Control
-                      type="file"
-                      id="fileInput"
-                      onChange={handleFileChange}
-                      style={{ display: 'none' }}
-                    />
-                  </InputGroup>
-                  {file && (
-                    <div className="file-preview mt-2">
-                      <strong>Selected File:</strong> {file.name}
-                      {file.type.startsWith('image') && (
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt="preview"
-                          style={{ maxWidth: '50px', marginLeft: '10px' }}
-                        />
-                      )}
-                    </div>
-                  )}
-                </Col>
-                <Col xs={3}>
-                  <Button type="submit" className="w-100">
-                    Send
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Col>
-        </Row>
-      </Container>
-    </div>
+        {/* Message Input */}
+        <div className="card card-footer">
+          <Form onSubmit={handleSendMessage} className="d-flex align-items-center">
+            <InputGroup>
+              <InputGroup.Text as="label" htmlFor="fileInput">
+                <FaPaperclip />
+              </InputGroup.Text>
+              <Form.Control
+                type="text"
+                placeholder="Type your message..."
+                name="messageInput"
+                className="flex-grow-1"
+              />
+              <Form.Control
+                type="file"
+                id="fileInput"
+                onChange={handleFileChange}
+                style={{ display: "none" }}
+              />
+            </InputGroup>
+            <Button type="submit" className="btn btn-primary ms-2">
+              Send
+            </Button>
+          </Form>
+          {file && (
+            <div className="file-preview mt-2">
+              <strong>Selected File:</strong> {file.name}
+              {file.type.startsWith("image") && (
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt="preview"
+                  style={{ maxWidth: "50px", marginLeft: "10px" }}
+                />
+              )}
+            </div>
+          )}
+        </div>
+      </Col>
+    </Row>
+  </Container>
+</div>
+
   );
 }
 
